@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import {
   ShieldCheck,
+  Award,
   CheckCircle2,
   FileText,
   Download,
@@ -16,6 +17,7 @@ import {
   X,
   Wand2,
   Sparkles,
+  ArrowRight,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
@@ -812,6 +814,13 @@ export default function CampaignResultsPage({ user, onLogout }) {
               <span>Brand Guardian</span>
             </button>
             <button
+              onClick={() => navigate('/report-card')}
+              className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+            >
+              <Award className="w-3.5 h-3.5 text-purple-600" />
+              <span>Campaign Report Card</span>
+            </button>
+            <button
               onClick={() => setSearchParams({ tab: 'export' })}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeView === 'export'
@@ -1133,6 +1142,18 @@ export default function CampaignResultsPage({ user, onLogout }) {
                 </div>
               </div>
             </div>
+
+            {/* Proceed to Brand Guardian CTA */}
+            <div className="flex items-center justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => setSearchParams({ tab: 'guardian' })}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+              >
+                <span>Proceed to Brand Guardian</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -1264,6 +1285,18 @@ export default function CampaignResultsPage({ user, onLogout }) {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Proceed to Campaign Report Card CTA */}
+            <div className="flex items-center justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => navigate('/report-card')}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+              >
+                <span>Proceed to Campaign Report Card</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}

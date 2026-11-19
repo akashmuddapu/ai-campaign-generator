@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage'
 import BrandPersonaSetupPage from './pages/BrandPersonaSetupPage'
 import StrategyConceptPage from './pages/StrategyConceptPage'
 import CampaignResultsPage from './pages/CampaignResultsPage'
+import CampaignReportCardPage from './pages/CampaignReportCardPage'
 import CampaignHistoryReportPage from './pages/CampaignHistoryReportPage'
 
 // ─── Auth Context ───────────────────────────────────────────────────────────
@@ -167,6 +168,24 @@ function AppShell() {
               element={
                 <ProtectedRoute user={user} isLoading={isLoading}>
                   <CampaignResultsPage user={user} onLogout={handleLogout} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/report-card"
+              element={
+                <ProtectedRoute user={user} isLoading={isLoading}>
+                  <CampaignReportCardPage user={user} onLogout={handleLogout} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/report-card/:id"
+              element={
+                <ProtectedRoute user={user} isLoading={isLoading}>
+                  <CampaignReportCardPage user={user} onLogout={handleLogout} />
                 </ProtectedRoute>
               }
             />

@@ -7,6 +7,7 @@ import {
   Sparkles,
   FileText,
   ShieldCheck,
+  Award,
   Download,
   History,
   Bell,
@@ -116,6 +117,7 @@ export default function SidebarLayout({
     { label: 'Campaign Concepts', path: '/strategy-concept', icon: Sparkles },
     { label: 'Campaign Assets', path: '/results', icon: FileText, tab: 'assets' },
     { label: 'Brand Guardian', path: '/results?tab=guardian', icon: ShieldCheck, tab: 'guardian' },
+    { label: 'Campaign Report Card', path: '/report-card', icon: Award },
     { label: 'Export', path: '/results?tab=export', icon: Download, tab: 'export' },
     { label: 'Campaign History', path: '/history', icon: History },
   ]
