@@ -23,8 +23,9 @@ The platform allows marketers to:
 4. **Generate Personalized Assets** — unique social media posts (≤280 characters) and emails (75–250 words) for each persona.
 5. **Run Brand Guardian** — validates assets against brand rules, including banned words, content length, and tone.
 6. **Auto-Fix Violations** — automatically fixes brand compliance violations.
-7. **Analyze Campaign Performance** — view campaign analytics and insights through the Analytics page.
-8. **Export Campaigns** — download complete campaigns as Markdown or JSON.
+7. **Campaign Report Card** — comprehensive 5-axis radar evaluation (Brand Voice, Persona Alignment, Platform Fit, Safety & Compliance, Message Clarity), executive grade (A–F), predicted performance metrics, and AI recommendations.
+8. **Analyze Campaign Performance** — view campaign analytics and insights through the Analytics page.
+9. **Export Campaigns** — download complete campaigns as PDF, Markdown, or JSON.
 
 All through a guided campaign studio with no AI prompt engineering required.
 
@@ -37,8 +38,9 @@ All through a guided campaign studio with no AI prompt engineering required.
 | Brand Kit & Personas | Define products, brand tone, banned words, and customer personas.     |
 | Campaign Assets      | Generate persona-specific social media posts and emails.              |
 | Brand Guardian       | Review asset-wise compliance scores and automatically fix violations. |
+| Campaign Report Card | Comprehensive 5-axis radar chart, executive grade, and AI insights.  |
 | Analytics Dashboard  | Explore campaign analytics, performance metrics, and insights.        |
-| Export               | Download complete campaigns in Markdown or JSON.                      |
+| Export               | Download complete campaigns in PDF, Markdown, or JSON.                |
 
 ---
 
@@ -49,9 +51,10 @@ All through a guided campaign studio with no AI prompt engineering required.
 | 🧠 **AI Provider Abstraction** | Pluggable Gemini / Grok / Mock providers that can be switched without changing business logic. |
 | 🛡️ **Brand Guardian**         | Deterministic banned-word detection, content-length validation, and semantic scoring.          |
 | ⚡ **Auto-Fix Engine**          | Automatically replaces banned words and fixes over-length content.                             |
+| 🎯 **Campaign Report Card**    | 5-axis radar chart, executive grade (A–F), predicted performance metrics, and AI recommendations. |
 | 👤 **Persona DNA**             | Generates distinct marketing content for each customer persona.                                |
 | 📊 **Analytics Dashboard**     | Provides campaign analytics, performance metrics, and visual insights.                         |
-| 📥 **Offline Export**          | Client-side Markdown and JSON downloads.                                                       |
+| 📥 **Offline Export**          | Client-side PDF, Markdown, and JSON downloads.                                                 |
 | 🕒 **Campaign History**        | Access previous campaigns, executive reports, and quick-edit functionality.                    |
 | 🔐 **Authentication System**   | Server-side Flask sessions with password hashing.                                              |
 | 📊 **Live Validation**         | Brand compliance scores update as campaign assets are edited.                                  |
@@ -73,24 +76,33 @@ ai-campaign-generator/
 │   │   │   ├── BrandPersonaSetupPage.jsx
 │   │   │   ├── StrategyConceptPage.jsx
 │   │   │   ├── CampaignResultsPage.jsx
+│   │   │   ├── CampaignReportCardPage.jsx    # Campaign Report Card & 5-axis radar
 │   │   │   ├── CampaignHistoryReportPage.jsx
-│   │   │   └── AnalyticsPage.jsx       # Campaign analytics dashboard
+│   │   │   └── AnalyticsPage.jsx             # Campaign analytics dashboard
 │   │   ├── components/
 │   │   │   ├── SidebarLayout.jsx
 │   │   │   ├── AssetCard.jsx
 │   │   │   ├── BrandGuardianBadge.jsx
 │   │   │   ├── WhyThisContentModal.jsx
 │   │   │   ├── PresetSelector.jsx
-│   │   │   └── ValidationReportCard.jsx
+│   │   │   ├── ValidationReportCard.jsx
+│   │   │   ├── CampaignRadarChart.jsx        # SVG 5-axis radar chart
+│   │   │   ├── ExecutiveGradeBanner.jsx      # Letter grade banner & status
+│   │   │   ├── ScoreBreakdownGrid.jsx        # Dimension metrics grid
+│   │   │   ├── PersonaImpactCard.jsx         # Persona alignment breakdown
+│   │   │   ├── PredictedPerformanceCard.jsx   # Projected CTR, engagement & reach
+│   │   │   ├── AIInsightsPanel.jsx           # AI recommendations panel
+│   │   │   └── ImprovementDrawerModal.jsx    # Interactive auto-fix drawer
 │   │   └── services/
 │   │       └── api.js
-│   └── tests/                          # Vitest + React Testing Library
+│   └── tests/                                # Vitest + React Testing Library
 │
-├── backend/                            # Python Flask REST API
+├── backend/                                  # Python Flask REST API
 │   ├── app/
 │   │   ├── routes/
 │   │   │   ├── auth_routes.py
 │   │   │   ├── campaign_routes.py
+│   │   │   ├── report_card_routes.py         # Report Card endpoints
 │   │   │   └── preset_routes.py
 │   │   ├── services/
 │   │   │   ├── ai_service.py
@@ -98,9 +110,12 @@ ai-campaign-generator/
 │   │   │   ├── grok_provider.py
 │   │   │   ├── mock_provider.py
 │   │   │   ├── brand_guardian.py
+│   │   │   ├── report_card_service.py        # 5-axis scoring & synthesis
+│   │   │   ├── performance_forecast_service.py # Forecast engine
 │   │   │   ├── export_service.py
 │   │   │   └── storage_service.py
 │   │   ├── models/
+│   │   │   └── report_card.py                # Report Card domain models
 │   │   └── validators/
 │   ├── data/
 │   ├── tests/
@@ -108,11 +123,8 @@ ai-campaign-generator/
 │   └── wsgi.py
 │
 └── specs/
-    └── 001-campaign-generator-mvp/
-        ├── spec.md
-        ├── plan.md
-        ├── tasks.md
-        └── contracts/
+    ├── 001-campaign-generator-mvp/
+    └── 002-campaign-report-card/             # Report Card specification & plan
 ```
 
 ---
@@ -280,6 +292,14 @@ All API endpoints are prefixed with `/api`.
 | DELETE | `/campaigns/<id>`            | Delete a campaign                       |
 | GET    | `/campaigns/export/<id>`     | Export a campaign                       |
 
+### Campaign Report Card
+
+| Method | Endpoint                                         | Description                                                        |
+| ------ | ------------------------------------------------ | ------------------------------------------------------------------ |
+| GET    | `/campaigns/<id>/report-card`                    | Retrieve or synthesize 5-axis report card and performance forecast |
+| POST   | `/campaigns/<id>/report-card/improve`            | Generate prioritized improvement recommendations                 |
+| POST   | `/campaigns/<id>/report-card/apply-improvements` | Auto-apply recommendations and re-score campaign                   |
+
 ### Presets
 
 | Method | Endpoint        | Description                      |
@@ -322,7 +342,7 @@ All API endpoints are prefixed with `/api`.
 
 ---
 
-## 📋 5-Step Campaign Studio Workflow
+## 📋 6-Step Campaign Studio Workflow
 
 ```text
 Step 1 → Brand Kit & Personas
@@ -341,9 +361,13 @@ Step 4 → Campaign Assets
          Generate persona-specific social media posts
          and emails. Edit, regenerate, or auto-fix assets.
 
-Step 5 → Brand Guardian & Export
-         Validate content, review compliance scores,
-         automatically fix violations, and export campaigns.
+Step 5 → Brand Guardian & Compliance
+         Validate content against brand guidelines, review
+         dimension scores, and automatically fix violations.
+
+Step 6 → Campaign Report Card & Export
+         Review 5-axis radar chart, executive letter grade,
+         predicted CTR/engagement, and export PDF/Markdown/JSON.
 ```
 
 The Analytics page provides an additional view of campaign data and insights.
