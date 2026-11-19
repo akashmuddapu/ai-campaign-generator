@@ -388,4 +388,4 @@ Please follow the engineering principles documented in `.specify/memory/constitu
 
 ---
 
-\<p align="center">   Built with ❤️ using React, Flask, and Google Gemini AI. \</p>
+\<p align="center">   Built with ❤️ using React, Flask, Google Gemini AI and AntiGravity IDE. \</p>
