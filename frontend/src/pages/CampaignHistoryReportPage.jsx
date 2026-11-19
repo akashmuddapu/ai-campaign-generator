@@ -20,9 +20,11 @@ import {
   FileBarChart,
   RefreshCw,
   X,
+  FileDown,
 } from 'lucide-react'
 import SidebarLayout from '../components/SidebarLayout'
 import api from '../services/api'
+import { generateCampaignPdf } from '../utils/generateCampaignPdf'
 
 // Default seed campaigns for initial workspace state or offline demo
 const SEED_CAMPAIGNS = [
@@ -407,6 +409,29 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
     const b = activeCampaign.bundle || {}
     const bk = b.brand_kit || {}
     const c = b.concept || {}
+
+    if (format === 'pdf') {
+      const personas = b.all_personas || (b.persona ? [b.persona] : [{ persona_name: activeCampaign.persona_name || 'Customer' }])
+      let assetsMap = b.assets_by_persona || b.assets
+      if (!assetsMap && (b.social_post || b.email)) {
+        assetsMap = {
+          [personas[0]?.persona_name || 'Customer']: {
+            social_post: b.social_post,
+            email: b.email,
+          },
+        }
+      }
+      generateCampaignPdf({
+        brandKit: bk,
+        concept: c,
+        personas: personas,
+        personaAssets: assetsMap || {},
+        overallScore: activeCampaign.score || 95,
+        guardianRating: activeCampaign.score >= 90 ? 'Excellent' : 'Good',
+        campaignId: activeCampaign.id,
+      })
+      return
+    }
     const safeName = (bk.product_name || activeCampaign.product_name || 'campaign')
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_')
@@ -561,6 +586,15 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
             >
               <FileCode className="w-3.5 h-3.5 text-indigo-600" />
               <span>Export JSON</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleDownload('pdf')}
+              className="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-purple-300 text-slate-700 text-xs font-bold shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <FileDown className="w-3.5 h-3.5 text-purple-600" />
+              <span>Export PDF</span>
             </button>
 
             <Link

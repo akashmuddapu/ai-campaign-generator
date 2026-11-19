@@ -16,10 +16,12 @@ import {
   X,
   Wand2,
   Sparkles,
+  FileDown,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import WhyThisContentModal from '../components/WhyThisContentModal'
+import { generateCampaignPdf } from '../utils/generateCampaignPdf'
 
 // Re-derive persona icon from name/index (never store React components in route state)
 function getPersonaIcon(name, idx) {
@@ -755,6 +757,32 @@ export default function CampaignResultsPage({ user, onLogout }) {
   }
 
   const handleExportDownload = (format) => {
+    if (format === 'pdf') {
+      try {
+        const exportedFilename = generateCampaignPdf({
+          brandKit: brand_kit,
+          concept: selected_concept,
+          personas: all_personas,
+          personaAssets: personaAssets,
+          validationRows: validationRows,
+          overallScore: overallGuardianScore,
+          guardianRating: guardianRating,
+          metrics: {
+            brandFitTile,
+            personaFitTile,
+            channelFitTile,
+            ruleComplianceTile,
+          },
+          campaignId: campaignId,
+        })
+        showFeedback(`Downloading PDF report: ${exportedFilename}…`)
+      } catch (err) {
+        console.error('PDF generation failed:', err)
+        showFeedback('Failed to generate PDF. Please try again.')
+      }
+      return
+    }
+
     // Always use client-side download — no backend dependency for export
     const safeName = (brand_kit.product_name || 'campaign').toLowerCase().replace(/[^a-z0-9]/g, '_')
     const filename = `${safeName}_${Date.now()}.${format === 'markdown' ? 'md' : 'json'}`
@@ -1324,8 +1352,8 @@ export default function CampaignResultsPage({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Two Action Cards matching Image 1 Screen 9 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Three Action Cards matching Image 1 Screen 9 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <button
                 type="button"
                 onClick={() => handleExportDownload('markdown')}
@@ -1355,6 +1383,22 @@ export default function CampaignResultsPage({ user, onLogout }) {
                     Export as JSON
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">.json raw payload</p>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleExportDownload('pdf')}
+                className="p-6 rounded-2xl border border-slate-200 bg-white hover:border-purple-300 hover:shadow-md transition-all flex items-center gap-4 cursor-pointer text-left group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
+                  <FileDown className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 group-hover:text-purple-700 transition-colors">
+                    Export as PDF
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Professional campaign report (.pdf)</p>
                 </div>
               </button>
             </div>
