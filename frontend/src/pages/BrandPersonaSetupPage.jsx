@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ArrowRight,
   Plus,
@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Pencil,
   Trash2,
+  Lock,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
@@ -74,6 +75,11 @@ function PersonaAvatar({ name, className = 'w-11 h-11' }) {
 
 export default function BrandPersonaSetupPage({ user, onLogout }) {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Detect locked step warning from sidebar redirect
+  const lockedStepWarning = location.state?.lockedStepWarning || false
+  const blockedStep = location.state?.blockedStep || null
 
   // ─── State ───────────────────────────────────────────────────────────────
   const [productName, setProductName] = useState('TravelMate Smart Mug')
@@ -342,10 +348,14 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
         return rest
       })
 
-      // Persist across browser refresh/tab changes
+      // Persist across browser refresh/tab changes and reset downstream step completion flags
       try {
         sessionStorage.setItem('cg_brand_kit', JSON.stringify(brandKit))
         sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
+        sessionStorage.removeItem('cg_step2_done')
+        sessionStorage.removeItem('cg_step3_done')
+        sessionStorage.removeItem('cg_step4_done')
+        sessionStorage.removeItem('cg_selected_concept')
       } catch {
         // Ignore storage errors in restricted contexts
       }
@@ -416,6 +426,16 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
           <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
             <span>{error}</span>
+          </div>
+        )}
+
+        {lockedStepWarning && (
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+            <Lock className="w-4 h-4 shrink-0 text-amber-600" />
+            <span>
+              <strong>Please follow the steps in order.</strong> Complete <strong>Brand & Personas</strong> (Step 1) first, then proceed to the next steps sequentially.
+              {blockedStep && <> You tried to access <strong>Step {blockedStep}</strong>.</>}
+            </span>
           </div>
         )}
 

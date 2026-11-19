@@ -15,23 +15,12 @@ import {
   Clock,
   PanelLeftClose,
   PanelLeftOpen,
+  Lock,
+  Image as ImageIcon,
 } from 'lucide-react'
 import api from '../services/api'
 
-const DEFAULT_PREVIOUS = [
-  {
-    id: 'camp-travelmate-001',
-    product_name: 'TravelMate Smart Mug',
-    concept_title: 'Temperature That Travels',
-    score: 96,
-  },
-  {
-    id: 'camp-cybershield-002',
-    product_name: 'CyberShield Cloud',
-    concept_title: 'The Proactive Guardrail',
-    score: 98,
-  },
-]
+const DEFAULT_PREVIOUS = []
 
 export default function SidebarLayout({
   children,
@@ -150,13 +139,41 @@ export default function SidebarLayout({
           return campaignName || 'TravelMate'
         })()
 
+  // ─── Sequential Step Locking Logic ──────────────────────────────────────
+  // Re-check step completion whenever the route changes
+  const [stepFlags, setStepFlags] = useState({
+    step1: false,
+    step2: false,
+    step3: false,
+    step4: false,
+  })
+
+  useEffect(() => {
+    setStepFlags({
+      step1: !!sessionStorage.getItem('cg_brand_kit'),
+      step2: !!sessionStorage.getItem('cg_step2_done'),
+      step3: !!sessionStorage.getItem('cg_step3_done'),
+      step4: !!sessionStorage.getItem('cg_step4_done'),
+    })
+  }, [currentPath, activeTab])
+
+  const [lockedClickWarning, setLockedClickWarning] = useState(null)
+
+  const handleLockedClick = (stepNum, stepLabel) => {
+    setLockedClickWarning(
+      `Please follow the steps one after another. Complete the earlier steps first before accessing Step ${stepNum}: ${stepLabel}.`
+    )
+    setTimeout(() => setLockedClickWarning(null), 5000)
+  }
+
   const navItems = [
     { label: 'Home', path: '/dashboard', icon: Home, exact: true },
-    { label: 'Brand & Personas', path: '/generator', icon: Layers },
-    { label: 'Campaign Concepts', path: '/strategy-concept', icon: Sparkles },
-    { label: 'Campaign Assets', path: '/results', icon: FileText, tab: 'assets' },
-    { label: 'Brand Guardian', path: '/results?tab=guardian', icon: ShieldCheck, tab: 'guardian' },
-    { label: 'Export', path: '/results?tab=export', icon: Download, tab: 'export' },
+    { label: 'Brand & Personas', path: '/generator', icon: Layers, stepNum: 1, locked: false },
+    { label: 'Campaign Concepts', path: '/strategy-concept', icon: Sparkles, stepNum: 2, locked: !stepFlags.step1 },
+    { label: 'Campaign Assets', path: '/results', icon: FileText, tab: 'assets', stepNum: 3, locked: !stepFlags.step2 },
+    { label: 'Brand Guardian', path: '/results?tab=guardian', icon: ShieldCheck, tab: 'guardian', stepNum: 4, locked: !stepFlags.step3 },
+    { label: 'Export', path: '/results?tab=export', icon: Download, tab: 'export', stepNum: 5, locked: !stepFlags.step4 },
+    { label: 'Generate Ad', path: '/results?tab=ad', icon: ImageIcon, tab: 'ad', stepNum: 6, locked: !stepFlags.step4 },
     { label: 'Campaign History', path: '/history', icon: History },
   ]
 
@@ -237,6 +254,46 @@ export default function SidebarLayout({
             {navItems.map((item) => {
               const active = isNavActive(item)
               const Icon = item.icon
+              const isLocked = item.locked === true
+
+              if (isLocked) {
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => handleLockedClick(item.stepNum, item.label)}
+                    title={`Complete previous steps first`}
+                    className={`w-full flex items-center ${
+                      isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3.5 py-2.5'
+                    } rounded-xl text-xs font-semibold transition-all relative group text-slate-500 hover:bg-white/5 cursor-not-allowed opacity-60`}
+                  >
+                    <div className="relative shrink-0">
+                      <Icon
+                        className={`${
+                          isCollapsed ? 'w-5 h-5' : 'w-4 h-4'
+                        } text-slate-500`}
+                      />
+                      <Lock className="w-2.5 h-2.5 text-amber-400 absolute -top-1 -right-1" />
+                    </div>
+                    {!isCollapsed && (
+                      <>
+                        <span className="truncate">{item.label}</span>
+                        {item.stepNum && (
+                          <span className="ml-auto text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-700/50 text-slate-400 shrink-0">
+                            {item.stepNum}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    {isCollapsed && (
+                      <span className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 border border-slate-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl z-50">
+                        🔒 {item.label} (Locked)
+                      </span>
+                    )}
+                  </button>
+                )
+              }
+
               return (
                 <Link
                   key={item.label}
@@ -256,7 +313,20 @@ export default function SidebarLayout({
                       isCollapsed ? 'w-5 h-5' : 'w-4 h-4'
                     } shrink-0 ${active ? 'text-purple-400' : 'text-slate-400'}`}
                   />
-                  {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  {!isCollapsed && (
+                    <>
+                      <span className="truncate">{item.label}</span>
+                      {item.stepNum && (
+                        <span className={`ml-auto text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
+                          active
+                            ? 'bg-purple-500/30 text-purple-200 border border-purple-400/30'
+                            : 'bg-white/10 text-slate-400'
+                        }`}>
+                          {item.stepNum}
+                        </span>
+                      )}
+                    </>
+                  )}
                   {isCollapsed && (
                     <span className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 border border-slate-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl z-50">
                       {item.label}
@@ -419,8 +489,25 @@ export default function SidebarLayout({
             </button>
 
             {currentStep && (
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200">
                 {currentStep}
+                <span className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5, 6].map((s) => {
+                    const currentStepNum = parseInt(currentStep.match(/\d+/)?.[0] || '0', 10)
+                    return (
+                      <span
+                        key={s}
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          s < currentStepNum
+                            ? 'bg-emerald-500'
+                            : s === currentStepNum
+                            ? 'bg-purple-600'
+                            : 'bg-slate-300'
+                        }`}
+                      />
+                    )
+                  })}
+                </span>
               </span>
             )}
           </div>
@@ -446,6 +533,23 @@ export default function SidebarLayout({
             </div>
           </div>
         </header>
+
+        {/* Locked Step Warning Banner */}
+        {lockedClickWarning && (
+          <div className="bg-amber-500 text-white px-6 py-2.5 text-xs font-bold flex items-center justify-between shadow-md transition-all shrink-0">
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 shrink-0 text-white" />
+              <span>{lockedClickWarning}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setLockedClickWarning(null)}
+              className="text-white/80 hover:text-white cursor-pointer ml-4 font-bold text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Page Content Scroll Area */}
         <main className="flex-1 overflow-y-auto p-8">

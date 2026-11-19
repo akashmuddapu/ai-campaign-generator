@@ -14,6 +14,7 @@ import {
   Rocket,
   User,
   Zap,
+  Lock,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
@@ -34,6 +35,8 @@ function getPersonaColor(idx) {
 export default function StrategyConceptPage({ user, onLogout }) {
   const location = useLocation()
   const navigate = useNavigate()
+
+  const hasStep1 = !!(location.state?.brand_kit || sessionStorage.getItem('cg_brand_kit'))
 
   // Retrieve state or use rich fallbacks (with sessionStorage refresh resilience)
   const brand_kit =
@@ -164,6 +167,7 @@ export default function StrategyConceptPage({ user, onLogout }) {
         sessionStorage.setItem('cg_brand_kit', JSON.stringify(brand_kit))
         sessionStorage.setItem('cg_selected_concept', JSON.stringify(selectedConcept))
         sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
+        sessionStorage.setItem('cg_step2_done', 'true')
         if (createdCampaign?.id) {
           sessionStorage.setItem('cg_active_campaign_id', createdCampaign.id)
         }
@@ -193,11 +197,36 @@ export default function StrategyConceptPage({ user, onLogout }) {
     }
   }
 
+  if (!hasStep1) {
+    return (
+      <SidebarLayout user={user} onLogout={onLogout} currentStep="Step 2 of 5" campaignName="New Campaign" campaignStatus="Draft">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-5">
+          <div className="w-20 h-20 rounded-3xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+            <Lock className="w-10 h-10 text-amber-500" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900">Step 1 Not Completed</h2>
+            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              Please follow the steps one after another. Complete <strong>Brand &amp; Personas (Step 1)</strong> first before accessing Campaign Concepts.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/generator')}
+            className="px-6 py-2.5 rounded-xl bg-purple-700 text-white text-xs font-bold hover:bg-purple-800 transition-all shadow-md shadow-purple-200 cursor-pointer"
+          >
+            Go to Step 1: Brand &amp; Personas →
+          </button>
+        </div>
+      </SidebarLayout>
+    )
+  }
+
   return (
     <SidebarLayout
       user={user}
       onLogout={onLogout}
-      currentStep={subStep === 'dna' ? 'Step 2 of 5' : 'Step 3 of 5'}
+      currentStep="Step 2 of 5"
       campaignName={brand_kit.product_name?.split(' ')[0] || 'TravelMate'}
     >
       <div className="max-w-6xl mx-auto space-y-6">

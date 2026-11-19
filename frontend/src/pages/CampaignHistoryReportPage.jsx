@@ -450,6 +450,9 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
       sessionStorage.setItem('cg_brand_kit', JSON.stringify(bk))
       sessionStorage.setItem('cg_personas', JSON.stringify(personas))
       sessionStorage.setItem('cg_selected_concept', JSON.stringify(concept))
+      sessionStorage.setItem('cg_step2_done', 'true')
+      sessionStorage.setItem('cg_step3_done', 'true')
+      sessionStorage.setItem('cg_step4_done', 'true')
       if (b.assets) {
         sessionStorage.setItem('cg_persona_assets', JSON.stringify(b.assets))
       }
