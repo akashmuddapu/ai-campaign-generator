@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import {
   ShieldCheck,
   CheckCircle2,
@@ -104,6 +104,7 @@ function validateAssetContent(content, channelType, brandKit, isFixed = false) {
 
 export default function CampaignResultsPage({ user, onLogout }) {
   const location = useLocation()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Active view tab: 'assets' | 'guardian' | 'export'
@@ -161,10 +162,39 @@ export default function CampaignResultsPage({ user, onLogout }) {
 
   const campaignId = location.state?.campaign_id || 'camp-travelmate-001'
 
+  // Guard: if no meaningful state loaded (direct URL access), show empty state
+  const hasRealData = !!(location.state?.brand_kit || sessionStorage.getItem('cg_brand_kit'))
+  if (!hasRealData) {
+    return (
+      <SidebarLayout user={user} onLogout={onLogout} currentStep="Step 4 of 5" campaignName="New Campaign" campaignStatus="Draft">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-5">
+          <div className="w-20 h-20 rounded-3xl bg-purple-50 flex items-center justify-center">
+            <FileText className="w-10 h-10 text-purple-400" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900">No Campaign Loaded</h2>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+              Campaign data wasn't found. Start a new campaign from the Brand &amp; Personas step.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/generator')}
+            className="px-6 py-2.5 rounded-xl bg-purple-700 text-white text-xs font-bold hover:bg-purple-800 transition-all shadow-md shadow-purple-200 cursor-pointer"
+          >
+            Start New Campaign →
+          </button>
+        </div>
+      </SidebarLayout>
+    )
+  }
+
   const [activePersonaName, setActivePersonaName] = useState(
     location.state?.persona?.persona_name || all_personas[0]?.persona_name || 'Student'
   )
 
+  // Persona-specific assets map state — keyed by persona name
+  // Build fresh defaults for ALL personas so switching tabs shows different content
   // Dynamic tailored content generator adapting to ANY product (beverage, tech, or custom)
   const getDefaultPersonaAssets = (personaName, brandKit, concept) => {
     const pName = personaName || 'Student'
@@ -724,45 +754,28 @@ export default function CampaignResultsPage({ user, onLogout }) {
     )
   }
 
-  const handleExportDownload = async (format) => {
+  const handleExportDownload = (format) => {
+    // Always use client-side download — no backend dependency for export
     const safeName = (brand_kit.product_name || 'campaign').toLowerCase().replace(/[^a-z0-9]/g, '_')
-    const filename = `${safeName}_${campaignId}.${format === 'markdown' ? 'md' : 'json'}`
+    const filename = `${safeName}_${Date.now()}.${format === 'markdown' ? 'md' : 'json'}`
 
-    try {
-      // 1. Attempt download from backend REST API
-      const res = await api.get(`/campaigns/export/${campaignId}?format=${format}`, {
-        responseType: 'blob',
-      })
-      const blob = new Blob([res.data], {
-        type: format === 'markdown' ? 'text/markdown;charset=utf-8' : 'application/json;charset=utf-8',
-      })
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
-    } catch {
-      // 2. Client-side instant download fallback (offline/demo resilience)
-      const content =
-        format === 'markdown'
-          ? generateClientMarkdown(brand_kit, selected_concept, all_personas, personaAssets)
-          : generateClientJson(brand_kit, selected_concept, all_personas, personaAssets, campaignId)
+    const content =
+      format === 'markdown'
+        ? generateClientMarkdown(brand_kit, selected_concept, all_personas, personaAssets)
+        : generateClientJson(brand_kit, selected_concept, all_personas, personaAssets, campaignId)
 
-      const blob = new Blob([content], {
-        type: format === 'markdown' ? 'text/markdown;charset=utf-8' : 'application/json;charset=utf-8',
-      })
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
-    }
+    const blob = new Blob([content], {
+      type: format === 'markdown' ? 'text/markdown;charset=utf-8' : 'application/json;charset=utf-8',
+    })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+    showFeedback(`Downloading ${format === 'markdown' ? 'Markdown' : 'JSON'} export…`)
   }
 
   return (
