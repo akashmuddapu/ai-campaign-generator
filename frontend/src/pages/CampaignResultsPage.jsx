@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import {
   ShieldCheck,
@@ -33,6 +33,7 @@ import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import WhyThisContentModal from '../components/WhyThisContentModal'
 import { generateCampaignPdf } from '../utils/generateCampaignPdf'
+import { unlockStep, getMaxUnlockedStep, resetWizardSession } from '../utils/wizardProgress'
 
 // Re-derive persona icon from name/index
 function getPersonaIcon(name, idx) {
@@ -135,6 +136,24 @@ export default function CampaignResultsPage({ user, onLogout }) {
 
   // Active view tab: 'assets' | 'guardian' | 'export'
   const activeView = searchParams.get('tab') || 'assets'
+
+  // Track progressive wizard step unlocking
+  const [maxStep, setMaxStep] = useState(() => getMaxUnlockedStep())
+  useEffect(() => {
+    const syncStep = (e) => setMaxStep(e?.detail?.maxStep || getMaxUnlockedStep())
+    window.addEventListener('cg_step_unlocked', syncStep)
+    return () => window.removeEventListener('cg_step_unlocked', syncStep)
+  }, [])
+  useEffect(() => {
+    if (activeView === 'guardian') unlockStep(5)
+    else if (activeView === 'export') unlockStep(6)
+    else unlockStep(4)
+  }, [activeView])
+
+  const effectiveMaxStep = Math.max(
+    maxStep,
+    activeView === 'export' ? 6 : activeView === 'guardian' ? 5 : 4
+  )
 
   // Retrieve state or use complete fallbacks (with sessionStorage refresh resilience)
   const brand_kit =
@@ -838,12 +857,12 @@ export default function CampaignResultsPage({ user, onLogout }) {
     <SidebarLayout
       user={user}
       onLogout={onLogout}
-      currentStep={activeView === 'guardian' ? 'Step 5 of 5' : 'Step 4 of 5'}
+      currentStep={activeView === 'assets' ? 'Step 4 of 5' : 'Step 5 of 5'}
       campaignName={brand_kit.product_name?.split(' ')[0] || 'TravelMate'}
       campaignStatus="Validated"
     >
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* ─── Top View Switcher Tabs ──────────────────────────────────────── */}
+        {/* ─── Top View Switcher Tabs (progressively revealed) ─────────────── */}
         <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
           <div className="flex items-center gap-2">
             <button
@@ -856,35 +875,41 @@ export default function CampaignResultsPage({ user, onLogout }) {
             >
               Campaign Assets
             </button>
-            <button
-              onClick={() => setSearchParams({ tab: 'guardian' })}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeView === 'guardian'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Brand Guardian</span>
-            </button>
-            <button
-              onClick={() => navigate('/report-card')}
-              className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-            >
-              <Award className="w-3.5 h-3.5 text-purple-600" />
-              <span>Campaign Report Card</span>
-            </button>
-            <button
-              onClick={() => setSearchParams({ tab: 'export' })}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeView === 'export'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export Campaign</span>
-            </button>
+            {effectiveMaxStep >= 5 && (
+              <>
+                <button
+                  onClick={() => setSearchParams({ tab: 'guardian' })}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeView === 'guardian'
+                      ? 'bg-purple-700 text-white shadow-xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Brand Guardian</span>
+                </button>
+                <button
+                  onClick={() => navigate('/report-card')}
+                  className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                >
+                  <Award className="w-3.5 h-3.5 text-purple-600" />
+                  <span>Campaign Report Card</span>
+                </button>
+              </>
+            )}
+            {effectiveMaxStep >= 6 && (
+              <button
+                onClick={() => setSearchParams({ tab: 'export' })}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeView === 'export'
+                    ? 'bg-purple-700 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export Campaign</span>
+              </button>
+            )}
           </div>
 
           <div className="text-xs text-slate-500 font-semibold hidden sm:block">
@@ -1197,15 +1222,25 @@ export default function CampaignResultsPage({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Proceed to Brand Guardian CTA */}
-            <div className="flex items-center justify-end pt-1">
+            {/* ─── Step navigation for Assets view (Step 4) ───────────────────── */}
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => setSearchParams({ tab: 'guardian' })}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+                onClick={() => navigate('/strategy-concept?step=concepts', { state: { brand_kit, all_personas: all_personas.map(({ icon: _i, color: _c, ...rest }) => rest), selected_concept } })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
               >
-                <span>Proceed to Brand Guardian</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>← Step 3: Campaign Concepts</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  unlockStep(5)
+                  setSearchParams({ tab: 'guardian' })
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Step 5: Brand Guardian →</span>
               </button>
             </div>
           </div>
@@ -1341,16 +1376,36 @@ export default function CampaignResultsPage({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Proceed to Campaign Report Card CTA */}
-            <div className="flex items-center justify-end pt-1">
+            {/* ─── Step navigation for Brand Guardian view (Step 5) ──────────── */}
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => navigate('/report-card')}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+                onClick={() => setSearchParams({ tab: 'assets' })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
               >
-                <span>Proceed to Campaign Report Card</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>← Step 4: Campaign Assets</span>
               </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate('/report-card')}
+                  className="px-5 py-2.5 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Award className="w-4 h-4" />
+                  <span>Campaign Report Card</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    unlockStep(6)
+                    setSearchParams({ tab: 'export' })
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export Campaign →</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1459,6 +1514,28 @@ export default function CampaignResultsPage({ user, onLogout }) {
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">Professional campaign report (.pdf)</p>
                 </div>
+              </button>
+            </div>
+
+            {/* ─── Step navigation for Export view ────────────────────────────── */}
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSearchParams({ tab: 'guardian' })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <span>← Step 5: Brand Guardian</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  resetWizardSession()
+                  navigate('/dashboard')
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-200 cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Finish &amp; Return Home</span>
               </button>
             </div>
           </div>

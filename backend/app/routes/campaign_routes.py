@@ -36,6 +36,74 @@ def suggest_personas():
     return jsonify({"status": "success", "personas": personas}), 200
 
 
+@campaign_bp.post("/draft")
+def save_draft():
+    """Save or update an in-progress campaign draft."""
+    data = request.get_json(silent=True) or {}
+    user_id = data.get("user_id") or request.headers.get("X-User-Id") or session.get("user_id")
+    draft_id = data.get("draft_id") or data.get("id") or f"draft-{uuid.uuid4()}"
+    current_step = int(data.get("current_step", 1))
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    brand_kit = data.get("brand_kit") or {}
+    persona = data.get("persona") or {}
+    all_personas = data.get("all_personas") or ([persona] if persona else [])
+    persona_dna = data.get("persona_dna")
+    concept = data.get("selected_concept") or data.get("concept")
+    concepts = data.get("concepts") or []
+    assets = data.get("assets") or {}
+
+    campaigns_path = str(Path(current_app.config["DATA_DIR"]) / "campaigns.json")
+    campaigns = storage_service.read_json(campaigns_path, default=[])
+
+    existing_idx = next(
+        (i for i, c in enumerate(campaigns) if c.get("id") == draft_id or c.get("bundle", {}).get("id") == draft_id),
+        None
+    )
+
+    created_at = now_iso
+    if existing_idx is not None:
+        created_at = (
+            campaigns[existing_idx].get("created_at")
+            or campaigns[existing_idx].get("bundle", {}).get("created_at")
+            or now_iso
+        )
+
+    bundle_record = {
+        "id": draft_id,
+        "user_id": str(user_id) if user_id is not None else None,
+        "status": "Draft",
+        "current_step": current_step,
+        "brand_kit": brand_kit,
+        "persona": persona,
+        "all_personas": all_personas,
+        "persona_dna": persona_dna,
+        "concept": concept,
+        "concepts": concepts,
+        "assets": assets,
+        "created_at": created_at,
+        "updated_at": now_iso,
+    }
+
+    record = {
+        "id": draft_id,
+        "user_id": str(user_id) if user_id is not None else None,
+        "status": "Draft",
+        "current_step": current_step,
+        "created_at": created_at,
+        "updated_at": now_iso,
+        "bundle": bundle_record,
+    }
+
+    if existing_idx is not None:
+        campaigns[existing_idx] = record
+    else:
+        campaigns.append(record)
+
+    storage_service.write_json(campaigns_path, campaigns)
+    return jsonify({"status": "success", "draft_id": draft_id, "campaign": bundle_record}), 200
+
+
 @campaign_bp.post("/persona-dna")
 def persona_dna():
     data = request.get_json(silent=True) or {}
@@ -130,8 +198,11 @@ def generate_assets():
         }
 
         # Store for export and dashboard
+        draft_id = data.get("draft_id")
         campaigns_path = str(Path(current_app.config["DATA_DIR"]) / "campaigns.json")
         campaigns = storage_service.read_json(campaigns_path, default=[])
+        if draft_id:
+            campaigns = [c for c in campaigns if c.get("id") != draft_id and c.get("bundle", {}).get("id") != draft_id]
         campaigns.append({
             "id": campaign_id,
             "user_id": str(user_id) if user_id is not None else None,
@@ -215,7 +286,16 @@ def list_campaigns():
         persona = b.get("persona", {})
         social = b.get("social_post", {})
         vr = social.get("validation_report", {})
-        score = vr.get("overall_score", 96)
+
+        raw_status = b.get("status") or item.get("status")
+        current_step = b.get("current_step") or item.get("current_step") or 1
+
+        if raw_status == "Draft":
+            item_status = "Draft"
+            score = 90
+        else:
+            item_status = "Validated" if vr.get("passed", True) else "Review"
+            score = vr.get("overall_score", 96)
 
         c_id = item.get("id") or b.get("id")
         if not c_id:
@@ -230,8 +310,10 @@ def list_campaigns():
             "concept_title": concept.get("title", "Core Campaign"),
             "persona_name": persona.get("persona_name", "Primary Audience"),
             "score": score,
-            "status": "Validated" if vr.get("passed", True) else "Review",
+            "status": item_status,
+            "current_step": current_step,
             "created_at": b.get("created_at") or item.get("created_at") or "2026-11-19T00:00:00Z",
+            "updated_at": b.get("updated_at") or item.get("updated_at"),
             "bundle": b,
         })
 

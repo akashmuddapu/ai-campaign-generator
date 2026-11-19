@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   ArrowRight,
   Plus,
@@ -23,6 +23,7 @@ import {
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import LoadingIndicator from '../components/LoadingIndicator'
+import { unlockStep, setUnlockedStep, resetWizardSession } from '../utils/wizardProgress'
 
 // Illustrated Persona Avatar supporting diverse domains
 function PersonaAvatar({ name, className = 'w-11 h-11' }) {
@@ -304,8 +305,14 @@ export function derivePersonasForProduct(productName, productDescription = '') {
 
 export default function BrandPersonaSetupPage({ user, onLogout }) {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const urlDraftId = searchParams.get('draft_id')
 
   // ─── State ───────────────────────────────────────────────────────────────
+  const [draftId, setDraftId] = useState(() => {
+    if (urlDraftId) return urlDraftId
+    try { return sessionStorage.getItem('cg_draft_id') || null } catch { return null }
+  })
   const [productName, setProductName] = useState('TravelMate Smart Mug')
   const [productDescription, setProductDescription] = useState(
     'A smart travel mug that keeps drinks at your preferred temperature during your journey.'
@@ -358,6 +365,38 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
   const [isSuggestingPersonas, setIsSuggestingPersonas] = useState(false)
   const [error, setError] = useState(null)
   const [presets, setPresets] = useState([])
+  const [draftSaved, setDraftSaved] = useState(false)
+
+  // ─── Draft save helper ───────────────────────────────────────────────────
+  const saveDraft = async ({ step = 1, brandKit, serializablePersonas, extraFields = {} } = {}) => {
+    const userId = user?.id || localStorage.getItem('cg_user_id')
+    if (!userId) return null
+    try {
+      const res = await api.post('/campaigns/draft', {
+        draft_id: draftId || undefined,
+        user_id: userId,
+        current_step: step,
+        brand_kit: brandKit,
+        all_personas: serializablePersonas,
+        persona: serializablePersonas[selectedPersonaIndex] || serializablePersonas[0],
+        ...extraFields,
+      })
+      const newId = res.data?.draft_id || res.data?.campaign?.id
+      if (newId) {
+        setDraftId(newId)
+        try { sessionStorage.setItem('cg_draft_id', newId) } catch {}
+        const draftData = res.data?.campaign
+        if (draftData) {
+          window.dispatchEvent(new CustomEvent('cg_draft_saved', { detail: draftData }))
+        }
+      }
+      setDraftSaved(true)
+      setTimeout(() => setDraftSaved(false), 2000)
+      return newId
+    } catch {
+      return null
+    }
+  }
 
   // Automatically suggest personas tailored to the current product
   const handleAutoSuggestPersonas = async () => {
@@ -473,19 +512,76 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
     }
   }
 
-  // Restore user-saved brand kit and personas on mount if available
+  // Hydrate from draft_id URL param (when resuming a draft) or sessionStorage
   useEffect(() => {
+    const hydrateFromBundle = (bundle) => {
+      if (!bundle) return
+      const bk = bundle.brand_kit || {}
+      if (bk.product_name) setProductName(bk.product_name)
+      if (bk.product_description) setProductDescription(bk.product_description)
+      if (bk.brand_tone) {
+        const tones = Array.isArray(bk.brand_tone)
+          ? bk.brand_tone
+          : String(bk.brand_tone).split(',').map((t) => t.trim()).filter(Boolean)
+        if (tones.length > 0) setBrandTones(tones)
+      }
+      if (bk.tagline !== undefined) setTagline(bk.tagline)
+      if (Array.isArray(bk.banned_words)) setBannedWords(bk.banned_words)
+      if (Array.isArray(bk.example_brand_lines)) {
+        setExampleBrandLines(
+          bk.example_brand_lines.map((l) => (l.startsWith('•') ? l : `• ${l}`)).join('\n')
+        )
+      }
+      const pList =
+        Array.isArray(bundle.all_personas) && bundle.all_personas.length > 0
+          ? bundle.all_personas
+          : bundle.persona && bundle.persona.persona_name
+          ? [bundle.persona]
+          : null
+      if (pList) {
+        setPersonas(pList)
+        if (bundle.persona?.persona_name) {
+          const idx = pList.findIndex((p) => p.persona_name === bundle.persona.persona_name)
+          if (idx >= 0) setSelectedPersonaIndex(idx)
+        }
+      }
+      try {
+        if (bundle.id) sessionStorage.setItem('cg_draft_id', bundle.id)
+        if (bk.product_name) sessionStorage.setItem('cg_brand_kit', JSON.stringify(bk))
+        if (pList) sessionStorage.setItem('cg_personas', JSON.stringify(pList))
+        if (bundle.persona_dna) sessionStorage.setItem('cg_persona_dna', JSON.stringify(bundle.persona_dna))
+        if (Array.isArray(bundle.concepts) && bundle.concepts.length > 0) {
+          sessionStorage.setItem('cg_concepts', JSON.stringify(bundle.concepts))
+        }
+      } catch {}
+      setUnlockedStep(bundle.current_step || 1)
+    }
+
+    if (urlDraftId) {
+      setDraftId(urlDraftId)
+      api
+        .get(`/campaigns/${urlDraftId}`)
+        .then((res) => {
+          const bundle = res.data?.campaign || res.data
+          hydrateFromBundle(bundle)
+        })
+        .catch(() => {})
+      return
+    }
+
     try {
       const savedBk = sessionStorage.getItem('cg_brand_kit')
       if (savedBk) {
         const bk = JSON.parse(savedBk)
         if (bk.product_name) setProductName(bk.product_name)
         if (bk.product_description) setProductDescription(bk.product_description)
-        if (bk.brand_tone) setBrandTones(bk.brand_tone.split(',').map((t) => t.trim()))
-        if (bk.tagline) setTagline(bk.tagline)
+        if (bk.brand_tone) setBrandTones(bk.brand_tone.split(',').map((t) => t.trim()).filter(Boolean))
+        if (bk.tagline !== undefined) setTagline(bk.tagline)
         if (Array.isArray(bk.banned_words)) setBannedWords(bk.banned_words)
         if (Array.isArray(bk.example_brand_lines)) {
-          setExampleBrandLines(bk.example_brand_lines.map((l) => `• ${l}`).join('\n'))
+          setExampleBrandLines(
+            bk.example_brand_lines.map((l) => (l.startsWith('•') ? l : `• ${l}`)).join('\n')
+          )
         }
       }
       const savedPersonas = sessionStorage.getItem('cg_personas')
@@ -498,7 +594,7 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
     } catch {
       // ignore
     }
-  }, [])
+  }, [urlDraftId])
 
   // Load presets on mount
   useEffect(() => {
@@ -624,18 +720,26 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
       try {
         sessionStorage.setItem('cg_brand_kit', JSON.stringify(brandKit))
         sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
+        sessionStorage.setItem('cg_persona_dna', JSON.stringify(personaDna))
+        sessionStorage.setItem('cg_concepts', JSON.stringify(concepts))
       } catch {
         // Ignore storage errors in restricted contexts
       }
 
-      // Navigate to Step 2 & 3
-      navigate('/strategy-concept', {
+      // Auto-save draft at step 2 (after DNA + concepts generated) and unlock Step 2 in sidebar
+      const resolvedDraftId = await saveDraft({ step: 2, brandKit, serializablePersonas, extraFields: { persona_dna: personaDna, concepts } })
+      unlockStep(2)
+
+      // Navigate to Step 2 (Persona Strategy)
+      const nextDraftParam = resolvedDraftId || draftId
+      navigate(nextDraftParam ? `/strategy-concept?step=dna&draft_id=${nextDraftParam}` : '/strategy-concept?step=dna', {
         state: {
           brand_kit: brandKit,
           persona: serializableCurrentPersona,
           all_personas: serializablePersonas,
           persona_dna: personaDna,
           concepts,
+          draft_id: nextDraftParam,
         },
       })
     } catch (err) {
@@ -945,14 +1049,43 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
             </div>
 
             {/* Bottom Continue Action Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white font-bold text-sm py-3.5 rounded-xl shadow-md shadow-purple-200 transition-all hover:scale-101 cursor-pointer disabled:opacity-50"
-            >
-              <span>{isLoading ? 'Synthesizing Audience DNA...' : 'Generate Campaign Concepts'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="flex items-center justify-between gap-3 pt-2">
+              {/* Draft save indicator */}
+              {draftSaved && (
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                  Draft saved
+                </span>
+              )}
+              <div className="ml-auto flex items-center gap-3">
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={async () => {
+                    const bk = { product_name: productName, product_description: productDescription, brand_tone: brandTones.join(', '), tagline, banned_words: bannedWords, example_brand_lines: exampleBrandLines.split('\n').filter(l => l.trim()) }
+                    const sp = personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+                    await saveDraft({ step: 1, brandKit: bk, serializablePersonas: sp })
+                    resetWizardSession()
+                    navigate('/dashboard', {
+                      state: {
+                        draftSavedNotice: `Draft "${productName || 'Campaign'}" saved at Step 1 of 5. You can resume anytime from Previous Campaigns or Campaign History.`,
+                      },
+                    })
+                  }}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer disabled:opacity-40"
+                >
+                  Save Draft
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex items-center gap-2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-200 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isLoading ? 'Synthesizing...' : 'Next Step: Persona Strategy'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </form>
 

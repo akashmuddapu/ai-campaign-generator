@@ -149,3 +149,47 @@ class TestCampaignFlowEndpoints:
         detail_data = detail_resp.get_json()
         assert detail_data.get("status") == "success"
         assert detail_data.get("campaign")["id"] == data["id"]
+
+    def test_draft_campaign_lifecycle(self, client, sample_brand_kit, sample_persona):
+        # 1. Save new draft at Step 1
+        draft_resp = client.post(
+            "/api/campaigns/draft",
+            json={
+                "user_id": "test-user-123",
+                "current_step": 1,
+                "brand_kit": sample_brand_kit,
+                "persona": sample_persona,
+            },
+        )
+        assert draft_resp.status_code == 200
+        draft_data = draft_resp.get_json()
+        assert draft_data.get("status") == "success"
+        draft_id = draft_data.get("draft_id")
+        assert draft_id.startswith("draft-")
+        assert draft_data["campaign"]["current_step"] == 1
+        assert draft_data["campaign"]["status"] == "Draft"
+
+        # 2. Update draft to Step 2
+        update_resp = client.post(
+            "/api/campaigns/draft",
+            json={
+                "draft_id": draft_id,
+                "user_id": "test-user-123",
+                "current_step": 2,
+                "brand_kit": sample_brand_kit,
+                "persona": sample_persona,
+                "persona_dna": {"core_value_angle": "Test Value"},
+            },
+        )
+        assert update_resp.status_code == 200
+        update_data = update_resp.get_json()
+        assert update_data["campaign"]["current_step"] == 2
+
+        # 3. List campaigns for this user verifies draft status and current_step
+        list_resp = client.get("/api/campaigns?user_id=test-user-123")
+        assert list_resp.status_code == 200
+        campaigns = list_resp.get_json().get("campaigns", [])
+        user_draft = next((c for c in campaigns if c["id"] == draft_id), None)
+        assert user_draft is not None
+        assert user_draft["status"] == "Draft"
+        assert user_draft["current_step"] == 2

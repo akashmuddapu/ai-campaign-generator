@@ -4,6 +4,7 @@ import {
   Shield,
   Home,
   Layers,
+  Target,
   Sparkles,
   FileText,
   ShieldCheck,
@@ -18,6 +19,7 @@ import {
   PanelLeftOpen,
 } from 'lucide-react'
 import api from '../services/api'
+import { getMaxUnlockedStep } from '../utils/wizardProgress'
 
 const DEFAULT_PREVIOUS = [
   {
@@ -107,19 +109,23 @@ export default function SidebarLayout({
       const bk = newCamp.brand_kit || {}
       const concept = newCamp.concept || {}
       const vr = newCamp.assets?.social_post?.validation_report || {}
+      const isDraft = newCamp.status === 'Draft'
       const summary = {
         id: newCamp.id,
         user_id: newCamp.user_id,
         product_name: bk.product_name || 'Campaign',
-        concept_title: concept.title || 'Campaign Concept',
-        score: vr.overall_score || 96,
-        status: vr.passed ? 'Validated' : 'Review',
+        concept_title: isDraft ? `Draft • Step ${newCamp.current_step || 1} of 5` : (concept.title || 'Campaign Concept'),
+        score: isDraft ? 90 : (vr.overall_score || 96),
+        status: isDraft ? 'Draft' : (vr.passed ? 'Validated' : 'Review'),
+        current_step: newCamp.current_step || 1,
         created_at: newCamp.created_at || new Date().toISOString(),
         bundle: newCamp,
       }
 
       setPreviousCampaigns((prev) => {
-        const withoutNew = prev.filter((c) => c.id !== newCamp.id)
+        const withoutNew = prev.filter(
+          (c) => c.id !== newCamp.id && (!newCamp.replaced_draft_id || c.id !== newCamp.replaced_draft_id)
+        )
         const updated = [summary, ...withoutNew]
         const userId = user?.id || localStorage.getItem('cg_user_id')
         try {
@@ -130,8 +136,43 @@ export default function SidebarLayout({
       })
     }
 
+    const handleDraftSaved = (e) => {
+      const draft = e.detail
+      if (!draft || !draft.id) return
+      const bk = draft.brand_kit || {}
+      const concept = draft.concept || {}
+      const step = draft.current_step || 1
+      const summary = {
+        id: draft.id,
+        user_id: draft.user_id,
+        product_name: bk.product_name || 'Draft Campaign',
+        concept_title: `Draft • Step ${step} of 5`,
+        score: 90,
+        status: 'Draft',
+        current_step: step,
+        created_at: draft.created_at || new Date().toISOString(),
+        updated_at: draft.updated_at || new Date().toISOString(),
+        bundle: draft,
+      }
+
+      setPreviousCampaigns((prev) => {
+        const withoutDraft = prev.filter((c) => c.id !== draft.id)
+        const updated = [summary, ...withoutDraft]
+        const userId = user?.id || localStorage.getItem('cg_user_id')
+        try {
+          const cacheKey = userId ? `cg_campaign_history_${userId}` : 'cg_campaign_history'
+          sessionStorage.setItem(cacheKey, JSON.stringify(updated))
+        } catch {}
+        return updated
+      })
+    }
+
     window.addEventListener('cg_campaign_created', handleCampaignCreated)
-    return () => window.removeEventListener('cg_campaign_created', handleCampaignCreated)
+    window.addEventListener('cg_draft_saved', handleDraftSaved)
+    return () => {
+      window.removeEventListener('cg_campaign_created', handleCampaignCreated)
+      window.removeEventListener('cg_draft_saved', handleDraftSaved)
+    }
   }, [user?.id])
 
   // Dynamically resolve campaign name from props or sessionStorage
@@ -151,20 +192,64 @@ export default function SidebarLayout({
           return campaignName || 'TravelMate'
         })()
 
+  // Progressive wizard step unlocking (steps 2..5 stay invisible until unlocked!)
+  const [maxUnlockedStep, setMaxUnlockedStep] = useState(() => getMaxUnlockedStep())
+
+  useEffect(() => {
+    setMaxUnlockedStep(getMaxUnlockedStep())
+  }, [location.pathname, location.search])
+
+  useEffect(() => {
+    const handleStepUnlocked = (e) => {
+      const next = e.detail?.maxStep || getMaxUnlockedStep()
+      setMaxUnlockedStep(next)
+    }
+    window.addEventListener('cg_step_unlocked', handleStepUnlocked)
+    return () => window.removeEventListener('cg_step_unlocked', handleStepUnlocked)
+  }, [])
+
+  const currentStepNum = (() => {
+    if (!currentStep) return 1
+    const match = String(currentStep).match(/Step\s+(\d+)/i)
+    return match ? parseInt(match[1], 10) : 1
+  })()
+
+  const activeStepParam = searchParams.get('step')
+  const effectiveMaxStep = Math.max(
+    maxUnlockedStep,
+    currentPath === '/results' && activeTab === 'export'
+      ? 6
+      : currentPath === '/report-card'
+      ? 5
+      : currentStepNum
+  )
+
   const navItems = [
     { label: 'Home', path: '/dashboard', icon: Home, exact: true },
-    { label: 'Brand & Personas', path: '/generator', icon: Layers },
-    { label: 'Campaign Concepts', path: '/strategy-concept', icon: Sparkles },
-    { label: 'Campaign Assets', path: '/results', icon: FileText, tab: 'assets' },
-    { label: 'Brand Guardian', path: '/results?tab=guardian', icon: ShieldCheck, tab: 'guardian' },
-    { label: 'Campaign Report Card', path: '/report-card', icon: Award },
-    { label: 'Export', path: '/results?tab=export', icon: Download, tab: 'export' },
+    { label: 'Brand & Personas', path: '/generator', icon: Layers, minStep: 1, stepNum: 1 },
+    { label: 'Persona Strategy', path: '/strategy-concept?step=dna', icon: Target, minStep: 2, stepNum: 2, subStep: 'dna' },
+    { label: 'Campaign Concepts', path: '/strategy-concept?step=concepts', icon: Sparkles, minStep: 3, stepNum: 3, subStep: 'concepts' },
+    { label: 'Campaign Assets', path: '/results?tab=assets', icon: FileText, tab: 'assets', minStep: 4, stepNum: 4 },
+    { label: 'Brand Guardian', path: '/results?tab=guardian', icon: ShieldCheck, tab: 'guardian', minStep: 5, stepNum: 5 },
+    { label: 'Campaign Report Card', path: '/report-card', icon: Award, minStep: 5 },
+    { label: 'Export', path: '/results?tab=export', icon: Download, tab: 'export', minStep: 6 },
     { label: 'Campaign History', path: '/history', icon: History },
   ]
+
+  // Only show steps that have been unlocked in the current flow
+  const visibleNavItems = navItems.filter((item) => {
+    if (!item.minStep) return true
+    return effectiveMaxStep >= item.minStep
+  })
 
   const isNavActive = (item) => {
     if (item.tab) {
       return currentPath === '/results' && (activeTab === item.tab || (!activeTab && item.tab === 'assets'))
+    }
+    if (item.subStep) {
+      if (currentPath !== '/strategy-concept') return false
+      if (activeStepParam) return activeStepParam === item.subStep
+      return currentStep === (item.subStep === 'dna' ? 'Step 2 of 5' : 'Step 3 of 5')
     }
     return currentPath === item.path
   }
@@ -234,9 +319,9 @@ export default function SidebarLayout({
             <div className="w-8 h-px bg-white/10 mx-auto my-2" />
           )}
 
-          {/* Navigation Links */}
+          {/* Navigation Links (progressively revealed by wizard step) */}
           <nav className="space-y-1">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const active = isNavActive(item)
               const Icon = item.icon
               return (
@@ -244,24 +329,37 @@ export default function SidebarLayout({
                   key={item.label}
                   to={item.path}
                   state={location.state}
-                  title={item.label}
+                  title={item.stepNum ? `Step ${item.stepNum}: ${item.label}` : item.label}
                   className={`flex items-center ${
-                    isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3.5 py-2.5'
+                    isCollapsed ? 'justify-center p-2.5' : 'justify-between gap-2 px-3.5 py-2.5'
                   } rounded-xl text-xs font-semibold transition-all relative group ${
                     active
                       ? 'bg-purple-600/30 text-white border border-purple-500/30 font-bold shadow-xs'
                       : 'text-slate-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <Icon
-                    className={`${
-                      isCollapsed ? 'w-5 h-5' : 'w-4 h-4'
-                    } shrink-0 ${active ? 'text-purple-400' : 'text-slate-400'}`}
-                  />
-                  {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon
+                      className={`${
+                        isCollapsed ? 'w-5 h-5' : 'w-4 h-4'
+                      } shrink-0 ${active ? 'text-purple-400' : 'text-slate-400'}`}
+                    />
+                    {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  </div>
+                  {!isCollapsed && item.stepNum && (
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 ${
+                        active
+                          ? 'bg-purple-500/40 text-purple-100'
+                          : 'bg-white/10 text-slate-400'
+                      }`}
+                    >
+                      {item.stepNum}
+                    </span>
+                  )}
                   {isCollapsed && (
                     <span className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 border border-slate-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl z-50">
-                      {item.label}
+                      {item.stepNum ? `Step ${item.stepNum}: ${item.label}` : item.label}
                     </span>
                   )}
                 </Link>
@@ -313,13 +411,19 @@ export default function SidebarLayout({
                   previousCampaigns.map((camp) => {
                     const isSelected =
                       currentPath === '/history' && searchParams.get('id') === camp.id
+                    const isDraft = camp.status === 'Draft'
+                    const step = camp.current_step || 1
+
                     return (
                       <Link
                         key={camp.id}
                         to={`/history?id=${camp.id}`}
+                        title={isDraft ? `Draft Campaign (Step ${step} of 5) — Click to view & resume` : camp.product_name}
                         className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all group ${
                           isSelected
                             ? 'bg-purple-600/30 text-white border border-purple-500/30 font-bold'
+                            : isDraft
+                            ? 'bg-amber-500/10 text-slate-200 hover:bg-amber-500/20 hover:text-white border border-amber-500/30'
                             : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`}
                       >
@@ -328,12 +432,18 @@ export default function SidebarLayout({
                             {camp.product_name}
                           </span>
                           <span className="block truncate text-[10px] text-slate-400 font-normal">
-                            {camp.concept_title || camp.persona_name || 'Campaign'}
+                            {isDraft ? `🟡 Draft • Step ${step} of 5` : (camp.concept_title || camp.persona_name || 'Campaign')}
                           </span>
                         </div>
-                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 shrink-0">
-                          {camp.score || 96}%
-                        </span>
+                        {isDraft ? (
+                          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-amber-500/25 text-amber-300 border border-amber-400/40 shrink-0">
+                            Step {step}/5
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 shrink-0">
+                            {camp.score || 96}%
+                          </span>
+                        )}
                       </Link>
                     )
                   })

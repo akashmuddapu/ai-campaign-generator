@@ -105,6 +105,7 @@ function AppShell() {
     const userData = res.data?.user || res.data
     setUser(userData)
     try {
+      sessionStorage.clear()
       if (userData?.id) {
         localStorage.setItem('cg_user_id', userData.id)
         localStorage.setItem('cg_user', JSON.stringify(userData))
@@ -118,6 +119,7 @@ function AppShell() {
     const userData = res.data?.user || res.data
     setUser(userData)
     try {
+      sessionStorage.clear()
       if (userData?.id) {
         localStorage.setItem('cg_user_id', userData.id)
         localStorage.setItem('cg_user', JSON.stringify(userData))
