@@ -158,6 +158,43 @@ def generate_assets():
         social_report = run_brand_guardian("social_post", social_post, brand_kit, persona, concept, provider)
         email_report = run_brand_guardian("email", email, brand_kit, persona, concept, provider)
 
+        # Automatic 1-pass closed-loop Auto-Fix before showing failing assets
+        if not social_report.get("passed", True):
+            social_violations = [
+                v
+                for dim in social_report.get("dimensions", [])
+                for v in dim.get("violations", [])
+            ]
+            if social_violations:
+                try:
+                    social_post = provider.auto_fix_content(
+                        "social_post", social_post, social_violations, brand_kit, persona, concept
+                    )
+                    social_report = run_brand_guardian(
+                        "social_post", social_post, brand_kit, persona, concept, provider
+                    )
+                    social_report["auto_fixed"] = True
+                except Exception:
+                    pass
+
+        if not email_report.get("passed", True):
+            email_violations = [
+                v
+                for dim in email_report.get("dimensions", [])
+                for v in dim.get("violations", [])
+            ]
+            if email_violations:
+                try:
+                    email = provider.auto_fix_content(
+                        "email", email, email_violations, brand_kit, persona, concept
+                    )
+                    email_report = run_brand_guardian(
+                        "email", email, brand_kit, persona, concept, provider
+                    )
+                    email_report["auto_fixed"] = True
+                except Exception:
+                    pass
+
         # Why This Content
         social_why = provider.generate_explanation(social_post, brand_kit, persona, concept, "social_post")
         email_why = provider.generate_explanation(email, brand_kit, persona, concept, "email")

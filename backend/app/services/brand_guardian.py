@@ -32,9 +32,14 @@ def run_brand_guardian(
     # 1. Deterministic evaluation
     if channel_type == "social_post":
         text = content.get("text", "")
-        det_result = validate_social_post(text, banned_words)
+        hashtags = content.get("hashtags")
+        det_result = validate_social_post(text, banned_words, hashtags=hashtags)
         content_str = text
-        length_explanation = f"Character count: {det_result['char_count']} (max allowed: {SOCIAL_POST_MAX_CHARS})."
+        ht_count = det_result.get("hashtag_count", 0)
+        length_explanation = (
+            f"Character count: {det_result['char_count']}/{SOCIAL_POST_MAX_CHARS} chars, "
+            f"Hashtags: {ht_count} (1-5 recommended)."
+        )
     else:
         subject = content.get("subject", "")
         body = content.get("body", "")
@@ -45,6 +50,8 @@ def run_brand_guardian(
     bw_detected = det_result.get("banned_words_detected", [])
     has_banned = len(bw_detected) > 0
     length_passed = det_result.get("length_passed", True)
+    hashtags_passed = det_result.get("hashtags_passed", True)
+    format_passed = length_passed and hashtags_passed
 
     # 2. AI semantic evaluation
     try:
@@ -65,7 +72,7 @@ def run_brand_guardian(
     # Deterministic dimension scoring
     bw_score = 0 if has_banned else 100
     rule_score = 0 if has_banned else 100
-    length_score = 100 if length_passed else 0
+    length_score = 100 if format_passed else (50 if length_passed and not hashtags_passed else 0)
 
     dimensions = [
         {
@@ -98,10 +105,13 @@ def run_brand_guardian(
         },
         {
             "dimension": "Length Validation",
-            "passed": length_passed,
+            "passed": format_passed,
             "score": length_score,
             "explanation": length_explanation,
-            "violations": [v for v in det_result.get("violations", []) if "exceeds" in v or "too short" in v or "too long" in v],
+            "violations": [
+                v for v in det_result.get("violations", [])
+                if "exceeds" in v or "too short" in v or "too long" in v or "hashtag" in v.lower()
+            ],
         },
         {
             "dimension": "Banned Words Check",
@@ -127,21 +137,28 @@ def run_brand_guardian(
     if has_banned:
         overall_score = min(overall_score, 68)
 
-    passed = overall_score >= 85 and not has_banned and length_passed
+    passed = overall_score >= 85 and not has_banned and format_passed
 
     recommendations = []
     if has_banned:
         recommendations.append(f"Execute Auto-Fix to remove prohibited terms: {', '.join(bw_detected)}.")
     if not length_passed:
         recommendations.append("Adjust copy length to meet channel boundaries.")
+    if not hashtags_passed:
+        recommendations.append("Adjust social post hashtags to stay between 1 and 5 relevant tags.")
     if brand_fit_score < 80:
         recommendations.append(f"Strengthen adherence to brand tone: {brand_kit.get('brand_tone')}.")
     if not recommendations:
         recommendations.append("Copy passed all Brand Guardian criteria and is certified ready for deployment.")
 
+    brand_score_5 = max(1, min(5, int(round(overall_score / 20))))
+
     return {
         "overall_score": overall_score,
+        "brand_score_5": brand_score_5,
         "passed": passed,
+        "hashtags_passed": hashtags_passed,
+        "hashtag_count": det_result.get("hashtag_count", 0),
         "dimensions": dimensions,
         "recommendations": recommendations,
     }
