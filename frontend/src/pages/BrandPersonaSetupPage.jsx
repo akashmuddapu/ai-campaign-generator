@@ -8,15 +8,26 @@ import {
   AlertCircle,
   Pencil,
   Trash2,
+  Sparkles,
+  RefreshCw,
+  Shield,
+  Cpu,
+  Heart,
+  Palette,
+  Building2,
+  GraduationCap,
+  Briefcase,
+  Plane,
+  User,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import LoadingIndicator from '../components/LoadingIndicator'
 
-// Illustrated Persona Avatar matching Image 1
+// Illustrated Persona Avatar supporting diverse domains
 function PersonaAvatar({ name, className = 'w-11 h-11' }) {
   const n = (name || '').toLowerCase()
-  if (n.includes('student')) {
+  if (n.includes('student') || n.includes('academic') || n.includes('school')) {
     return (
       <div className={`${className} rounded-full overflow-hidden bg-amber-100/70 border border-amber-200 shrink-0 flex items-center justify-center shadow-xs`}>
         <svg viewBox="0 0 64 64" className="w-full h-full">
@@ -36,7 +47,35 @@ function PersonaAvatar({ name, className = 'w-11 h-11' }) {
       </div>
     )
   }
-  if (n.includes('professional') || n.includes('working')) {
+  if (n.includes('ciso') || n.includes('security') || n.includes('guardrail') || n.includes('compliance')) {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-purple-100 border border-purple-200 shrink-0 flex items-center justify-center text-purple-700 shadow-xs`}>
+        <Shield className="w-5 h-5 fill-purple-200 text-purple-700" />
+      </div>
+    )
+  }
+  if (n.includes('cto') || n.includes('engineer') || n.includes('tech') || n.includes('dev') || n.includes('cloud')) {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-indigo-100 border border-indigo-200 shrink-0 flex items-center justify-center text-indigo-700 shadow-xs`}>
+        <Cpu className="w-5 h-5 text-indigo-700" />
+      </div>
+    )
+  }
+  if (n.includes('health') || n.includes('wellness') || n.includes('athlete') || n.includes('fitness')) {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-emerald-100 border border-emerald-200 shrink-0 flex items-center justify-center text-emerald-700 shadow-xs`}>
+        <Heart className="w-5 h-5 fill-emerald-200 text-emerald-700" />
+      </div>
+    )
+  }
+  if (n.includes('creative') || n.includes('design') || n.includes('artist') || n.includes('writer')) {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-fuchsia-100 border border-fuchsia-200 shrink-0 flex items-center justify-center text-fuchsia-700 shadow-xs`}>
+        <Palette className="w-5 h-5 text-fuchsia-700" />
+      </div>
+    )
+  }
+  if (n.includes('professional') || n.includes('working') || n.includes('executive') || n.includes('manager') || n.includes('founder')) {
     return (
       <div className={`${className} rounded-full overflow-hidden bg-blue-100/70 border border-blue-200 shrink-0 flex items-center justify-center shadow-xs`}>
         <svg viewBox="0 0 64 64" className="w-full h-full">
@@ -53,23 +92,214 @@ function PersonaAvatar({ name, className = 'w-11 h-11' }) {
       </div>
     )
   }
+  if (n.includes('travel') || n.includes('commut') || n.includes('nomad')) {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-rose-100/70 border border-rose-200 shrink-0 flex items-center justify-center shadow-xs`}>
+        <svg viewBox="0 0 64 64" className="w-full h-full">
+          <circle cx="32" cy="32" r="32" fill="#FFE4E6" />
+          <path d="M20 30 C20 20 44 20 44 30 C44 40 42 46 42 46 L22 46 Z" fill="#78350F" />
+          <path d="M16 58 C16 48 24 44 32 44 C40 44 48 48 48 58 Z" fill="#0284C7" />
+          <rect x="28" y="36" width="8" height="9" fill="#FCD34D" rx="2" />
+          <ellipse cx="32" cy="28" rx="10" ry="11" fill="#FDE68A" />
+          <circle cx="28" cy="28" r="1.3" fill="#1E293B" />
+          <circle cx="36" cy="28" r="1.3" fill="#1E293B" />
+          <path d="M30 33 Q32 35 34 33" stroke="#B45309" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+          <ellipse cx="32" cy="21" rx="19" ry="5" fill="#D97706" />
+          <path d="M23 21 C23 14 41 14 41 21 Z" fill="#B45309" />
+          <ellipse cx="32" cy="21" rx="9" ry="2" fill="#78350F" opacity="0.3" />
+        </svg>
+      </div>
+    )
+  }
   return (
-    <div className={`${className} rounded-full overflow-hidden bg-rose-100/70 border border-rose-200 shrink-0 flex items-center justify-center shadow-xs`}>
-      <svg viewBox="0 0 64 64" className="w-full h-full">
-        <circle cx="32" cy="32" r="32" fill="#FFE4E6" />
-        <path d="M20 30 C20 20 44 20 44 30 C44 40 42 46 42 46 L22 46 Z" fill="#78350F" />
-        <path d="M16 58 C16 48 24 44 32 44 C40 44 48 48 48 58 Z" fill="#0284C7" />
-        <rect x="28" y="36" width="8" height="9" fill="#FCD34D" rx="2" />
-        <ellipse cx="32" cy="28" rx="10" ry="11" fill="#FDE68A" />
-        <circle cx="28" cy="28" r="1.3" fill="#1E293B" />
-        <circle cx="36" cy="28" r="1.3" fill="#1E293B" />
-        <path d="M30 33 Q32 35 34 33" stroke="#B45309" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-        <ellipse cx="32" cy="21" rx="19" ry="5" fill="#D97706" />
-        <path d="M23 21 C23 14 41 14 41 21 Z" fill="#B45309" />
-        <ellipse cx="32" cy="21" rx="9" ry="2" fill="#78350F" opacity="0.3" />
-      </svg>
+    <div className={`${className} rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs`}>
+      {name ? name.charAt(0).toUpperCase() : 'U'}
     </div>
   )
+}
+
+// Generate high-resonance customer personas dynamically based on product domain
+export function derivePersonasForProduct(productName, productDescription = '') {
+  const text = `${productName} ${productDescription}`.toLowerCase()
+
+  // 1. Cybersecurity / IT / Cloud / SaaS / Dev / Guardrail
+  if (/security|cyber|cloud|saas|guardrail|compliance|devops|threat|software|api|server|network/i.test(text)) {
+    return [
+      {
+        persona_name: 'Enterprise CISO',
+        summary: 'Security executive managing multi-cloud compliance and threat defense.',
+        primary_goals: 'Zero data breaches, automated compliance audit readiness, board-level risk transparency.',
+        pain_points: 'Alert fatigue, shadow IT, fragmented security tooling, developer friction.',
+        core_motivations: 'Executive governance, systemic resilience, and proactive threat mitigation.',
+        emotional_triggers: 'Reputational risk, audit failure, disruption to business continuity.',
+        preferred_message_style: 'Empirical, authoritative, risk-quantified, high-level.',
+        buying_triggers: 'SOC2/ISO27001 compliance, verifiable audit logging, enterprise SSO.',
+      },
+      {
+        persona_name: 'Startup CTO & Engineering Lead',
+        summary: 'Technical leader balancing engineering velocity with code safety.',
+        primary_goals: 'Rapid product shipping with continuous automated guardrails.',
+        pain_points: 'Manual security reviews slowing sprint velocity, lack of dedicated SecOps.',
+        core_motivations: 'Developer velocity, modern cloud-native architecture, investor readiness.',
+        emotional_triggers: 'Engineering bottlenecks, slow deployment cycles, developer pushback.',
+        preferred_message_style: 'Developer-first, pragmatic, concise, transparent.',
+        buying_triggers: 'One-click CI/CD integration, developer CLI, instant self-serve onboarding.',
+      },
+      {
+        persona_name: 'SecOps & Compliance Specialist',
+        summary: 'Practitioner responsible for daily policy enforcement and incident response.',
+        primary_goals: 'Streamlined incident triage and continuous policy automation.',
+        pain_points: 'False positive fatigue, slow remediation workflows, manual spreadsheet audits.',
+        core_motivations: 'Actionable alerts, automated remediation, clean compliance reports.',
+        emotional_triggers: 'Late night incident pages, audit panic, unmanageable ticket queues.',
+        preferred_message_style: 'Direct, workflow-focused, technical, solution-oriented.',
+        buying_triggers: 'Automated remediation scripts, real-time Slack/PagerDuty alerts.',
+      },
+    ]
+  }
+
+  // 2. Health / Fitness / Wellness / Nutrition
+  if (/fitness|wellness|health|nutrition|workout|gym|running|supplement|diet|wearable/i.test(text)) {
+    return [
+      {
+        persona_name: 'Mindful Wellness Enthusiast',
+        summary: 'Health-conscious individual prioritizing daily vitality and clean routines.',
+        primary_goals: 'Nourishing physical energy, balancing stress, sustaining natural focus.',
+        pain_points: 'Midday fatigue, synthetic ingredients, inconsistent daily habits.',
+        core_motivations: 'Holistic health, clean ingredients, mindful living.',
+        emotional_triggers: 'Burnout, guilt from unhealthy shortcuts, craving calm vitality.',
+        preferred_message_style: 'Warm, uplifting, sensorial, authentic.',
+        buying_triggers: 'Organic certification, clean label, proven natural ingredients.',
+      },
+      {
+        persona_name: 'High-Performance Athlete',
+        summary: 'Goal-driven performer tracking measurable gains and peak recovery.',
+        primary_goals: 'Maximizing workout performance, rapid muscle recovery, stamina.',
+        pain_points: 'Plateaus, delayed recovery, injury risks, inaccurate tracking.',
+        core_motivations: 'Measurable athletic progress, competitive edge, peak fitness.',
+        emotional_triggers: 'Frustration with lack of progress, passion for discipline.',
+        preferred_message_style: 'Data-driven, motivational, sharp, high-energy.',
+        buying_triggers: 'Clinical studies, performance metrics, durability.',
+      },
+      {
+        persona_name: 'Busy Working Professional',
+        summary: 'Corporate professional balancing long work hours with healthy living.',
+        primary_goals: 'Convenient healthy habits that fit tightly into packed schedules.',
+        pain_points: 'Lack of time for prep, sedentary desk hours, afternoon energy slumps.',
+        core_motivations: 'Efficiency, sustained workday stamina, stress relief.',
+        emotional_triggers: 'Guilt over neglected health, desire to feel vibrant.',
+        preferred_message_style: 'Practical, crisp, time-saving, encouraging.',
+        buying_triggers: 'Quick preparation, portable design, seamless daily integration.',
+      },
+    ]
+  }
+
+  // 3. Beverage / Mug / Coffee / Tea
+  if (/mug|coffee|tea|drink|sip|beverage|temperature|brew|flask|thermos/i.test(text)) {
+    return [
+      {
+        persona_name: 'Student',
+        summary: 'Long lectures and study blocks, needs convenient and reliable drinks.',
+        primary_goals: 'Stay energized during long study hours and lectures.',
+        pain_points: 'Drinks get cold during classes and library sessions.',
+        core_motivations: 'Convenience, reliability, and academic productivity.',
+        emotional_triggers: 'Fun, relatable, energetic student life.',
+        preferred_message_style: 'Short, energetic, student-friendly, casual.',
+        buying_triggers: 'Keeps drink at right temperature, affordable, aesthetic.',
+      },
+      {
+        persona_name: 'Working Professional',
+        summary: 'Back-to-back executive meetings, values productivity and convenience.',
+        primary_goals: 'Sustained productivity through back-to-back executive meetings.',
+        pain_points: 'No time to reheat coffee between client presentations.',
+        core_motivations: 'Professional polish, daily efficiency, and sleek design.',
+        emotional_triggers: 'Frustration with lukewarm coffee, focus on high output.',
+        preferred_message_style: 'Crisp, benefit-driven, modern, executive.',
+        buying_triggers: 'All-day precision temperature battery, leakproof design.',
+      },
+      {
+        persona_name: 'Traveller & Commuter',
+        summary: 'Frequent travel and commutes, needs a portable and rugged solution.',
+        primary_goals: 'Consistent hydration and hot drinks across time zones and commutes.',
+        pain_points: 'Airport spills, poor hotel coffee, unstable car cup holders.',
+        core_motivations: 'Portability, rugged durability, and peace of mind on the go.',
+        emotional_triggers: 'Wanderlust, comfort of familiar beverages anywhere.',
+        preferred_message_style: 'Adventurous, practical, uplifting, compact.',
+        buying_triggers: 'Compact fit for travel bags, long battery life.',
+      },
+    ]
+  }
+
+  // 4. Productivity / Stationery / Creative / Office / Hardware
+  if (/pen|pencil|paper|desk|notep|office|hardware|monitor|chair|organizer|tool/i.test(text)) {
+    return [
+      {
+        persona_name: 'Creative Professional & Designer',
+        summary: 'Visual thinker who values tactile craftsmanship and aesthetic excellence.',
+        primary_goals: 'Effortless ideation, tactile precision, and a clean creative workspace.',
+        pain_points: 'Clunky tools, poor ergonomics, aesthetic clutter, low-durability gear.',
+        core_motivations: 'Artistic expression, seamless tactile flow, premium aesthetics.',
+        emotional_triggers: 'Pride in craftsmanship, joy of uninhibited creative flow.',
+        preferred_message_style: 'Aesthetic, sensory, elegant, design-forward.',
+        buying_triggers: 'Precision build quality, sustainable materials, minimalist design.',
+      },
+      {
+        persona_name: 'Deep-Work Knowledge Worker',
+        summary: 'Researcher or engineer who values distraction-free focus and durability.',
+        primary_goals: 'Sustained deep work blocks and frictionless daily organization.',
+        pain_points: 'Digital distractions, hand fatigue, cheap tools breaking.',
+        core_motivations: 'Intellectual output, reliable durability, minimalist setup.',
+        emotional_triggers: 'Satisfaction of focused progress, disdain for gimmicks.',
+        preferred_message_style: 'Clear, understated, utility-focused, refined.',
+        buying_triggers: 'Ergonomic certification, lifetime durability, thoughtful details.',
+      },
+      {
+        persona_name: 'University Student & Researcher',
+        summary: 'Intensive note-taker balancing coursework and long research sessions.',
+        primary_goals: 'Fast, fatigue-free writing and reliable daily note organization.',
+        pain_points: 'Smudging, uncomfortable grip, high cost of specialty refills.',
+        core_motivations: 'Academic stamina, clean study notes, affordable reliability.',
+        emotional_triggers: 'Academic achievement, reliable study companion.',
+        preferred_message_style: 'Relatable, encouraging, student-friendly, practical.',
+        buying_triggers: 'Affordable price point, long-lasting refills, smooth performance.',
+      },
+    ]
+  }
+
+  // 5. General Consumer / Modern Brand Fallback
+  const safeProd = productName || 'Product'
+  return [
+    {
+      persona_name: 'Discerning Quality Seeker',
+      summary: `Values premium reliability and thoughtful design in everyday products like ${safeProd}.`,
+      primary_goals: `Invest in reliable solutions that deliver consistent everyday satisfaction with ${safeProd}.`,
+      pain_points: 'Cheap alternatives that break easily, overcomplicated features, disappointing quality.',
+      core_motivations: 'Long-term value, dependable craftsmanship, elevated daily experience.',
+      emotional_triggers: 'Satisfaction of making smart purchasing decisions, pride in quality.',
+      preferred_message_style: 'Authentic, premium, clear, benefit-focused.',
+      buying_triggers: 'Verified reviews, quality guarantee, durable construction.',
+    },
+    {
+      persona_name: 'High-Pace Modern Professional',
+      summary: `Busy individual seeking efficiency, convenience, and modern aesthetics with ${safeProd}.`,
+      primary_goals: `Save time, streamline daily routines, and enjoy modern convenience.`,
+      pain_points: 'Wasted time, clumsy user experiences, lack of seamless portability.',
+      core_motivations: 'Efficiency, modern lifestyle, daily ease.',
+      emotional_triggers: 'Relief from friction, feeling capable and organized.',
+      preferred_message_style: 'Direct, crisp, modern, benefit-oriented.',
+      buying_triggers: 'Time-saving features, seamless setup, sleek design.',
+    },
+    {
+      persona_name: 'Value & Lifestyle Enthusiast',
+      summary: `Community-focused customer inspired by innovative, well-designed brands.`,
+      primary_goals: `Find smart, stylish products that fit their personal lifestyle and values.`,
+      pain_points: 'Overpriced luxury without substance, bland legacy options.',
+      core_motivations: 'Smart value, relatable branding, positive everyday lifestyle.',
+      emotional_triggers: 'Excitement of discovering a great product, sharing recommendations.',
+      preferred_message_style: 'Engaging, friendly, vibrant, inspirational.',
+      buying_triggers: 'Transparent pricing, relatable story, strong community feedback.',
+    },
+  ]
 }
 
 export default function BrandPersonaSetupPage({ user, onLogout }) {
@@ -125,8 +355,57 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
 
   const [selectedPersonaIndex, setSelectedPersonaIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [isSuggestingPersonas, setIsSuggestingPersonas] = useState(false)
   const [error, setError] = useState(null)
   const [presets, setPresets] = useState([])
+
+  // Automatically suggest personas tailored to the current product
+  const handleAutoSuggestPersonas = async () => {
+    setIsSuggestingPersonas(true)
+    try {
+      const res = await api.post('/campaigns/suggest-personas', {
+        product_name: productName,
+        product_description: productDescription,
+        brand_tone: brandTones.join(', '),
+      })
+      if (res.data?.personas && Array.isArray(res.data.personas) && res.data.personas.length > 0) {
+        const tailored = res.data.personas.map((p) => ({
+          ...p,
+          summary: p.summary || p.primary_goals,
+        }))
+        setPersonas(tailored)
+        setSelectedPersonaIndex(0)
+        try {
+          sessionStorage.setItem('cg_personas', JSON.stringify(tailored))
+        } catch {}
+        return
+      }
+    } catch {
+      // Fall through to client heuristic
+    } finally {
+      setIsSuggestingPersonas(false)
+    }
+
+    const derived = derivePersonasForProduct(productName, productDescription)
+    setPersonas(derived)
+    setSelectedPersonaIndex(0)
+    try {
+      sessionStorage.setItem('cg_personas', JSON.stringify(derived))
+    } catch {}
+  }
+
+  // Detect if current personas don't match the entered product domain
+  const currentPersonasMismatch = (() => {
+    const isBeverageProduct = /mug|coffee|tea|drink|sip|beverage|temperature|brew|thermos|flask/i.test(
+      `${productName} ${productDescription}`
+    )
+    const hasBeveragePersonas = personas.some((p) =>
+      /drinks get cold|reheat coffee|poor hotel coffee|lukewarm coffee|smart travel mug/i.test(
+        `${p.summary} ${p.primary_goals} ${p.pain_points} ${p.buying_triggers}`
+      )
+    )
+    return !isBeverageProduct && hasBeveragePersonas
+  })()
 
   // Edit Persona Modal State
   const [editingPersonaIndex, setEditingPersonaIndex] = useState(null)
@@ -246,15 +525,14 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
         ? bk.example_brand_lines.map((l) => `• ${l}`).join('\n')
         : bk.example_brand_lines || ''
     )
-    let newPersonas = personas
-    if (preset.personas && preset.personas.length > 0) {
-      newPersonas = preset.personas.map((p) => ({
-        ...p,
-        summary: p.summary || p.primary_goals,
-      }))
-      setPersonas(newPersonas)
-      setSelectedPersonaIndex(0)
-    }
+    let newPersonas = (preset.personas && preset.personas.length > 0)
+      ? preset.personas.map((p) => ({
+          ...p,
+          summary: p.summary || p.primary_goals,
+        }))
+      : derivePersonasForProduct(bk.product_name || '', bk.product_description || '')
+    setPersonas(newPersonas)
+    setSelectedPersonaIndex(0)
 
     try {
       sessionStorage.setItem('cg_brand_kit', JSON.stringify({
@@ -560,17 +838,48 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
                   <p className="text-[11px] text-slate-500">Select active audience for campaign synthesis</p>
                 </div>
 
-                {/* Add Persona Button (+) */}
-                <button
-                  type="button"
-                  onClick={handleAddNewPersona}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs hover:scale-102 active:scale-98"
-                  title="Add new customer persona"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Persona</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleAutoSuggestPersonas}
+                    disabled={isSuggestingPersonas}
+                    className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs hover:scale-102 active:scale-98 disabled:opacity-50"
+                    title="Automatically generate tailored customer personas for this product"
+                  >
+                    <Sparkles className={`w-3.5 h-3.5 text-indigo-600 ${isSuggestingPersonas ? 'animate-spin' : ''}`} />
+                    <span>{isSuggestingPersonas ? 'Generating...' : '✨ Suggest Personas'}</span>
+                  </button>
+
+                  {/* Add Persona Button (+) */}
+                  <button
+                    type="button"
+                    onClick={handleAddNewPersona}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs hover:scale-102 active:scale-98"
+                    title="Add new customer persona"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add</span>
+                  </button>
+                </div>
               </div>
+
+              {/* Mismatch Alert & Quick Fix */}
+              {currentPersonasMismatch && (
+                <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs flex items-center justify-between gap-3 animate-in fade-in">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600 shrink-0" />
+                    <span className="text-[11px] leading-tight">Current personas don't match {productName || 'your product'}.</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAutoSuggestPersonas}
+                    disabled={isSuggestingPersonas}
+                    className="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold shrink-0 transition-colors cursor-pointer"
+                  >
+                    {isSuggestingPersonas ? 'Updating...' : '✨ Auto-Update'}
+                  </button>
+                </div>
+              )}
 
               {/* Persona Cards List matching Image 1 */}
               <div className="space-y-3">

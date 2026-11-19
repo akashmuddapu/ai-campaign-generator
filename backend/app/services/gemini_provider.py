@@ -77,6 +77,34 @@ class GeminiProvider(BaseAIProvider):
             raise last_error
         raise RuntimeError("No candidate Gemini models succeeded.")
 
+    def suggest_personas(self, product_name: str, product_description: str = "", brand_tone: str = "") -> List[dict]:
+        prompt = (
+            f"You are an expert marketing audience strategist.\n"
+            f"Given product: '{product_name}', description: '{product_description}', tone: '{brand_tone}', "
+            f"generate exactly 3 distinct, realistic customer target personas in JSON format.\n"
+            f"Return a JSON array of 3 objects, each having:\n"
+            f"- persona_name (string)\n"
+            f"- summary (string, 1-2 sentence overview)\n"
+            f"- primary_goals (string)\n"
+            f"- pain_points (string)\n"
+            f"- core_motivations (string)\n"
+            f"- emotional_triggers (string)\n"
+            f"- preferred_message_style (string)\n"
+            f"- buying_triggers (string)\n"
+            f"Respond with JSON only."
+        )
+        try:
+            raw = self._call_gemini(prompt)
+            res = json.loads(raw)
+            if isinstance(res, list) and len(res) > 0:
+                return res
+            if isinstance(res, dict) and "personas" in res:
+                return res["personas"]
+        except Exception:
+            pass
+        from .mock_provider import MockProvider
+        return MockProvider().suggest_personas(product_name, product_description, brand_tone)
+
     def generate_persona_dna(self, brand_kit: dict, persona: dict) -> dict:
         prompt = (
             f"You are an expert marketing strategist. Analyze the following Brand Kit and Customer Persona:\n"

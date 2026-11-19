@@ -40,6 +40,14 @@ export default function DashboardPage({ user, onLogout }) {
             <div className="pt-2">
               <Link
                 to="/generator"
+                onClick={() => {
+                  try {
+                    sessionStorage.removeItem('cg_brand_kit')
+                    sessionStorage.removeItem('cg_personas')
+                    sessionStorage.removeItem('cg_selected_concept')
+                    sessionStorage.removeItem('cg_active_campaign_id')
+                  } catch {}
+                }}
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-purple-900/50 transition-all hover:scale-102 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />

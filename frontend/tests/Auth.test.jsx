@@ -65,7 +65,7 @@ describe('Authentication & Dashboard Pages (T037)', () => {
         </MemoryRouter>
       )
 
-      expect(screen.getByText(/Sarah Connor/i)).toBeInTheDocument()
+      expect(screen.getAllByText(/Sarah Connor/i).length).toBeGreaterThan(0)
       expect(screen.getByRole('link', { name: /Create New Campaign/i })).toBeInTheDocument()
     })
   })

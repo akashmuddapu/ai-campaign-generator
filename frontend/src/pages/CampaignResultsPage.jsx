@@ -17,22 +17,45 @@ import {
   Wand2,
   Sparkles,
   FileDown,
+  Shield,
+  Cpu,
+  Target,
+  Compass,
+  Award,
+  Heart,
+  Palette,
+  Building2,
+  User,
+  Users,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import WhyThisContentModal from '../components/WhyThisContentModal'
 import { generateCampaignPdf } from '../utils/generateCampaignPdf'
 
-// Re-derive persona icon from name/index (never store React components in route state)
+// Re-derive persona icon from name/index
 function getPersonaIcon(name, idx) {
   const n = (name || '').toLowerCase()
-  if (n.includes('student')) return GraduationCap
-  if (n.includes('professional') || n.includes('working')) return Briefcase
-  if (n.includes('travel')) return Plane
-  return [GraduationCap, Briefcase, Plane][idx % 3] || GraduationCap
+  if (n.includes('student') || n.includes('academic') || n.includes('school') || n.includes('learn')) return GraduationCap
+  if (n.includes('ciso') || n.includes('security') || n.includes('guardrail') || n.includes('compliance')) return Shield
+  if (n.includes('cto') || n.includes('engineer') || n.includes('tech') || n.includes('dev') || n.includes('cloud')) return Cpu
+  if (n.includes('executive') || n.includes('director') || n.includes('founder') || n.includes('leader')) return Building2
+  if (n.includes('professional') || n.includes('working') || n.includes('manager') || n.includes('specialist')) return Briefcase
+  if (n.includes('travel') || n.includes('commut') || n.includes('nomad')) return Plane
+  if (n.includes('health') || n.includes('wellness') || n.includes('athlete') || n.includes('fitness')) return Heart
+  if (n.includes('creative') || n.includes('design') || n.includes('artist') || n.includes('writer')) return Palette
+  const genericList = [User, Users, Sparkles, Target, Award]
+  return genericList[idx % genericList.length] || User
 }
 function getPersonaColor(idx) {
-  return ['bg-amber-100 text-amber-700', 'bg-indigo-100 text-indigo-700', 'bg-purple-100 text-purple-700'][idx % 3]
+  const colors = [
+    'bg-purple-100 text-purple-700',
+    'bg-indigo-100 text-indigo-700',
+    'bg-blue-100 text-blue-700',
+    'bg-emerald-100 text-emerald-700',
+    'bg-amber-100 text-amber-700',
+  ]
+  return colors[idx % colors.length]
 }
 
 // Validate individual asset content deterministically against Brand Kit rules
