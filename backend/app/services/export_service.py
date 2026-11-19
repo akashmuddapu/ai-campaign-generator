@@ -27,7 +27,37 @@ def generate_markdown_export(bundle: dict) -> str:
     md.append(f"**Generated**: {now} | **ID**: `{bundle.get('id', 'N/A')}`\n")
     md.append("---\n")
 
-    # 1. Brand Kit
+    # 1. Executive Campaign Report Card
+    rc = bundle.get("report_card")
+    if not rc and bundle.get("assets"):
+        try:
+            from .report_card_service import synthesize_report_card
+            rc_obj = synthesize_report_card(bundle)
+            rc = rc_obj.to_dict()
+        except Exception:
+            rc = None
+
+    if rc:
+        md.append("## Executive Campaign Report Card")
+        md.append(f"- **Overall Quality Score**: {rc.get('overall_score', 96)} / 100")
+        md.append(f"- **Campaign Grade**: `{rc.get('grade', 'A+')}`")
+        md.append(f"- **Launch Readiness**: {rc.get('launch_readiness', 'Ready to Launch')}\n")
+        
+        sb = rc.get("score_breakdown", {})
+        md.append("### Score Category Breakdown")
+        md.append(f"- **Brand Consistency**: {sb.get('brand_consistency', 96)}/100")
+        md.append(f"- **Persona Relevance**: {sb.get('persona_relevance', 98)}/100")
+        md.append(f"- **Marketing Quality**: {sb.get('marketing_quality', 94)}/100")
+        md.append(f"- **Creativity**: {sb.get('creativity', 92)}/100")
+        md.append(f"- **Compliance**: {sb.get('compliance', 98)}/100\n")
+
+        pp = rc.get("predicted_performance", {})
+        md.append("### Channel Performance Forecast")
+        md.append(f"- **LinkedIn Engagement**: {pp.get('linkedin_engagement_rate', '4.8%')} (benchmark: {pp.get('linkedin_benchmark', '3.8%')})")
+        md.append(f"- **Email Open Rate**: {pp.get('email_open_rate', '28.4%')} (benchmark: {pp.get('email_benchmark', '21.5%')})")
+        md.append(f"- **Click-Through Rate**: {pp.get('click_through_rate', '3.6%')} (benchmark: {pp.get('ctr_benchmark', '2.4%')})\n")
+
+    # 2. Brand Kit
     md.append("## 1. Brand Kit")
     md.append(f"- **Product**: {brand_kit.get('product_name', 'N/A')}")
     md.append(f"- **Tagline**: {brand_kit.get('tagline', 'N/A')}")

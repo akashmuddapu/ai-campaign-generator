@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import {
   ShieldCheck,
+  Award,
   CheckCircle2,
   FileText,
   Download,
@@ -16,23 +17,46 @@ import {
   X,
   Wand2,
   Sparkles,
+  ArrowRight,
   FileDown,
+  Shield,
+  Cpu,
+  Target,
+  Compass,
+  Heart,
+  Palette,
+  Building2,
+  User,
+  Users,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import WhyThisContentModal from '../components/WhyThisContentModal'
 import { generateCampaignPdf } from '../utils/generateCampaignPdf'
 
-// Re-derive persona icon from name/index (never store React components in route state)
+// Re-derive persona icon from name/index
 function getPersonaIcon(name, idx) {
   const n = (name || '').toLowerCase()
-  if (n.includes('student')) return GraduationCap
-  if (n.includes('professional') || n.includes('working')) return Briefcase
-  if (n.includes('travel')) return Plane
-  return [GraduationCap, Briefcase, Plane][idx % 3] || GraduationCap
+  if (n.includes('student') || n.includes('academic') || n.includes('school') || n.includes('learn')) return GraduationCap
+  if (n.includes('ciso') || n.includes('security') || n.includes('guardrail') || n.includes('compliance')) return Shield
+  if (n.includes('cto') || n.includes('engineer') || n.includes('tech') || n.includes('dev') || n.includes('cloud')) return Cpu
+  if (n.includes('executive') || n.includes('director') || n.includes('founder') || n.includes('leader')) return Building2
+  if (n.includes('professional') || n.includes('working') || n.includes('manager') || n.includes('specialist')) return Briefcase
+  if (n.includes('travel') || n.includes('commut') || n.includes('nomad')) return Plane
+  if (n.includes('health') || n.includes('wellness') || n.includes('athlete') || n.includes('fitness')) return Heart
+  if (n.includes('creative') || n.includes('design') || n.includes('artist') || n.includes('writer')) return Palette
+  const genericList = [User, Users, Sparkles, Target, Award]
+  return genericList[idx % genericList.length] || User
 }
 function getPersonaColor(idx) {
-  return ['bg-amber-100 text-amber-700', 'bg-indigo-100 text-indigo-700', 'bg-purple-100 text-purple-700'][idx % 3]
+  const colors = [
+    'bg-purple-100 text-purple-700',
+    'bg-indigo-100 text-indigo-700',
+    'bg-blue-100 text-blue-700',
+    'bg-emerald-100 text-emerald-700',
+    'bg-amber-100 text-amber-700',
+  ]
+  return colors[idx % colors.length]
 }
 
 // Validate individual asset content deterministically against Brand Kit rules
@@ -844,6 +868,13 @@ export default function CampaignResultsPage({ user, onLogout }) {
               <span>Brand Guardian</span>
             </button>
             <button
+              onClick={() => navigate('/report-card')}
+              className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+            >
+              <Award className="w-3.5 h-3.5 text-purple-600" />
+              <span>Campaign Report Card</span>
+            </button>
+            <button
               onClick={() => setSearchParams({ tab: 'export' })}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeView === 'export'
@@ -1165,6 +1196,18 @@ export default function CampaignResultsPage({ user, onLogout }) {
                 </div>
               </div>
             </div>
+
+            {/* Proceed to Brand Guardian CTA */}
+            <div className="flex items-center justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => setSearchParams({ tab: 'guardian' })}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+              >
+                <span>Proceed to Brand Guardian</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -1296,6 +1339,18 @@ export default function CampaignResultsPage({ user, onLogout }) {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Proceed to Campaign Report Card CTA */}
+            <div className="flex items-center justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => navigate('/report-card')}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+              >
+                <span>Proceed to Campaign Report Card</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}

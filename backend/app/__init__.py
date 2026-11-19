@@ -16,10 +16,12 @@ def create_app(config=None):
     from .routes.auth_routes import auth_bp
     from .routes.preset_routes import preset_bp
     from .routes.campaign_routes import campaign_bp
+    from .routes.report_card_routes import report_card_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(preset_bp, url_prefix="/api")
     app.register_blueprint(campaign_bp, url_prefix="/api/campaigns")
+    app.register_blueprint(report_card_bp, url_prefix="/api/campaigns")
 
     @app.get("/api/health")
     def health():

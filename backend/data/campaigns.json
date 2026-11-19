@@ -9817,6 +9817,2936 @@
     "user_id": "6ba626a8-2abd-4d68-9dd9-7ec35d5b881c"
   },
   {
+    "id": "8f868d11-b253-443a-bde2-d5aa0acea0c7",
+    "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+    "created_at": "2026-11-19T06:41:36.228892+00:00",
+    "bundle": {
+      "id": "8f868d11-b253-443a-bde2-d5aa0acea0c7",
+      "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+      "created_at": "2026-11-19T06:41:36.228892+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "From 8 AM lectures to midnight study sessions, the TravelMate Smart Mug keeps my coffee at the perfect temperature the entire time. No more lukewarm sips while I crush my deadlines! #TravelMate #StudyHack #CampusLife",
+            "character_count": 216,
+            "hashtags": [
+              "TravelMate",
+              "StudyHack",
+              "CampusLife"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 216 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "This content speaks directly to the student's pain point of lukewarm coffee during long study sessions, positioning the TravelMate as an essential tool for maintaining energy and focus throughout their demanding academic day.",
+            "brand_rationale": "The copy aligns with the 'Friendly, Premium, Modern' brand tone by using casual, relatable language while highlighting the product's premium utility of temperature control, reinforcing the tagline 'Your drink. Your temperature.'",
+            "channel_rationale": "The format is optimized for social media platforms (like Instagram or TikTok) where hashtag usage and short, punchy narratives foster community engagement and viral potential among student demographics.",
+            "angle_explanation": "By framing the mug as a 'consistent companion' in high-stress environments, the angle moves beyond simple utility to emotional support, emphasizing reliability during the peaks and valleys of a student's schedule.",
+            "audience_impact": "This content effectively builds brand affinity by validating the student experience; it transforms a functional product into a 'study hack,' driving conversion through social proof and relatable lifestyle integration."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "Your drink, perfect from lecture to library",
+            "body": "Hey there! We know the struggle. You grab a coffee before your 8 AM lecture, only for it to turn ice-cold by the time you reach the library for that late-night study grind. It is time to upgrade your campus routine.\n\nMeet the TravelMate Smart Mug. Designed for your busy lifestyle, this sleek companion keeps your favorite drink at your preferred temperature throughout your entire day. Whether you are powering through back-to-back classes or prepping for finals, you can finally enjoy that first sip just as much as the last one.\n\nYour drink. Your temperature. It is the reliable partner you need to stay energized and focused on your goals. With a modern aesthetic that fits right into your backpack, it is built for every journey you take on campus. \n\nReady to level up your study sessions? Grab your TravelMate today and experience consistent warmth, no matter how long the lecture runs. Your perfect sip, wherever you go. Keep your energy high and your coffee hot until the work is done.",
+            "word_count": 171
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 43/60 chars, Body: 171 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "The content addresses the specific pain point of the student persona—cold coffee during long study sessions—by framing the mug as an essential tool for academic focus and convenience.",
+            "brand_rationale": "The copy maintains a friendly, premium, and modern tone, aligning with the TravelMate identity while avoiding banned terms and focusing on the product's value proposition as a reliable, high-quality companion.",
+            "channel_rationale": "The messaging is structured for digital engagement, utilizing a relatable narrative hook that resonates with students' fast-paced campus lifestyle, making it ideal for social media or email marketing.",
+            "angle_explanation": "By positioning the product as a 'Consistent Campus Companion,' the copy transforms a functional mug into a dependable asset for high-stress environments, directly connecting the product's performance to the student's need for sustained energy.",
+            "audience_impact": "This approach builds emotional resonance by acknowledging the daily struggle of the student experience, encouraging purchase through the promise of a superior, frustration-free study experience."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "Cheap",
+          "Guaranteed",
+          "Best"
+        ],
+        "example_brand_lines": [
+          "• Your perfect sip, wherever you go.",
+          "• Built for every journey."
+        ]
+      },
+      "persona": {
+        "persona_name": "Student",
+        "summary": "Long classes, needs convenient and reliable drinks.",
+        "primary_goals": "Stay energized during long study hours and lectures.",
+        "pain_points": "Drinks get cold during classes and library sessions.",
+        "core_motivations": "Convenience, reliability, and academic productivity.",
+        "emotional_triggers": "Fun, relatable, energetic student life.",
+        "preferred_message_style": "Short, energetic, student-friendly, casual.",
+        "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+      },
+      "all_personas": [
+        {
+          "persona_name": "Student",
+          "summary": "Long classes, needs convenient and reliable drinks.",
+          "primary_goals": "Stay energized during long study hours and lectures.",
+          "pain_points": "Drinks get cold during classes and library sessions.",
+          "core_motivations": "Convenience, reliability, and academic productivity.",
+          "emotional_triggers": "Fun, relatable, energetic student life.",
+          "preferred_message_style": "Short, energetic, student-friendly, casual.",
+          "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+        },
+        {
+          "persona_name": "Working Professional",
+          "summary": "Back-to-back meetings, values productivity and convenience.",
+          "primary_goals": "Sustained productivity through back-to-back executive meetings.",
+          "pain_points": "No time to reheat coffee between client presentations.",
+          "core_motivations": "Professional polish, daily efficiency, and sleek design.",
+          "emotional_triggers": "Frustration with lukewarm coffee, focus on high output.",
+          "preferred_message_style": "Crisp, benefit-driven, modern, executive.",
+          "buying_triggers": "All-day precision temperature battery, leakproof design."
+        },
+        {
+          "persona_name": "Traveller",
+          "summary": "Frequent travel, needs a portable and reliable solution.",
+          "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+          "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+          "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+          "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+          "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+          "buying_triggers": "Compact fit for travel bags, long battery life."
+        }
+      ],
+      "assets_by_persona": {},
+      "concept": {
+        "angle": "Reliability in high-stress environments",
+        "hook": "From the first morning lecture to the final late-night study grind, keep your drink exactly how you like it.",
+        "id": "c9d2f4a1-0b5e-4c7a-9d8f-3e6a7b8c9d0e",
+        "rationale": "This campaign highlights the reliability of the TravelMate throughout the fluctuating schedule of a university student, emphasizing that the mug is a dependable companion for high-stress days.",
+        "title": "The Consistent Campus Companion",
+        "tone": "Friendly and modern"
+      },
+      "social_post": {
+        "content": {
+          "text": "From 8 AM lectures to midnight study sessions, the TravelMate Smart Mug keeps my coffee at the perfect temperature the entire time. No more lukewarm sips while I crush my deadlines! #TravelMate #StudyHack #CampusLife",
+          "character_count": 216,
+          "hashtags": [
+            "TravelMate",
+            "StudyHack",
+            "CampusLife"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 216 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "This content speaks directly to the student's pain point of lukewarm coffee during long study sessions, positioning the TravelMate as an essential tool for maintaining energy and focus throughout their demanding academic day.",
+          "brand_rationale": "The copy aligns with the 'Friendly, Premium, Modern' brand tone by using casual, relatable language while highlighting the product's premium utility of temperature control, reinforcing the tagline 'Your drink. Your temperature.'",
+          "channel_rationale": "The format is optimized for social media platforms (like Instagram or TikTok) where hashtag usage and short, punchy narratives foster community engagement and viral potential among student demographics.",
+          "angle_explanation": "By framing the mug as a 'consistent companion' in high-stress environments, the angle moves beyond simple utility to emotional support, emphasizing reliability during the peaks and valleys of a student's schedule.",
+          "audience_impact": "This content effectively builds brand affinity by validating the student experience; it transforms a functional product into a 'study hack,' driving conversion through social proof and relatable lifestyle integration."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "Your drink, perfect from lecture to library",
+          "body": "Hey there! We know the struggle. You grab a coffee before your 8 AM lecture, only for it to turn ice-cold by the time you reach the library for that late-night study grind. It is time to upgrade your campus routine.\n\nMeet the TravelMate Smart Mug. Designed for your busy lifestyle, this sleek companion keeps your favorite drink at your preferred temperature throughout your entire day. Whether you are powering through back-to-back classes or prepping for finals, you can finally enjoy that first sip just as much as the last one.\n\nYour drink. Your temperature. It is the reliable partner you need to stay energized and focused on your goals. With a modern aesthetic that fits right into your backpack, it is built for every journey you take on campus. \n\nReady to level up your study sessions? Grab your TravelMate today and experience consistent warmth, no matter how long the lecture runs. Your perfect sip, wherever you go. Keep your energy high and your coffee hot until the work is done.",
+          "word_count": 171
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 43/60 chars, Body: 171 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "The content addresses the specific pain point of the student persona—cold coffee during long study sessions—by framing the mug as an essential tool for academic focus and convenience.",
+          "brand_rationale": "The copy maintains a friendly, premium, and modern tone, aligning with the TravelMate identity while avoiding banned terms and focusing on the product's value proposition as a reliable, high-quality companion.",
+          "channel_rationale": "The messaging is structured for digital engagement, utilizing a relatable narrative hook that resonates with students' fast-paced campus lifestyle, making it ideal for social media or email marketing.",
+          "angle_explanation": "By positioning the product as a 'Consistent Campus Companion,' the copy transforms a functional mug into a dependable asset for high-stress environments, directly connecting the product's performance to the student's need for sustained energy.",
+          "audience_impact": "This approach builds emotional resonance by acknowledging the daily struggle of the student experience, encouraging purchase through the promise of a superior, frustration-free study experience."
+        }
+      }
+    }
+  },
+  {
+    "id": "2e072083-8a13-48de-8637-de2ac7a35815",
+    "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+    "created_at": "2026-11-19T06:59:34.284817+00:00",
+    "bundle": {
+      "id": "2e072083-8a13-48de-8637-de2ac7a35815",
+      "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+      "created_at": "2026-11-19T06:59:34.284817+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "From the first lecture to the final review, the TravelMate Smart Mug keeps my coffee at the perfect temperature. No more lukewarm sips during long study sessions. Essential for my desk setup!",
+            "character_count": 191,
+            "hashtags": [
+              "TravelMate",
+              "StudyEssentials",
+              "StudentLife",
+              "SmartMug"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 191 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "This content directly addresses the student persona's pain point of lukewarm coffee during long study sessions, positioning the product as a vital tool for maintaining academic productivity.",
+            "brand_rationale": "The copy maintains a friendly and modern tone that aligns with the brand's identity while highlighting the product's premium utility without using banned terminology.",
+            "channel_rationale": "The concise, hashtag-rich format is optimized for social media platforms where students discover study hacks and desk setup inspiration.",
+            "angle_explanation": "By focusing on 'reliable comfort,' the content transforms a simple utility product into an essential academic companion, framing it as a solution for long-form focus.",
+            "audience_impact": "This resonates with students by validating their daily routine, creating an emotional connection through shared experience and the promise of a consistently enjoyable beverage during high-stress study periods."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+            "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with The Lecture Companion? From the first lecture to the final review, keep your drink at your perfect temperature.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+            "word_count": 130
+          },
+          "validation_report": {
+            "overall_score": 87,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 85,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": false,
+                "score": 65,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": [
+                  "Messaging does not address persona pain points"
+                ]
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 80,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 53/60 chars, Body: 130 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "The copy addresses the specific pain point of lukewarm beverages during long study sessions, positioning the mug as an essential tool for academic productivity and comfort.",
+            "brand_rationale": "The tone remains premium and modern while avoiding banned promotional terms, focusing on the product's engineering and reliability to align with the 'Your drink. Your temperature.' brand identity.",
+            "channel_rationale": "The email format allows for a direct, personalized message that fits into a student's busy schedule, providing a clear narrative that connects the product to their daily routine.",
+            "angle_explanation": "By framing the mug as 'The Lecture Companion,' the content transforms a functional item into a supportive academic partner, reinforcing the concept of reliable comfort throughout the student day.",
+            "audience_impact": "This messaging fosters an emotional connection by validating the challenges of student life, encouraging the student to view the product as an investment in their daily convenience and sustained energy."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "Cheap",
+          "Guaranteed",
+          "Best"
+        ],
+        "example_brand_lines": [
+          "• • Your perfect sip, wherever you go.",
+          "• • Built for every journey."
+        ]
+      },
+      "persona": {
+        "persona_name": "Student",
+        "summary": "Long classes, needs convenient and reliable drinks.",
+        "primary_goals": "Stay energized during long study hours and lectures.",
+        "pain_points": "Drinks get cold during classes and library sessions.",
+        "core_motivations": "Convenience, reliability, and academic productivity.",
+        "emotional_triggers": "Fun, relatable, energetic student life.",
+        "preferred_message_style": "Short, energetic, student-friendly, casual.",
+        "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+      },
+      "all_personas": [
+        {
+          "persona_name": "Student",
+          "summary": "Long classes, needs convenient and reliable drinks.",
+          "primary_goals": "Stay energized during long study hours and lectures.",
+          "pain_points": "Drinks get cold during classes and library sessions.",
+          "core_motivations": "Convenience, reliability, and academic productivity.",
+          "emotional_triggers": "Fun, relatable, energetic student life.",
+          "preferred_message_style": "Short, energetic, student-friendly, casual.",
+          "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+        },
+        {
+          "persona_name": "Working Professional",
+          "summary": "Back-to-back meetings, values productivity and convenience.",
+          "primary_goals": "Sustained productivity through back-to-back executive meetings.",
+          "pain_points": "No time to reheat coffee between client presentations.",
+          "core_motivations": "Professional polish, daily efficiency, and sleek design.",
+          "emotional_triggers": "Frustration with lukewarm coffee, focus on high output.",
+          "preferred_message_style": "Crisp, benefit-driven, modern, executive.",
+          "buying_triggers": "All-day precision temperature battery, leakproof design."
+        },
+        {
+          "persona_name": "Traveller",
+          "summary": "Frequent travel, needs a portable and reliable solution.",
+          "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+          "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+          "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+          "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+          "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+          "buying_triggers": "Compact fit for travel bags, long battery life."
+        }
+      ],
+      "assets_by_persona": {},
+      "concept": {
+        "angle": "Reliable comfort",
+        "hook": "From the first lecture to the final review, keep your drink at your perfect temperature.",
+        "id": "d4c3b2a1-f9e8-4d7c-b6a5-9e8d7c6b5a4f",
+        "rationale": "Targets the daily reality of back-to-back lectures, emphasizing reliability and comfort as a way to enhance the academic experience.",
+        "title": "The Lecture Companion",
+        "tone": "Friendly and Modern"
+      },
+      "social_post": {
+        "content": {
+          "text": "From the first lecture to the final review, the TravelMate Smart Mug keeps my coffee at the perfect temperature. No more lukewarm sips during long study sessions. Essential for my desk setup!",
+          "character_count": 191,
+          "hashtags": [
+            "TravelMate",
+            "StudyEssentials",
+            "StudentLife",
+            "SmartMug"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 191 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "This content directly addresses the student persona's pain point of lukewarm coffee during long study sessions, positioning the product as a vital tool for maintaining academic productivity.",
+          "brand_rationale": "The copy maintains a friendly and modern tone that aligns with the brand's identity while highlighting the product's premium utility without using banned terminology.",
+          "channel_rationale": "The concise, hashtag-rich format is optimized for social media platforms where students discover study hacks and desk setup inspiration.",
+          "angle_explanation": "By focusing on 'reliable comfort,' the content transforms a simple utility product into an essential academic companion, framing it as a solution for long-form focus.",
+          "audience_impact": "This resonates with students by validating their daily routine, creating an emotional connection through shared experience and the promise of a consistently enjoyable beverage during high-stress study periods."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+          "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with The Lecture Companion? From the first lecture to the final review, keep your drink at your perfect temperature.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+          "word_count": 130
+        },
+        "validation_report": {
+          "overall_score": 87,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 85,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": false,
+              "score": 65,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": [
+                "Messaging does not address persona pain points"
+              ]
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 80,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 53/60 chars, Body: 130 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "The copy addresses the specific pain point of lukewarm beverages during long study sessions, positioning the mug as an essential tool for academic productivity and comfort.",
+          "brand_rationale": "The tone remains premium and modern while avoiding banned promotional terms, focusing on the product's engineering and reliability to align with the 'Your drink. Your temperature.' brand identity.",
+          "channel_rationale": "The email format allows for a direct, personalized message that fits into a student's busy schedule, providing a clear narrative that connects the product to their daily routine.",
+          "angle_explanation": "By framing the mug as 'The Lecture Companion,' the content transforms a functional item into a supportive academic partner, reinforcing the concept of reliable comfort throughout the student day.",
+          "audience_impact": "This messaging fosters an emotional connection by validating the challenges of student life, encouraging the student to view the product as an investment in their daily convenience and sustained energy."
+        }
+      }
+    }
+  },
+  {
+    "id": "8e199ed7-b622-4195-9413-a3f6382b282a",
+    "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+    "created_at": "2026-11-19T07:10:20.515567+00:00",
+    "bundle": {
+      "id": "8e199ed7-b622-4195-9413-a3f6382b282a",
+      "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+      "created_at": "2026-11-19T07:10:20.515567+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "From the first morning lecture to the final late-night review, your coffee stays exactly how you like it. The TravelMate Smart Mug keeps your drink at the perfect temperature so you can focus on acing your exams. Ready for your next academic adventure?",
+            "character_count": 252,
+            "hashtags": [
+              "TravelMate",
+              "StudyEssentials",
+              "SmartLiving",
+              "StudentLife"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 82,
+            "passed": false,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 85,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": false,
+                "score": 40,
+                "explanation": "Addresses core motivations and triggers for Traveller.",
+                "violations": [
+                  "Messaging does not address persona pain points"
+                ]
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 80,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 252 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "The copy addresses the 'Traveller' persona's need for reliable comfort during long, demanding days. By framing the mug as an essential companion for back-to-back lectures, it validates the persona's desire for a consistent, high-quality beverage experience despite a hectic, mobile lifestyle.",
+            "brand_rationale": "The messaging aligns with the 'Friendly, Premium, Modern' tone by focusing on the value of the experience rather than price or over-promising. It maintains brand consistency by highlighting the core product benefit—precise temperature control—in a way that feels sophisticated and supportive.",
+            "channel_rationale": "The length and tone are optimized for social media engagement, where brevity is key. The use of relevant, community-driven hashtags like #StudentLife and #StudyEssentials ensures the content reaches the target academic demographic effectively within a mobile-first browsing environment.",
+            "angle_explanation": "The 'Reliable comfort' angle focuses on transforming a mundane necessity (a beverage) into a stress-reduction tool. By positioning the product as a support system for academic success, it elevates the mug from a simple container to a vital piece of study equipment.",
+            "audience_impact": "This copy creates an emotional connection by empathizing with the specific pain point of lukewarm coffee during long study sessions. It empowers the user to feel more prepared and in control of their environment, directly appealing to their goal of academic focus and personal comfort."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "Your perfect sip, from lecture to lounge.",
+            "body": "Between the early morning commute and the final review of your notes, your day is a whirlwind. You deserve a moment of reliable comfort that travels with you. Meet the TravelMate Smart Mug, your new essential companion for every journey. Whether you are navigating busy terminals or settling into a long study session, our technology ensures your beverage stays at your preferred temperature from the first drop to the last. Designed for the modern explorer, the TravelMate fits perfectly in your carry-on and keeps your drink ready whenever you need a boost. No more lukewarm coffee or rushing to finish before your beverage loses its edge. Experience the ease of a mug built for your lifestyle, offering consistent warmth that keeps pace with your ambition. Your drink, your temperature, wherever the road leads you. Elevate your daily routine with a solution designed for durability and grace. Discover how we are redefining portable refreshment for those who never stop moving. Ready to upgrade your journey? Your perfect sip awaits.",
+            "word_count": 168
+          },
+          "validation_report": {
+            "overall_score": 94,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 85,
+                "explanation": "Addresses core motivations and triggers for Traveller.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 41/60 chars, Body: 168 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "The copy speaks directly to the 'Traveller' persona by acknowledging the chaotic nature of their schedule, framing the mug as an essential tool for maintaining comfort amidst the friction of commuting and long study sessions.",
+            "brand_rationale": "The messaging aligns with the 'Friendly, Premium, Modern' tone by focusing on the value of a consistent experience rather than price, positioning the product as an aspirational upgrade to the user's daily lifestyle.",
+            "channel_rationale": "The content length and structure are optimized for high-engagement platforms like email newsletters or social media captions, where a blend of storytelling and product benefit drives immediate conversion.",
+            "angle_explanation": "By framing the mug as a source of 'reliable comfort,' the content transforms a utilitarian object into an emotional anchor, addressing the user's desire for familiar habits in unfamiliar or high-pressure environments.",
+            "audience_impact": "This content validates the user's ambition and busy lifestyle, reducing the anxiety of 'lukewarm' interruptions and reinforcing the brand as a premium, durable partner for the modern explorer."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "Cheap",
+          "Guaranteed",
+          "Best"
+        ],
+        "example_brand_lines": [
+          "• • Your perfect sip, wherever you go.",
+          "• • Built for every journey."
+        ]
+      },
+      "persona": {
+        "persona_name": "Traveller",
+        "summary": "Frequent travel, needs a portable and reliable solution.",
+        "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+        "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+        "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+        "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+        "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+        "buying_triggers": "Compact fit for travel bags, long battery life.",
+        "icon": {},
+        "color": "bg-purple-100 text-purple-700"
+      },
+      "all_personas": [
+        {
+          "persona_name": "Traveller",
+          "summary": "Frequent travel, needs a portable and reliable solution.",
+          "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+          "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+          "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+          "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+          "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+          "buying_triggers": "Compact fit for travel bags, long battery life.",
+          "icon": {},
+          "color": "bg-purple-100 text-purple-700"
+        }
+      ],
+      "assets_by_persona": {},
+      "concept": {
+        "angle": "Reliable comfort",
+        "hook": "From the first lecture to the final review, keep your drink at your perfect temperature.",
+        "id": "d4c3b2a1-f9e8-4d7c-b6a5-9e8d7c6b5a4f",
+        "rationale": "Targets the daily reality of back-to-back lectures, emphasizing reliability and comfort as a way to enhance the academic experience.",
+        "title": "The Lecture Companion",
+        "tone": "Friendly and Modern"
+      },
+      "social_post": {
+        "content": {
+          "text": "From the first morning lecture to the final late-night review, your coffee stays exactly how you like it. The TravelMate Smart Mug keeps your drink at the perfect temperature so you can focus on acing your exams. Ready for your next academic adventure?",
+          "character_count": 252,
+          "hashtags": [
+            "TravelMate",
+            "StudyEssentials",
+            "SmartLiving",
+            "StudentLife"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 82,
+          "passed": false,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 85,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": false,
+              "score": 40,
+              "explanation": "Addresses core motivations and triggers for Traveller.",
+              "violations": [
+                "Messaging does not address persona pain points"
+              ]
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 80,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 252 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "The copy addresses the 'Traveller' persona's need for reliable comfort during long, demanding days. By framing the mug as an essential companion for back-to-back lectures, it validates the persona's desire for a consistent, high-quality beverage experience despite a hectic, mobile lifestyle.",
+          "brand_rationale": "The messaging aligns with the 'Friendly, Premium, Modern' tone by focusing on the value of the experience rather than price or over-promising. It maintains brand consistency by highlighting the core product benefit—precise temperature control—in a way that feels sophisticated and supportive.",
+          "channel_rationale": "The length and tone are optimized for social media engagement, where brevity is key. The use of relevant, community-driven hashtags like #StudentLife and #StudyEssentials ensures the content reaches the target academic demographic effectively within a mobile-first browsing environment.",
+          "angle_explanation": "The 'Reliable comfort' angle focuses on transforming a mundane necessity (a beverage) into a stress-reduction tool. By positioning the product as a support system for academic success, it elevates the mug from a simple container to a vital piece of study equipment.",
+          "audience_impact": "This copy creates an emotional connection by empathizing with the specific pain point of lukewarm coffee during long study sessions. It empowers the user to feel more prepared and in control of their environment, directly appealing to their goal of academic focus and personal comfort."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "Your perfect sip, from lecture to lounge.",
+          "body": "Between the early morning commute and the final review of your notes, your day is a whirlwind. You deserve a moment of reliable comfort that travels with you. Meet the TravelMate Smart Mug, your new essential companion for every journey. Whether you are navigating busy terminals or settling into a long study session, our technology ensures your beverage stays at your preferred temperature from the first drop to the last. Designed for the modern explorer, the TravelMate fits perfectly in your carry-on and keeps your drink ready whenever you need a boost. No more lukewarm coffee or rushing to finish before your beverage loses its edge. Experience the ease of a mug built for your lifestyle, offering consistent warmth that keeps pace with your ambition. Your drink, your temperature, wherever the road leads you. Elevate your daily routine with a solution designed for durability and grace. Discover how we are redefining portable refreshment for those who never stop moving. Ready to upgrade your journey? Your perfect sip awaits.",
+          "word_count": 168
+        },
+        "validation_report": {
+          "overall_score": 94,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 85,
+              "explanation": "Addresses core motivations and triggers for Traveller.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 41/60 chars, Body: 168 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "The copy speaks directly to the 'Traveller' persona by acknowledging the chaotic nature of their schedule, framing the mug as an essential tool for maintaining comfort amidst the friction of commuting and long study sessions.",
+          "brand_rationale": "The messaging aligns with the 'Friendly, Premium, Modern' tone by focusing on the value of a consistent experience rather than price, positioning the product as an aspirational upgrade to the user's daily lifestyle.",
+          "channel_rationale": "The content length and structure are optimized for high-engagement platforms like email newsletters or social media captions, where a blend of storytelling and product benefit drives immediate conversion.",
+          "angle_explanation": "By framing the mug as a source of 'reliable comfort,' the content transforms a utilitarian object into an emotional anchor, addressing the user's desire for familiar habits in unfamiliar or high-pressure environments.",
+          "audience_impact": "This content validates the user's ambition and busy lifestyle, reducing the anxiety of 'lukewarm' interruptions and reinforcing the brand as a premium, durable partner for the modern explorer."
+        }
+      }
+    }
+  },
+  {
+    "id": "01c89cbc-3127-424e-af95-bb9636121aa0",
+    "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+    "created_at": "2026-11-19T07:28:30.805996+00:00",
+    "bundle": {
+      "id": "01c89cbc-3127-424e-af95-bb9636121aa0",
+      "user_id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+      "created_at": "2026-11-19T07:28:30.805996+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "Stuck in the library for finals? Keep your coffee at the ideal temperature from the first page to the last. Because every journey deserves the perfect sip. #TravelMate #StudyHack #CampusLife",
+            "character_count": 190,
+            "hashtags": [
+              "TravelMate",
+              "StudyHack",
+              "CampusLife"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 94,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 85,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 95,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 190 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly addresses the specific pain point of lukewarm coffee during marathon study sessions, positioning the product as a practical solution to maintain focus and energy.",
+            "brand_rationale": "Aligns with the 'Friendly, Premium, Modern' tone by elevating a mundane student necessity into a high-quality experience, reinforcing the brand's commitment to temperature control without using prohibited superlative language.",
+            "channel_rationale": "The short, snappy structure and relevant hashtags are optimized for social media platforms where students consume quick, relatable content while on the go.",
+            "angle_explanation": "Leverages the 'Mindful Morning Ritual' concept by reframing the act of studying as a 'journey' that deserves the comfort of a consistent, perfect beverage temperature.",
+            "audience_impact": "Builds emotional resonance by validating the student struggle, while the aspirational messaging transforms the mug from a simple utility into a lifestyle accessory that supports academic success."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "Your perfect sip, all lecture long",
+            "body": "Between back-to-back lectures and late-night study sessions in the library, your day is demanding. We believe your coffee or tea should keep up with your pace, not turn cold the moment you open your textbook. Introducing the TravelMate Smart Mug, designed to bring a touch of comfort to your busy academic life. Whether you are prepping for finals or heading to an early seminar, our mug ensures your beverage stays at your preferred temperature from the first sip to the very last drop. Built for every journey, this sleek companion fits perfectly into your student lifestyle, blending modern aesthetics with reliable performance. Transform your mindful morning ritual into an all-day experience. Enjoy the warmth you deserve while you focus on achieving your goals. Your drink. Your temperature. Elevate your study sessions today with the companion that understands your need for a consistent, soothing break. Because every journey deserves the perfect sip. Visit our site to choose the color that matches your personal style and make every lecture a little more enjoyable.",
+            "word_count": 171
+          },
+          "validation_report": {
+            "overall_score": 89,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 85,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": false,
+                "score": 75,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": [
+                  "Messaging does not address persona pain points"
+                ]
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 80,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 34/60 chars, Body: 171 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "The copy directly addresses the student's primary pain point of cold beverages during long study sessions, positioning the product as a solution that supports academic productivity and comfort.",
+            "brand_rationale": "The tone remains premium and modern while adhering to brand guidelines, avoiding forbidden superlative language like 'best' or 'guaranteed' to maintain a trustworthy, elevated brand identity.",
+            "channel_rationale": "The content is structured for digital platforms (email or social media) where short, relatable narratives about student lifestyle resonate quickly with the target demographic.",
+            "angle_explanation": "By framing the mug as part of a 'Mindful Morning Ritual,' the copy elevates a functional item into a lifestyle accessory, appealing to the student's desire for aesthetic and soothing experiences amidst a stressful academic schedule.",
+            "audience_impact": "This messaging fosters an emotional connection with students by validating their busy lifestyle, ultimately driving conversion through the promise of a consistent, high-quality beverage experience."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "Cheap",
+          "Guaranteed",
+          "Best"
+        ],
+        "example_brand_lines": [
+          "• • Your perfect sip, wherever you go.",
+          "• • Built for every journey."
+        ]
+      },
+      "persona": {
+        "persona_name": "Student",
+        "summary": "Long classes, needs convenient and reliable drinks.",
+        "primary_goals": "Stay energized during long study hours and lectures.",
+        "pain_points": "Drinks get cold during classes and library sessions.",
+        "core_motivations": "Convenience, reliability, and academic productivity.",
+        "emotional_triggers": "Fun, relatable, energetic student life.",
+        "preferred_message_style": "Short, energetic, student-friendly, casual.",
+        "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+      },
+      "all_personas": [
+        {
+          "persona_name": "Student",
+          "summary": "Long classes, needs convenient and reliable drinks.",
+          "primary_goals": "Stay energized during long study hours and lectures.",
+          "pain_points": "Drinks get cold during classes and library sessions.",
+          "core_motivations": "Convenience, reliability, and academic productivity.",
+          "emotional_triggers": "Fun, relatable, energetic student life.",
+          "preferred_message_style": "Short, energetic, student-friendly, casual.",
+          "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+        },
+        {
+          "persona_name": "Working Professional",
+          "summary": "Back-to-back meetings, values productivity and convenience.",
+          "primary_goals": "Sustained productivity through back-to-back executive meetings.",
+          "pain_points": "No time to reheat coffee between client presentations.",
+          "core_motivations": "Professional polish, daily efficiency, and sleek design.",
+          "emotional_triggers": "Frustration with lukewarm coffee, focus on high output.",
+          "preferred_message_style": "Crisp, benefit-driven, modern, executive.",
+          "buying_triggers": "All-day precision temperature battery, leakproof design."
+        },
+        {
+          "persona_name": "Traveller",
+          "summary": "Frequent travel, needs a portable and reliable solution.",
+          "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+          "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+          "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+          "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+          "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+          "buying_triggers": "Compact fit for travel bags, long battery life."
+        }
+      ],
+      "assets_by_persona": {},
+      "concept": {
+        "id": "c-2",
+        "icon": {},
+        "title": "Your Perfect Sip",
+        "angle": "Mindful Morning Ritual",
+        "key_message": "Personalized comfort in every sip.",
+        "hook": "\"Because every journey deserves the perfect sip.\"",
+        "tone": "Warm, refined, mindful",
+        "rationale": "Focuses on the sensorial experience of hot beverages."
+      },
+      "social_post": {
+        "content": {
+          "text": "Stuck in the library for finals? Keep your coffee at the ideal temperature from the first page to the last. Because every journey deserves the perfect sip. #TravelMate #StudyHack #CampusLife",
+          "character_count": 190,
+          "hashtags": [
+            "TravelMate",
+            "StudyHack",
+            "CampusLife"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 94,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 85,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 95,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 190 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly addresses the specific pain point of lukewarm coffee during marathon study sessions, positioning the product as a practical solution to maintain focus and energy.",
+          "brand_rationale": "Aligns with the 'Friendly, Premium, Modern' tone by elevating a mundane student necessity into a high-quality experience, reinforcing the brand's commitment to temperature control without using prohibited superlative language.",
+          "channel_rationale": "The short, snappy structure and relevant hashtags are optimized for social media platforms where students consume quick, relatable content while on the go.",
+          "angle_explanation": "Leverages the 'Mindful Morning Ritual' concept by reframing the act of studying as a 'journey' that deserves the comfort of a consistent, perfect beverage temperature.",
+          "audience_impact": "Builds emotional resonance by validating the student struggle, while the aspirational messaging transforms the mug from a simple utility into a lifestyle accessory that supports academic success."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "Your perfect sip, all lecture long",
+          "body": "Between back-to-back lectures and late-night study sessions in the library, your day is demanding. We believe your coffee or tea should keep up with your pace, not turn cold the moment you open your textbook. Introducing the TravelMate Smart Mug, designed to bring a touch of comfort to your busy academic life. Whether you are prepping for finals or heading to an early seminar, our mug ensures your beverage stays at your preferred temperature from the first sip to the very last drop. Built for every journey, this sleek companion fits perfectly into your student lifestyle, blending modern aesthetics with reliable performance. Transform your mindful morning ritual into an all-day experience. Enjoy the warmth you deserve while you focus on achieving your goals. Your drink. Your temperature. Elevate your study sessions today with the companion that understands your need for a consistent, soothing break. Because every journey deserves the perfect sip. Visit our site to choose the color that matches your personal style and make every lecture a little more enjoyable.",
+          "word_count": 171
+        },
+        "validation_report": {
+          "overall_score": 89,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 85,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": false,
+              "score": 75,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": [
+                "Messaging does not address persona pain points"
+              ]
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 80,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 34/60 chars, Body: 171 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "The copy directly addresses the student's primary pain point of cold beverages during long study sessions, positioning the product as a solution that supports academic productivity and comfort.",
+          "brand_rationale": "The tone remains premium and modern while adhering to brand guidelines, avoiding forbidden superlative language like 'best' or 'guaranteed' to maintain a trustworthy, elevated brand identity.",
+          "channel_rationale": "The content is structured for digital platforms (email or social media) where short, relatable narratives about student lifestyle resonate quickly with the target demographic.",
+          "angle_explanation": "By framing the mug as part of a 'Mindful Morning Ritual,' the copy elevates a functional item into a lifestyle accessory, appealing to the student's desire for aesthetic and soothing experiences amidst a stressful academic schedule.",
+          "audience_impact": "This messaging fosters an emotional connection with students by validating their busy lifestyle, ultimately driving conversion through the promise of a consistent, high-quality beverage experience."
+        }
+      }
+    }
+  },
+  {
+    "id": "1823c318-2dac-4747-b63a-434f02de4db1",
+    "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+    "created_at": "2026-11-19T06:24:38.784476+00:00",
+    "bundle": {
+      "id": "1823c318-2dac-4747-b63a-434f02de4db1",
+      "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+      "created_at": "2026-11-19T06:24:38.784476+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "On the move? How modern market leaders outpace legacy limitations with TravelMate Smart Mug. TravelMate Smart Mug keeps your favorite brew hot across time zones with leakproof battery power. ✈️",
+            "character_count": 193,
+            "hashtags": [
+              "#TravelMate",
+              "#Innovation",
+              "#Excellence"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Traveller.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 193 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Traveller's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "TravelMate Smart Mug: Perfect temperature for Traveller",
+            "body": "Dear Traveller,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with The Strategic Advantage Benchmark? How modern market leaders outpace legacy limitations with TravelMate Smart Mug.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+            "word_count": 127
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Traveller.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 55/60 chars, Body: 127 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Traveller's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "Cheap",
+          "Guaranteed",
+          "Best"
+        ],
+        "example_brand_lines": [
+          "• Your perfect sip, wherever you go.",
+          "• Built for every journey."
+        ]
+      },
+      "persona": {
+        "persona_name": "Traveller",
+        "summary": "Frequent travel, needs a portable and reliable solution.",
+        "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+        "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+        "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+        "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+        "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+        "buying_triggers": "Compact fit for travel bags, long battery life."
+      },
+      "concept": {
+        "angle": "Competitive Dominance through Smart Systems",
+        "hook": "How modern market leaders outpace legacy limitations with TravelMate Smart Mug.",
+        "id": "ea168b9c-e3d3-437c-b67a-7f361478f91b",
+        "rationale": "Reinforces executive credibility and market differentiation for Student.",
+        "title": "The Strategic Advantage Benchmark",
+        "tone": "Visionary, evidence-backed, premium"
+      },
+      "social_post": {
+        "content": {
+          "text": "On the move? How modern market leaders outpace legacy limitations with TravelMate Smart Mug. TravelMate Smart Mug keeps your favorite brew hot across time zones with leakproof battery power. ✈️",
+          "character_count": 193,
+          "hashtags": [
+            "#TravelMate",
+            "#Innovation",
+            "#Excellence"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Traveller.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 193 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Traveller's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "TravelMate Smart Mug: Perfect temperature for Traveller",
+          "body": "Dear Traveller,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with The Strategic Advantage Benchmark? How modern market leaders outpace legacy limitations with TravelMate Smart Mug.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+          "word_count": 127
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Traveller.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 55/60 chars, Body: 127 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Traveller's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      }
+    }
+  },
+  {
+    "id": "1763b992-9300-4875-aff3-a9d5532eaee6",
+    "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+    "created_at": "2026-11-19T07:04:33.561763+00:00",
+    "bundle": {
+      "id": "1763b992-9300-4875-aff3-a9d5532eaee6",
+      "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+      "created_at": "2026-11-19T07:04:33.561763+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "Long lectures or study sessions? Your schedule changes. Your drink doesn't have to. Keep your favorite drink at the perfect temperature anytime with TravelMate Smart Mug. Stay energized and focused. ☕",
+            "character_count": 200,
+            "hashtags": [
+              "#TravelMate",
+              "#Innovation",
+              "#Excellence"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 200 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+            "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with Temperature That Travels? Your schedule changes. Your drink doesn't have to.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+            "word_count": 123
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 53/60 chars, Body: 123 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "cheap",
+          "guaranteed",
+          "best"
+        ]
+      },
+      "persona": {
+        "persona_name": "Student"
+      },
+      "concept": {
+        "id": "c-1",
+        "icon": {},
+        "title": "Temperature That Travels",
+        "angle": "Personalized Comfort On The Move",
+        "key_message": "Your perfect drink wherever you go.",
+        "hook": "\"Your schedule changes. Your drink doesn't have to.\"",
+        "tone": "Reliable, forward-looking",
+        "rationale": "Addresses the daily chaos of commuter and class schedules."
+      },
+      "social_post": {
+        "content": {
+          "text": "Long lectures or study sessions? Your schedule changes. Your drink doesn't have to. Keep your favorite drink at the perfect temperature anytime with TravelMate Smart Mug. Stay energized and focused. ☕",
+          "character_count": 200,
+          "hashtags": [
+            "#TravelMate",
+            "#Innovation",
+            "#Excellence"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 200 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+          "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with Temperature That Travels? Your schedule changes. Your drink doesn't have to.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+          "word_count": 123
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 53/60 chars, Body: 123 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      }
+    }
+  },
+  {
+    "id": "154a7495-9fd8-4306-bc4c-5a2ce25b43b2",
+    "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+    "created_at": "2026-11-19T07:04:36.419575+00:00",
+    "bundle": {
+      "id": "154a7495-9fd8-4306-bc4c-5a2ce25b43b2",
+      "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+      "created_at": "2026-11-19T07:04:36.419575+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "Long lectures or study sessions? Your schedule changes. Your drink doesn't have to. Keep your favorite drink at the perfect temperature anytime with TravelMate Smart Mug. Stay energized and focused. ☕",
+            "character_count": 200,
+            "hashtags": [
+              "#TravelMate",
+              "#Innovation",
+              "#Excellence"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 200 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+            "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with Temperature That Travels? Your schedule changes. Your drink doesn't have to.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+            "word_count": 123
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 53/60 chars, Body: 123 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "cheap",
+          "guaranteed",
+          "best"
+        ]
+      },
+      "persona": {
+        "persona_name": "Student"
+      },
+      "concept": {
+        "id": "c-1",
+        "icon": {},
+        "title": "Temperature That Travels",
+        "angle": "Personalized Comfort On The Move",
+        "key_message": "Your perfect drink wherever you go.",
+        "hook": "\"Your schedule changes. Your drink doesn't have to.\"",
+        "tone": "Reliable, forward-looking",
+        "rationale": "Addresses the daily chaos of commuter and class schedules."
+      },
+      "social_post": {
+        "content": {
+          "text": "Long lectures or study sessions? Your schedule changes. Your drink doesn't have to. Keep your favorite drink at the perfect temperature anytime with TravelMate Smart Mug. Stay energized and focused. ☕",
+          "character_count": 200,
+          "hashtags": [
+            "#TravelMate",
+            "#Innovation",
+            "#Excellence"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 200 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+          "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with Temperature That Travels? Your schedule changes. Your drink doesn't have to.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+          "word_count": 123
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 53/60 chars, Body: 123 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'Temperature That Travels' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      }
+    }
+  },
+  {
+    "id": "6e31ee21-fca1-4b34-b745-6a5d2aba42e3",
+    "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+    "created_at": "2026-11-19T07:04:53.992534+00:00",
+    "bundle": {
+      "id": "6e31ee21-fca1-4b34-b745-6a5d2aba42e3",
+      "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+      "created_at": "2026-11-19T07:04:53.992534+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "Long lectures or study sessions? How modern market leaders outpace legacy limitations with TravelMate Smart Mug. Keep your favorite drink at the perfect temperature anytime with TravelMate Smart Mug. Stay energized and focused. ☕",
+            "character_count": 229,
+            "hashtags": [
+              "#TravelMate",
+              "#Innovation",
+              "#Excellence"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 229 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+            "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with The Strategic Advantage Benchmark? How modern market leaders outpace legacy limitations with TravelMate Smart Mug.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+            "word_count": 127
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 53/60 chars, Body: 127 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+            "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "TravelMate Smart Mug",
+        "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+        "brand_tone": "Friendly, Premium, Modern",
+        "tagline": "Your drink. Your temperature.",
+        "banned_words": [
+          "cheap",
+          "guaranteed",
+          "best"
+        ],
+        "example_brand_lines": [
+          "• Your perfect sip, wherever you go.",
+          "• Built for every journey."
+        ]
+      },
+      "persona": {
+        "persona_name": "Student"
+      },
+      "concept": {
+        "angle": "Competitive Dominance through Smart Systems",
+        "hook": "How modern market leaders outpace legacy limitations with TravelMate Smart Mug.",
+        "id": "b5934f6e-9f50-4d25-8e26-de444516bd2c",
+        "rationale": "Reinforces executive credibility and market differentiation for Student.",
+        "title": "The Strategic Advantage Benchmark",
+        "tone": "Visionary, evidence-backed, premium"
+      },
+      "social_post": {
+        "content": {
+          "text": "Long lectures or study sessions? How modern market leaders outpace legacy limitations with TravelMate Smart Mug. Keep your favorite drink at the perfect temperature anytime with TravelMate Smart Mug. Stay energized and focused. ☕",
+          "character_count": 229,
+          "hashtags": [
+            "#TravelMate",
+            "#Innovation",
+            "#Excellence"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 229 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "TravelMate Smart Mug: Perfect temperature for Student",
+          "body": "Dear Student,\n\nWhether you are heading into back-to-back commitments or embarking on a long journey, settling for lukewarm drinks should never be on your agenda. With TravelMate Smart Mug, your favorite beverage remains at the exact temperature you prefer from your very first sip to the last.\n\nEngineered with intelligent temperature regulation and leakproof reliability, TravelMate Smart Mug combines sleek design with dependable everyday performance. Experience seamless comfort and sustained energy wherever your day takes you across any schedule.\n\nAre you prepared to elevate your daily routine with The Strategic Advantage Benchmark? How modern market leaders outpace legacy limitations with TravelMate Smart Mug.\n\nDiscover why individuals like you trust TravelMate Smart Mug to stay refreshed and energized throughout the day.\n\nWarm regards,\nThe TravelMate Smart Mug Team",
+          "word_count": 127
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Friendly, Premium, Modern'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 53/60 chars, Body: 127 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Friendly, Premium, Modern tonality, elevating TravelMate Smart Mug as an industry benchmark.",
+          "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'The Strategic Advantage Benchmark' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      }
+    }
+  },
+  {
+    "id": "f07e61c0-e3c1-42f4-9b1c-3f2728c739ec",
+    "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+    "created_at": "2026-11-19T07:13:20.528672+00:00",
+    "bundle": {
+      "id": "f07e61c0-e3c1-42f4-9b1c-3f2728c739ec",
+      "user_id": "aaefe8d4-67ce-43e5-bf92-2519f9de329d",
+      "created_at": "2026-11-19T07:13:20.528672+00:00",
+      "status": "success",
+      "assets": {
+        "social_post": {
+          "content": {
+            "text": "Stop reacting to threats. Build unshakeable confidence with SmartFit Pro. Experience SmartFit Pro engineered for Student. Train Smarter. Recover Better.",
+            "character_count": 152,
+            "hashtags": [
+              "#SmartFit",
+              "#Innovation",
+              "#Excellence"
+            ]
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Motivational, Innovative, Trustworthy'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for social_post.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Character count: 152 (max allowed: 280).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Motivational, Innovative, Trustworthy tonality, elevating SmartFit Pro as an industry benchmark.",
+            "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'The Proactive Guardrail Initiative' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        },
+        "email": {
+          "content": {
+            "subject": "SmartFit Pro: Built specifically for Student",
+            "body": "Dear Student,\n\nFinding a solution that seamlessly balances uncompromising quality with everyday convenience is essential. With SmartFit Pro, you gain an exceptional product engineered directly around your primary needs.\n\nAI-powered fitness band that tracks health,\nworkouts, sleep quality, and daily recovery. Built with precision and care, our mission is to ensure you experience unmatched reliability and peak satisfaction at every step. Stop reacting to threats. Build unshakeable confidence with SmartFit Pro.\n\nDiscover how SmartFit Pro elevates your experience and helps you achieve your goals with complete confidence. Train Smarter. Recover Better.\n\nExplore the new standard today and learn why Students everywhere choose SmartFit Pro.\n\nWarm regards,\nThe SmartFit Pro Customer Team",
+            "word_count": 111
+          },
+          "validation_report": {
+            "overall_score": 96,
+            "passed": true,
+            "dimensions": [
+              {
+                "dimension": "Brand Fit",
+                "passed": true,
+                "score": 92,
+                "explanation": "Tone conforms to 'Motivational, Innovative, Trustworthy'.",
+                "violations": []
+              },
+              {
+                "dimension": "Persona Fit",
+                "passed": true,
+                "score": 90,
+                "explanation": "Addresses core motivations and triggers for Student.",
+                "violations": []
+              },
+              {
+                "dimension": "Channel Fit",
+                "passed": true,
+                "score": 94,
+                "explanation": "Structure and call-to-action are optimized for email.",
+                "violations": []
+              },
+              {
+                "dimension": "Rule Compliance",
+                "passed": true,
+                "score": 100,
+                "explanation": "No corporate policy violations detected.",
+                "violations": []
+              },
+              {
+                "dimension": "Length Validation",
+                "passed": true,
+                "score": 100,
+                "explanation": "Subject: 44/60 chars, Body: 111 words (75-250 required).",
+                "violations": []
+              },
+              {
+                "dimension": "Banned Words Check",
+                "passed": true,
+                "score": 100,
+                "explanation": "Zero banned words detected.",
+                "violations": []
+              }
+            ],
+            "recommendations": [
+              "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+            ]
+          },
+          "why_this_content": {
+            "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+            "brand_rationale": "Maintains Motivational, Innovative, Trustworthy tonality, elevating SmartFit Pro as an industry benchmark.",
+            "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+            "angle_explanation": "Leverages the 'The Proactive Guardrail Initiative' strategic angle to establish trust before presenting the solution.",
+            "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+          }
+        }
+      },
+      "brand_kit": {
+        "product_name": "SmartFit Pro",
+        "product_description": "AI-powered fitness band that tracks health,\nworkouts, sleep quality, and daily recovery.",
+        "brand_tone": "Motivational, Innovative, Trustworthy",
+        "tagline": "Train Smarter. Recover Better.",
+        "banned_words": [
+          "cheap",
+          "guaranteed",
+          "best"
+        ],
+        "example_brand_lines": [
+          "• Every workout tells a story.",
+          "• Smarter insights. Better performance.",
+          "• Your health, powered by intelligence.",
+          "• Built to help you train at your best."
+        ]
+      },
+      "persona": {
+        "persona_name": "Student"
+      },
+      "concept": {
+        "angle": "Systematic Risk Elimination for Student",
+        "hook": "Stop reacting to threats. Build unshakeable confidence with SmartFit Pro.",
+        "id": "4735aad9-a5be-4eee-b3be-250a877d748f",
+        "rationale": "Appeals directly to Student's desire for predictability and seamless governance.",
+        "title": "The Proactive Guardrail Initiative",
+        "tone": "Confident, authoritative, forward-thinking"
+      },
+      "social_post": {
+        "content": {
+          "text": "Stop reacting to threats. Build unshakeable confidence with SmartFit Pro. Experience SmartFit Pro engineered for Student. Train Smarter. Recover Better.",
+          "character_count": 152,
+          "hashtags": [
+            "#SmartFit",
+            "#Innovation",
+            "#Excellence"
+          ]
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Motivational, Innovative, Trustworthy'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for social_post.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Character count: 152 (max allowed: 280).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Motivational, Innovative, Trustworthy tonality, elevating SmartFit Pro as an industry benchmark.",
+          "channel_rationale": "Optimized for social_post with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'The Proactive Guardrail Initiative' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      },
+      "email": {
+        "content": {
+          "subject": "SmartFit Pro: Built specifically for Student",
+          "body": "Dear Student,\n\nFinding a solution that seamlessly balances uncompromising quality with everyday convenience is essential. With SmartFit Pro, you gain an exceptional product engineered directly around your primary needs.\n\nAI-powered fitness band that tracks health,\nworkouts, sleep quality, and daily recovery. Built with precision and care, our mission is to ensure you experience unmatched reliability and peak satisfaction at every step. Stop reacting to threats. Build unshakeable confidence with SmartFit Pro.\n\nDiscover how SmartFit Pro elevates your experience and helps you achieve your goals with complete confidence. Train Smarter. Recover Better.\n\nExplore the new standard today and learn why Students everywhere choose SmartFit Pro.\n\nWarm regards,\nThe SmartFit Pro Customer Team",
+          "word_count": 111
+        },
+        "validation_report": {
+          "overall_score": 96,
+          "passed": true,
+          "dimensions": [
+            {
+              "dimension": "Brand Fit",
+              "passed": true,
+              "score": 92,
+              "explanation": "Tone conforms to 'Motivational, Innovative, Trustworthy'.",
+              "violations": []
+            },
+            {
+              "dimension": "Persona Fit",
+              "passed": true,
+              "score": 90,
+              "explanation": "Addresses core motivations and triggers for Student.",
+              "violations": []
+            },
+            {
+              "dimension": "Channel Fit",
+              "passed": true,
+              "score": 94,
+              "explanation": "Structure and call-to-action are optimized for email.",
+              "violations": []
+            },
+            {
+              "dimension": "Rule Compliance",
+              "passed": true,
+              "score": 100,
+              "explanation": "No corporate policy violations detected.",
+              "violations": []
+            },
+            {
+              "dimension": "Length Validation",
+              "passed": true,
+              "score": 100,
+              "explanation": "Subject: 44/60 chars, Body: 111 words (75-250 required).",
+              "violations": []
+            },
+            {
+              "dimension": "Banned Words Check",
+              "passed": true,
+              "score": 100,
+              "explanation": "Zero banned words detected.",
+              "violations": []
+            }
+          ],
+          "recommendations": [
+            "Copy passed all Brand Guardian criteria and is certified ready for deployment."
+          ]
+        },
+        "why_this_content": {
+          "persona_rationale": "Directly speaks to Student's core motivation of reducing friction and achieving verified outcomes.",
+          "brand_rationale": "Maintains Motivational, Innovative, Trustworthy tonality, elevating SmartFit Pro as an industry benchmark.",
+          "channel_rationale": "Optimized for email with concise pacing, scannable structure, and a compelling call-to-action.",
+          "angle_explanation": "Leverages the 'The Proactive Guardrail Initiative' strategic angle to establish trust before presenting the solution.",
+          "audience_impact": "Drives engagement by demonstrating empathy for daily challenges coupled with immediate, credible utility."
+        }
+      }
+    }
+  },
+  {
     "id": "e618b822-e7e9-4a26-a6e3-0db5d131c381",
     "user_id": "demo-user-001",
     "created_at": "2026-11-19T07:20:03.920814+00:00",

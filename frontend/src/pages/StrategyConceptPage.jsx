@@ -13,22 +13,105 @@ import {
   Coffee,
   Rocket,
   User,
+  Users,
   Zap,
+  Shield,
+  Cpu,
+  Target,
+  Compass,
+  Lightbulb,
+  Award,
+  Layers,
+  Heart,
+  Palette,
+  Building2,
 } from 'lucide-react'
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import LoadingIndicator from '../components/LoadingIndicator'
 
-// Re-derive persona icon from name/index (never store React components in route state)
+// Dynamically resolve persona icon from role/name
 function getPersonaIcon(name, idx) {
   const n = (name || '').toLowerCase()
-  if (n.includes('student')) return GraduationCap
-  if (n.includes('professional') || n.includes('working')) return Briefcase
-  if (n.includes('travel')) return Plane
-  return [GraduationCap, Briefcase, Plane][idx % 3] || User
+  if (n.includes('student') || n.includes('academic') || n.includes('school') || n.includes('learn')) return GraduationCap
+  if (n.includes('ciso') || n.includes('security') || n.includes('guardrail') || n.includes('compliance')) return Shield
+  if (n.includes('cto') || n.includes('engineer') || n.includes('tech') || n.includes('dev') || n.includes('cloud')) return Cpu
+  if (n.includes('executive') || n.includes('director') || n.includes('founder') || n.includes('leader')) return Building2
+  if (n.includes('professional') || n.includes('working') || n.includes('manager') || n.includes('specialist')) return Briefcase
+  if (n.includes('travel') || n.includes('commut') || n.includes('nomad')) return Plane
+  if (n.includes('health') || n.includes('wellness') || n.includes('athlete') || n.includes('fitness')) return Heart
+  if (n.includes('creative') || n.includes('design') || n.includes('artist') || n.includes('writer')) return Palette
+  const genericList = [User, Users, Sparkles, Target, Award]
+  return genericList[idx % genericList.length] || User
 }
+
 function getPersonaColor(idx) {
-  return ['bg-amber-100 text-amber-700', 'bg-indigo-100 text-indigo-700', 'bg-purple-100 text-purple-700'][idx % 3]
+  const colors = [
+    'bg-purple-100 text-purple-700',
+    'bg-indigo-100 text-indigo-700',
+    'bg-blue-100 text-blue-700',
+    'bg-emerald-100 text-emerald-700',
+    'bg-amber-100 text-amber-700',
+  ]
+  return colors[idx % colors.length]
+}
+
+// Dynamically resolve concept icon based on concept direction and product details
+function getConceptIcon(concept, brandKit, idx) {
+  const title = (concept?.title || '').toLowerCase()
+  const angle = (concept?.angle || '').toLowerCase()
+  const hook = (concept?.hook || '').toLowerCase()
+  const keyMsg = (concept?.key_message || '').toLowerCase()
+  const prod = (brandKit?.product_name || '').toLowerCase()
+  const desc = (brandKit?.product_description || '').toLowerCase()
+  const combined = `${title} ${angle} ${hook} ${keyMsg}`
+  const isBeverage = /mug|coffee|drink|tea|sip|beverage|temperature|brew|thermos|flask/i.test(`${prod} ${desc}`)
+
+  // 1. Tech / Security / Cloud / Guardrail
+  if (/security|guardrail|shield|protect|defen|compliance|audit|cyber|cloud|zero-trust|threat|resilien/i.test(combined)) {
+    return Shield
+  }
+  if (/code|api|server|cpu|infra|system|terminal|developer/i.test(combined)) {
+    return Cpu
+  }
+
+  // 2. Focus / Flow State / Study / Productivity / Mind
+  if (/flow state|focus|study|academ|lecture|mind|learn|brain|intellect|concentrat/i.test(combined)) {
+    return Target
+  }
+
+  // 3. Aesthetic / Design / Premium / Luxury / Excellence
+  if (/aesthetic|design|style|elegance|craft|art|creative|visual/i.test(combined)) {
+    return Sparkles
+  }
+
+  // 4. Energy / Velocity / Speed / Scale / Rocket
+  if (/rocket|launch|velocity|speed|accelerat|scale|fast|momentum|surge/i.test(combined)) {
+    return Rocket
+  }
+  if (/energy|power|boost|zap|fuel|stamina|dynam/i.test(combined)) {
+    return Zap
+  }
+
+  // 5. Beverage / Thermal (ONLY if the product itself is actually a beverage/mug!)
+  if (isBeverage) {
+    if (/temperature|thermal|hot|cold|degree/i.test(combined)) return Thermometer
+    if (/sip|coffee|brew|ritual|roast|cup|drink/i.test(combined)) return Coffee
+  }
+
+  // 6. Travel / Movement / Exploration
+  if (/travel|journey|nomad|road|transit|commute|adventure|global|move/i.test(combined)) {
+    return Compass
+  }
+
+  // 7. Leadership / Benchmark / Advantage / Standard / Quality
+  if (/advantage|benchmark|leader|standard|trust|verifi|excellence|mastery/i.test(combined)) {
+    return Award
+  }
+
+  // 8. Reliable Generic Modern Icons for any campaign direction
+  const genericIcons = [Sparkles, Target, Zap, Rocket, Compass, Lightbulb, Award, Layers]
+  return genericIcons[idx % genericIcons.length] || Sparkles
 }
 
 export default function StrategyConceptPage({ user, onLogout }) {
@@ -360,7 +443,7 @@ export default function StrategyConceptPage({ user, onLogout }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {concepts.map((concept, idx) => {
                 const isSelected = selectedConceptIndex === idx
-                const Icon = idx === 0 ? Thermometer : idx === 1 ? Coffee : Rocket
+                const Icon = getConceptIcon(concept, brand_kit, idx)
 
                 return (
                   <div
@@ -461,26 +544,20 @@ export default function StrategyConceptPage({ user, onLogout }) {
                 </p>
               </div>
 
-              {/* Checklist steps */}
-              <div className="text-left space-y-2.5 text-xs font-medium text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              {/* Dynamic Checklist steps matching Image 2 */}
+              <div className="text-left space-y-2.5 text-xs font-medium text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 max-h-60 overflow-y-auto">
                 <div className="flex items-center gap-2 text-emerald-700 font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Campaign concept selected — {selectedConcept.title}</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Campaign concept selected — {selectedConcept?.title || 'Selected Concept'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-emerald-700 font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Generating strategy for Student</span>
-                </div>
-                <div className="flex items-center gap-2 text-emerald-700 font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Generating strategy for Working Professional</span>
-                </div>
-                <div className="flex items-center gap-2 text-emerald-700 font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Generating strategy for Traveller</span>
-                </div>
+                {all_personas.map((p, pIdx) => (
+                  <div key={p.persona_name || pIdx} className="flex items-center gap-2 text-emerald-700 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Generating strategy for {p.persona_name}</span>
+                  </div>
+                ))}
                 <div className="flex items-center gap-2 text-purple-700 font-bold animate-pulse">
-                  <div className="w-4 h-4 rounded-full border-2 border-purple-600 border-t-transparent animate-spin" />
+                  <div className="w-4 h-4 rounded-full border-2 border-purple-600 border-t-transparent animate-spin shrink-0" />
                   <span>Creating social posts and emails...</span>
                 </div>
               </div>
