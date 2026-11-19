@@ -265,48 +265,30 @@ export default function SidebarLayout({
         } shrink-0 bg-[#120F29] text-white flex flex-col justify-between select-none border-r border-[#1F1B40] transition-all duration-300 ease-in-out relative overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent`}
       >
         <div>
-          {/* Header: Logo and Close / Open button */}
+          {/* Header: Brand Logo */}
           {!isCollapsed ? (
-            <div className="flex items-center justify-between mb-4 px-1">
+            <div className="flex items-center mb-4 px-1">
               <Link to="/dashboard" className="flex items-center gap-2.5 group overflow-hidden">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-purple-900/40 shrink-0">
                   <Shield className="w-5 h-5 fill-white/20 text-white" />
                 </div>
-                <div className="truncate">
-                  <span className="font-extrabold text-base tracking-tight text-white block leading-tight truncate">
+                <div className="min-w-0">
+                  <span className="font-extrabold text-[15px] tracking-tight text-white block leading-tight whitespace-nowrap">
                     CampaignGuard <span className="text-purple-400">AI</span>
                   </span>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 block truncate">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 block whitespace-nowrap">
                     Guardrail Marketing
                   </span>
                 </div>
               </Link>
-              <button
-                type="button"
-                onClick={toggleSidebar}
-                title="Close sidebar"
-                aria-label="Close sidebar"
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer shrink-0 ml-1"
-              >
-                <PanelLeftClose className="w-4 h-4" />
-              </button>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2 mb-4">
+            <div className="flex flex-col items-center mb-4">
               <Link to="/dashboard" title="CampaignGuard AI — Guardrail Marketing" className="group">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-purple-900/40">
                   <Shield className="w-5 h-5 fill-white/20 text-white" />
                 </div>
               </Link>
-              <button
-                type="button"
-                onClick={toggleSidebar}
-                title="Open sidebar"
-                aria-label="Open sidebar"
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer mt-0.5"
-              >
-                <PanelLeftOpen className="w-4 h-4 text-purple-400" />
-              </button>
             </div>
           )}
 
@@ -514,22 +496,19 @@ export default function SidebarLayout({
         {/* Top Header Bar — minimal, blends with page bg */}
         <header className="h-12 bg-[#F6F7FB] border-b border-slate-200/60 px-4 sm:px-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            {/* Open / Close Sidebar Toggle Button */}
+            {/* Single Icon-Only Sidebar Toggle Button */}
             <button
               type="button"
               onClick={toggleSidebar}
               title={isCollapsed ? 'Open sidebar' : 'Close sidebar'}
               aria-label={isCollapsed ? 'Open sidebar' : 'Close sidebar'}
-              className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+              className="p-2 text-slate-500 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center"
             >
               {isCollapsed ? (
                 <PanelLeftOpen className="w-4 h-4 text-purple-600" />
               ) : (
-                <PanelLeftClose className="w-4 h-4 text-slate-500" />
+                <PanelLeftClose className="w-4 h-4" />
               )}
-              <span className="text-xs font-semibold text-slate-600 hidden sm:inline">
-                {isCollapsed ? 'Open Sidebar' : 'Close Sidebar'}
-              </span>
             </button>
 
             {currentStep && (
