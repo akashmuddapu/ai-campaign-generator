@@ -58,28 +58,28 @@ export default function PredictedPerformanceCard({ performance = {} }) {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
         {metrics.map((m, idx) => {
           const Icon = m.icon
           return (
             <div
               key={idx}
-              className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/40 hover:bg-slate-50 hover:border-purple-200 transition-all space-y-2"
+              className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 hover:border-purple-200 transition-all flex flex-col justify-between space-y-3"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-slate-600">{m.label}</span>
-                <div className={`w-6 h-6 rounded-md ${m.bg} ${m.color} flex items-center justify-center`}>
-                  <Icon className="w-3.5 h-3.5" />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-slate-700">{m.label}</span>
+                <div className={`w-7 h-7 rounded-lg ${m.bg} ${m.color} flex items-center justify-center shrink-0`}>
+                  <Icon className="w-4 h-4" />
                 </div>
               </div>
 
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl font-black text-slate-900">{m.value}</span>
-                <span className="text-[10px] text-slate-400 font-medium">Avg: {m.benchmark}</span>
+              <div className="flex items-baseline gap-2.5">
+                <span className="text-2xl font-black text-slate-900">{m.value}</span>
+                <span className="text-xs text-slate-500 font-semibold">Avg: {m.benchmark}</span>
               </div>
 
-              <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-700">
-                <ArrowUpRight className="w-3 h-3" />
+              <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700">
+                <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
                 <span>{m.status}</span>
               </div>
             </div>

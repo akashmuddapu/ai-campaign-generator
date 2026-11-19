@@ -21,7 +21,7 @@ export default function PersonaImpactCard({ personas = [] }) {
   }
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-4">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-4 h-full flex flex-col">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
@@ -32,12 +32,12 @@ export default function PersonaImpactCard({ personas = [] }) {
             <p className="text-[11px] text-slate-500">Segment differentiation & resonance triggers</p>
           </div>
         </div>
-        <span className="text-[10px] font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full">
+        <span className="text-[10px] font-extrabold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full">
           {personas.length} {personas.length === 1 ? 'Segment' : 'Segments'}
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 flex-1 content-start">
         {personas.map((p, idx) => {
           const Icon = getPersonaIcon(p.persona_name)
           const score = p.relevance_score ?? 92

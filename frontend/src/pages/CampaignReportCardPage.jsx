@@ -484,17 +484,48 @@ export default function CampaignReportCardPage({ user, onLogout }) {
           </div>
         )}
 
-        {/* Header Title + Campaign Switcher */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        {/* Sticky Top Header Bar: Title & Campaign Switcher on Left, Action Buttons Fixed at Top on Right */}
+        <div className="sticky top-0 z-30 -mx-4 px-4 py-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col xl:flex-row xl:items-center justify-between gap-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
                 Campaign Report Card
               </h1>
               {hasBrandKit && (
                 <span className="text-xs font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full">
                   {activeProductName}
                 </span>
+              )}
+              {isLoading && (
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 whitespace-nowrap">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  Evaluating…
+                </span>
+              )}
+              {savedCampaigns.length > 1 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+                    Campaign:
+                  </span>
+                  <select
+                    aria-label="Switch campaign report card"
+                    value={activeCampaignId || ''}
+                    onChange={(e) => {
+                      const nextId = e.target.value
+                      if (nextId) {
+                        setActiveCampaignId(nextId)
+                        setSearchParams({ id: nextId })
+                      }
+                    }}
+                    className="text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:border-purple-300 rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500/20 cursor-pointer max-w-[240px] truncate shadow-2xs"
+                  >
+                    {savedCampaigns.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.product_name} — {c.concept_title || 'Campaign'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               )}
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -503,38 +534,37 @@ export default function CampaignReportCardPage({ user, onLogout }) {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            {isLoading && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 whitespace-nowrap">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                Evaluating…
-              </span>
-            )}
-            {savedCampaigns.length > 1 && (
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
-                  Campaign:
-                </span>
-                <select
-                  aria-label="Switch campaign report card"
-                  value={activeCampaignId || ''}
-                  onChange={(e) => {
-                    const nextId = e.target.value
-                    if (nextId) {
-                      setActiveCampaignId(nextId)
-                      setSearchParams({ id: nextId })
-                    }
-                  }}
-                  className="text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:border-purple-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500/20 cursor-pointer max-w-[260px] truncate shadow-2xs"
-                >
-                  {savedCampaigns.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.product_name} — {c.concept_title || 'Campaign'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+          {/* Action Buttons Fixed at Top */}
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            <button
+              type="button"
+              onClick={() => navigate('/results?tab=guardian')}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Brand Guardian</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleOpenImprovementDrawer}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+              <span>Review Improvements</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                unlockStep(6)
+                navigate('/results?tab=export')
+              }}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-purple-900/20 transition-all cursor-pointer"
+            >
+              <span>Proceed to Export</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 
@@ -688,55 +718,22 @@ export default function CampaignReportCardPage({ user, onLogout }) {
         {/* ─── 2. 5 Category Score Cards ─────────────────────────────────── */}
         <ScoreBreakdownGrid scores={currentData.score_breakdown} />
 
-        {/* ─── 3. Two-Column Dashboard Section ────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column (7 cols): Persona Impact & AI Insights */}
-          <div className="lg:col-span-7 space-y-6">
+        {/* ─── 3. Balanced Two-Column Row: Persona Impact & 5-Axis Radar ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          <div className="lg:col-span-7 flex flex-col">
             <PersonaImpactCard personas={currentData.persona_impacts} />
-            <AIInsightsPanel insights={currentData.ai_insights} />
           </div>
 
-          {/* Right Column (5 cols): 5-Axis Radar Chart & Channel Predictions */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 flex flex-col">
             <CampaignRadarChart scores={currentData.score_breakdown} />
-            <PredictedPerformanceCard performance={currentData.predicted_performance} />
           </div>
         </div>
 
-        {/* ─── 4. Bottom Stepper Actions ───────────────────────────────────── */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-          <button
-            type="button"
-            onClick={() => navigate('/results?tab=guardian')}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Brand Guardian</span>
-          </button>
+        {/* ─── 4. Full-Width 3-Column Predicted Channel Performance ───────── */}
+        <PredictedPerformanceCard performance={currentData.predicted_performance} />
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={handleOpenImprovementDrawer}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-purple-200 text-purple-700 hover:bg-purple-50 text-xs font-bold transition-all cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>Review Improvements</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                unlockStep(6)
-                navigate('/results?tab=export')
-              }}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
-            >
-              <span>Proceed to Export</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        {/* ─── 5. Full-Width 3-Column AI Insights & Diagnostics ────────────── */}
+        <AIInsightsPanel insights={currentData.ai_insights} />
 
         {/* Slide-over Drawer for Improvement */}
         <ImprovementDrawerModal

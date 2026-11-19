@@ -41,21 +41,22 @@ export default function CampaignRadarChart({ scores = {} }) {
   const dataPolygon = dataPoints.map((p) => `${p.x},${p.y}`).join(' ')
 
   return (
-    <div className="flex flex-col items-center justify-center relative p-2 bg-gradient-to-b from-purple-50/40 via-white to-white rounded-2xl border border-purple-100 shadow-xs">
-      <div className="w-full flex items-center justify-between px-3 pt-2 pb-1">
-        <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse" />
+    <div className="h-full flex flex-col justify-between relative p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="w-full flex items-center justify-between border-b border-slate-100 pb-3 mb-2">
+        <span className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-pulse" />
           5-Dimension Balance Radar
         </span>
-        <span className="text-[10px] font-semibold text-purple-700 bg-purple-100/70 px-2 py-0.5 rounded-full">
+        <span className="text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-100 px-2.5 py-0.5 rounded-full">
           Max: 100
         </span>
       </div>
 
-      <svg
-        viewBox={`0 0 ${size} ${size}`}
-        className="w-full max-w-[310px] h-auto overflow-visible select-none"
-      >
+      <div className="flex-1 flex items-center justify-center">
+        <svg
+          viewBox={`0 0 ${size} ${size}`}
+          className="w-full max-w-[290px] h-auto overflow-visible select-none mx-auto"
+        >
         {/* Concentric pentagon grid lines */}
         {levels.map((lvl) => (
           <polygon
@@ -154,7 +155,8 @@ export default function CampaignRadarChart({ scores = {} }) {
             </g>
           )
         })}
-      </svg>
+        </svg>
+      </div>
     </div>
   )
 }
