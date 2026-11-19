@@ -1,415 +1,153 @@
 # CampaignGuard AI 🛡️
 
-> **AI-powered marketing campaign generator with built-in brand compliance.**
-> Generate persona-targeted social posts and emails — validated against your brand rules in real time.
+<p align="left">
+  <img alt="React 19" src="https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite%208-61DAFB?style=flat-square&logo=react&logoColor=black" />
+  <img alt="Flask 3.1" src="https://img.shields.io/badge/Backend-Flask%203.1%20(Python)-000000?style=flat-square&logo=flask&logoColor=white" />
+  <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Styling-Tailwind%20CSS%204-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white" />
+  <img alt="Tests Passing" src="https://img.shields.io/badge/Tests-128%20Passing-10B981?style=flat-square" />
+</p>
 
-
-
-
-\
-
-
----
-
-## 🎯 What Is This?
-
-**CampaignGuard AI** is a full-stack AI-powered marketing platform that helps marketers create personalized, brand-compliant marketing campaigns.
-
-The platform allows marketers to:
-
-1. **Define a Brand Kit** — product name, description, tone tags, tagline, and banned words.
-2. **Configure Customer Personas** — Student, Working Professional, Traveller, or custom personas.
-3. **Generate Campaign Concepts** — AI generates three strategic campaign angles with hooks and key messages.
-4. **Generate Personalized Assets** — unique social media posts (≤280 characters) and emails (75–250 words) for each persona.
-5. **Run Brand Guardian** — validates assets against brand rules, including banned words, content length, and tone.
-6. **Auto-Fix Violations** — automatically fixes brand compliance violations.
-7. **Campaign Report Card** — comprehensive 5-axis radar evaluation (Brand Voice, Persona Alignment, Platform Fit, Safety & Compliance, Message Clarity), executive grade (A–F), predicted performance metrics, and AI recommendations.
-8. **Analyze Campaign Performance** — view campaign analytics and insights through the Analytics page.
-9. **Export Campaigns** — download complete campaigns as PDF, Markdown, or JSON.
-
-All through a guided campaign studio with no AI prompt engineering required.
+> **AI Marketing Campaign Studio with Built-In Brand Governance.**  
+> Turn a Brand Kit and target personas into tailored campaign concepts, social posts, marketing emails, compliance report cards, and downloadable JPG/PNG ad visuals.
 
 ---
 
-## 📸 App Screenshots
+## Overview
 
-| Feature              | Description                                                           |
-| -------------------- | --------------------------------------------------------------------- |
-| Brand Kit & Personas | Define products, brand tone, banned words, and customer personas.     |
-| Campaign Assets      | Generate persona-specific social media posts and emails.              |
-| Brand Guardian       | Review asset-wise compliance scores and automatically fix violations. |
-| Campaign Report Card | Comprehensive 5-axis radar chart, executive grade, and AI insights.  |
-| Analytics Dashboard  | Explore campaign analytics, performance metrics, and insights.        |
-| Export               | Download complete campaigns in PDF, Markdown, or JSON.                |
+**CampaignGuard AI** combines structured AI generation with deterministic Python guardrails so every marketing asset stays on-brand, persona-specific, and channel-compliant—without requiring manual prompt engineering.
+
+```text
+Generate ──► Validate (Rules + AI) ──► Auto-Fix ──► Report Card & Export ──► Ad Image Studio (JPG/PNG)
+```
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-| Feature                        | Description                                                                                    |
-| ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| 🧠 **AI Provider Abstraction** | Pluggable Gemini / Grok / Mock providers that can be switched without changing business logic. |
-| 🛡️ **Brand Guardian**         | Deterministic banned-word detection, content-length validation, and semantic scoring.          |
-| ⚡ **Auto-Fix Engine**          | Automatically replaces banned words and fixes over-length content.                             |
-| 🎯 **Campaign Report Card**    | 5-axis radar chart, executive grade (A–F), predicted performance metrics, and AI recommendations. |
-| 👤 **Persona DNA**             | Generates distinct marketing content for each customer persona.                                |
-| 📊 **Analytics Dashboard**     | Provides campaign analytics, performance metrics, and visual insights.                         |
-| 📥 **Offline Export**          | Client-side PDF, Markdown, and JSON downloads.                                                 |
-| 🕒 **Campaign History**        | Access previous campaigns, executive reports, and quick-edit functionality.                    |
-| 🔐 **Authentication System**   | Server-side Flask sessions with password hashing.                                              |
-| 📊 **Live Validation**         | Brand compliance scores update as campaign assets are edited.                                  |
-| 🎨 **Sample Presets**          | TravelMate, CyberShield, and ZenBrew sample brand kits.                                        |
+- **🧭 6-Step Guided Studio:** Progress step-by-step from Brand Kit setup to final ad image generation, with draft auto-save (`Draft • Step X/6`) and exact-step resume.
+- **👤 Persona-Driven Strategy:** Generate distinct psychological profiles (goals, pain points, motivations) or use 1-click **AI Suggest Personas** so every audience segment gets tailored messaging.
+- **🛡️ Brand Guardian & Auto-Fix:** Enforces hard rules in Python (banned words, character limits, hashtag counts) alongside AI semantic scoring, automatically repairing violations in a closed loop.
+- **💡 Explainable AI:** Every post and email includes a *"Why This Content?"* breakdown explaining brand, persona, and channel alignment.
+- **📊 Dynamic Report Card:** Evaluates brand tone, banned-word compliance, and predicted channel engagement with an executive letter grade (`A+`–`D`) and 5-axis radar chart.
+- **🖼️ Step 6 — Ad Campaign Image Studio:** Generates persona-tailored commercial ad visuals across multiple aspect ratios (`1:1`, `16:9`, `9:16`) with customizable overlays and 1-click **JPG / PNG** export.
+- **📥 Multi-Format Campaign Export:** Download full campaign packages as **PDF**, **Markdown (`.md`)**, or **JSON (`.json`)**.
+- **🧠 Resilient AI Failover:** Pluggable provider chain (`Gemini → Grok → Mock`) ensures reliable uptime and instant offline demos/testing.
 
 ---
 
-## 🏗️ Project Structure
+## 6-Step Studio Workflow
+
+1. **Step 1 — Brand Kit & Personas (`/generator`)**  
+   Define your product, brand tone, tagline, banned words, and target personas (or load sample presets / click **Suggest Personas**).
+2. **Step 2 — Persona Strategy (`/strategy-concept?step=dna`)**  
+   Review generated goals, pain points, and messaging angles tailored to each customer segment.
+3. **Step 3 — Campaign Concepts (`/strategy-concept?step=concepts`)**  
+   Compare 3 strategic campaign directions complete with key messages and hooks.
+4. **Step 4 — Campaign Assets (`/results?tab=assets`)**  
+   Review side-by-side Social Posts and Marketing Emails per persona, edit inline, or inspect *"Why This Content?"*.
+5. **Step 5 — Brand Guardian, Report Card & Export (`/results?tab=guardian`, `/report-card`)**  
+   Audit compliance scores, run 1-click Auto-Fix, inspect your Brand Kit Report Card, and export campaign packages as **PDF**, **Markdown**, or **JSON**.
+6. **Step 6 — Ad Campaign Image Generation (`/results?tab=ad`)**  
+   Generate commercial ad visuals tailored to each persona across **`1:1`**, **`16:9`**, and **`9:16`** formats, choose from 4 visual styles, customize headline/CTA overlays, and download high-resolution **JPG** or **PNG** creatives.
+
+---
+
+## Architecture & Tech Stack
+
+```text
+[ React 19 + Tailwind CSS 4 Studio ] ──► REST / JSON ──► [ Flask 3.1 API ]
+                                                                │
+                          ┌─────────────────────────────────────┼─────────────────────────────────────┐
+                          ▼                                     ▼                                     ▼
+               [ AI Provider Chain ]                 [ Brand Guardian & Rules ]           [ Storage & Export ]
+               Gemini ─► Grok ─► Mock                Python Validators + Auto-Fix        Per-User JSON / PDF / JPG / PNG
+```
+
+- **Frontend:** React 19, Vite 8, Tailwind CSS 4, React Router 7, Axios, Lucide React, jsPDF
+- **Backend:** Python 3.11+, Flask 3.1, Flask-Session, Pydantic
+- **AI & Testing:** Google Gemini API, xAI Grok API, Mock Provider, Pytest (97 tests), Vitest (31 tests)
+
+---
+
+## Project Structure
 
 ```text
 ai-campaign-generator/
-├── frontend/                         # React 19 + Vite + Tailwind CSS 4
+├── frontend/                         # React 19 + Vite 8 + Tailwind CSS 4
 │   ├── src/
-│   │   ├── pages/
-│   │   │   ├── LandingPage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── SignupPage.jsx
-│   │   │   ├── DashboardPage.jsx
-│   │   │   ├── BrandPersonaSetupPage.jsx
-│   │   │   ├── StrategyConceptPage.jsx
-│   │   │   ├── CampaignResultsPage.jsx
-│   │   │   ├── CampaignReportCardPage.jsx    # Campaign Report Card & 5-axis radar
-│   │   │   ├── CampaignHistoryReportPage.jsx
-│   │   │   └── AnalyticsPage.jsx             # Campaign analytics dashboard
-│   │   ├── components/
-│   │   │   ├── SidebarLayout.jsx
-│   │   │   ├── AssetCard.jsx
-│   │   │   ├── BrandGuardianBadge.jsx
-│   │   │   ├── WhyThisContentModal.jsx
-│   │   │   ├── PresetSelector.jsx
-│   │   │   ├── ValidationReportCard.jsx
-│   │   │   ├── CampaignRadarChart.jsx        # SVG 5-axis radar chart
-│   │   │   ├── ExecutiveGradeBanner.jsx      # Letter grade banner & status
-│   │   │   ├── ScoreBreakdownGrid.jsx        # Dimension metrics grid
-│   │   │   ├── PersonaImpactCard.jsx         # Persona alignment breakdown
-│   │   │   ├── PredictedPerformanceCard.jsx   # Projected CTR, engagement & reach
-│   │   │   ├── AIInsightsPanel.jsx           # AI recommendations panel
-│   │   │   └── ImprovementDrawerModal.jsx    # Interactive auto-fix drawer
-│   │   └── services/
-│   │       └── api.js
-│   └── tests/                                # Vitest + React Testing Library
+│   │   ├── pages/                    # Auth, Dashboard, 6-Step Studio, Report Card & History
+│   │   ├── components/               # Sidebar, Asset Cards, Guardian Badges, Charts & Modals
+│   │   ├── services/api.js           # Axios API client
+│   │   └── utils/                    # Step progress manager & PDF generator
+│   └── tests/                        # Vitest frontend test suite
 │
-├── backend/                                  # Python Flask REST API
-│   ├── app/
-│   │   ├── routes/
-│   │   │   ├── auth_routes.py
-│   │   │   ├── campaign_routes.py
-│   │   │   ├── report_card_routes.py         # Report Card endpoints
-│   │   │   └── preset_routes.py
-│   │   ├── services/
-│   │   │   ├── ai_service.py
-│   │   │   ├── gemini_provider.py
-│   │   │   ├── grok_provider.py
-│   │   │   ├── mock_provider.py
-│   │   │   ├── brand_guardian.py
-│   │   │   ├── report_card_service.py        # 5-axis scoring & synthesis
-│   │   │   ├── performance_forecast_service.py # Forecast engine
-│   │   │   ├── export_service.py
-│   │   │   └── storage_service.py
-│   │   ├── models/
-│   │   │   └── report_card.py                # Report Card domain models
-│   │   └── validators/
-│   ├── data/
-│   ├── tests/
-│   ├── requirements.txt
-│   └── wsgi.py
-│
-└── specs/
-    ├── 001-campaign-generator-mvp/
-    └── 002-campaign-report-card/             # Report Card specification & plan
+└── backend/                          # Python Flask 3.1 REST API
+    ├── app/
+    │   ├── routes/                   # Auth, Campaigns, Ad Studio, Report Card & Presets
+    │   ├── services/                 # AI Providers, Brand Guardian, Report Card & Exports
+    │   ├── models/                   # Report card data models
+    │   └── validators/               # Deterministic banned-word, length & hashtag rules
+    ├── tests/                        # Pytest backend test suite
+    ├── .env.example
+    ├── requirements.txt
+    └── wsgi.py
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
+- **Node.js** `>= 20` and **Python** `>= 3.11`
 
-- **Node.js** ≥ 20
-- **Python** ≥ 3.11
-- **Git**
-
-### 1. Clone the Repository
-
+### 1. Clone & Start the Backend
 ```bash
 git clone https://github.com/akashmuddapu/ai-campaign-generator.git
-cd ai-campaign-generator
-```
-
-### 2. Backend Setup
-
-```bash
-cd backend
+cd ai-campaign-generator/backend
 
 python -m venv .venv
-```
-
-Activate the virtual environment:
-
-**Windows:**
-
-```powershell
-.venv\Scripts\activate
-```
-
-**macOS/Linux:**
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
+# Windows: .venv\Scripts\activate | macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-```
+cp .env.example .env
 
-### 3. Configure Environment Variables
-
-Create a `.env` file inside the `backend` directory.
-
-```env
-SECRET_KEY=your-super-secret-key-here
-GEMINI_API_KEY=your-gemini-api-key
-GROK_API_KEY=your-grok-api-key
-```
-
-API keys are optional. The application supports Mock mode when external AI providers are unavailable.
-
-### 4. Start the Backend
-
-From the `backend` directory:
-
-```bash
 python wsgi.py
 ```
+> *Note: API keys (`GEMINI_API_KEY`, `GROK_API_KEY`) in `backend/.env` are optional—Mock mode runs out of the box.*
 
-Backend runs at:
-
-```text
-http://localhost:5000
-```
-
-### 5. Start the Frontend
-
-Open another terminal:
-
+### 2. Start the Frontend
+Open a second terminal:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-Frontend runs at:
-
-```text
-http://localhost:5173
-```
-
-Open `http://localhost:5173` in your browser.
+Visit **`http://localhost:5173`** in your browser.
 
 ---
 
-## 🤖 AI Provider Configuration
+## Core API Endpoints (`/api`)
 
-CampaignGuard AI uses an AI Provider Abstraction Layer.
-
-Supported providers:
-
-```text
-Gemini → Grok → Mock
-```
-
-- **Gemini:** Google Gemini API integration.
-- **Grok:** xAI Grok API integration.
-- **Mock:** Deterministic fallback responses for offline demonstrations.
-
-### Gemini API Setup
-
-1. Visit [Google AI Studio](https://aistudio.google.com).
-2. Create a project and generate an API key.
-3. Add the key to `backend/.env`:
-
-```env
-GEMINI_API_KEY=your-gemini-api-key
-```
+| Category | Method & Endpoint | Description |
+| --- | --- | --- |
+| **Auth** | `POST /auth/signup`, `/auth/login`, `/auth/logout` | User registration and session management |
+| **Studio Flow** | `POST /campaigns/suggest-personas`, `/persona-dna`, `/concepts`, `/generate-assets` | Steps 1–4 generation & automatic Brand Guardian Auto-Fix |
+| **Drafts & History** | `POST /campaigns/draft` • `GET /campaigns` | Save/resume drafts at any step and manage user history |
+| **Report Card** | `GET /campaigns/<id>/report-card` • `POST /campaigns/report-card/evaluate` | Brand Kit alignment scoring and improvement suggestions |
+| **Step 6 Ad Studio** | `POST /campaigns/generate-ad-hooks`, `/campaigns/generate-ad-image` | Generate brand-safe ad hooks and **JPG / PNG** ad visuals |
+| **Export & Presets** | `GET /campaigns/export/<id>` • `GET /presets` | Export Markdown/JSON bundles and load synthetic sample brands |
 
 ---
 
-## 🧪 Running Tests
-
-### Backend Tests
-
-From the `backend` directory:
+## Testing
 
 ```bash
-pytest -q
-```
+# Backend tests (97 passing)
+pytest backend/tests -q
 
-### Frontend Tests
-
-From the project root:
-
-```bash
-npm --prefix frontend test
+# Frontend tests (31 passing)
+npm --prefix frontend test -- --run
 ```
 
 ---
 
-## 🌐 API Reference
-
-All API endpoints are prefixed with `/api`.
-
-### Authentication
-
-| Method | Endpoint       | Description                        |
-| ------ | -------------- | ---------------------------------- |
-| POST   | `/auth/signup` | Register a new user                |
-| POST   | `/auth/login`  | Authenticate a user                |
-| POST   | `/auth/logout` | End the current session            |
-| GET    | `/auth/me`     | Get the current authenticated user |
-
-### Campaigns
-
-| Method | Endpoint                     | Description                             |
-| ------ | ---------------------------- | --------------------------------------- |
-| POST   | `/campaigns/persona-dna`     | Generate persona psychological profiles |
-| POST   | `/campaigns/concepts`        | Generate three campaign concepts        |
-| POST   | `/campaigns/generate-assets` | Generate social posts and emails        |
-| POST   | `/campaigns/auto-fix`        | Fix brand compliance violations         |
-| POST   | `/campaigns/validate`        | Validate campaign assets                |
-| GET    | `/campaigns`                 | Retrieve campaign history               |
-| GET    | `/campaigns/<id>`            | Retrieve a campaign                     |
-| PUT    | `/campaigns/<id>`            | Update campaign data                    |
-| DELETE | `/campaigns/<id>`            | Delete a campaign                       |
-| GET    | `/campaigns/export/<id>`     | Export a campaign                       |
-
-### Campaign Report Card
-
-| Method | Endpoint                                         | Description                                                        |
-| ------ | ------------------------------------------------ | ------------------------------------------------------------------ |
-| GET    | `/campaigns/<id>/report-card`                    | Retrieve or synthesize 5-axis report card and performance forecast |
-| POST   | `/campaigns/<id>/report-card/improve`            | Generate prioritized improvement recommendations                 |
-| POST   | `/campaigns/<id>/report-card/apply-improvements` | Auto-apply recommendations and re-score campaign                   |
-
-### Presets
-
-| Method | Endpoint        | Description                      |
-| ------ | --------------- | -------------------------------- |
-| GET    | `/presets`      | List available sample brand kits |
-| GET    | `/presets/<id>` | Retrieve a specific preset       |
-
----
-
-## 🎨 Tech Stack
-
-| Layer              | Technology                     |
-| ------------------ | ------------------------------ |
-| Frontend Framework | React 19                       |
-| Build Tool         | Vite 8                         |
-| Styling            | Tailwind CSS 4                 |
-| Routing            | React Router 7                 |
-| HTTP Client        | Axios                          |
-| Icons              | Lucide React                   |
-| Frontend Testing   | Vitest + React Testing Library |
-| Backend Framework  | Flask 3.1                      |
-| Session Management | Flask-Session                  |
-| CORS               | Flask-CORS                     |
-| AI Integration     | OpenAI-compatible SDK          |
-| Data Validation    | Pydantic                       |
-| Backend Testing    | Pytest                         |
-
----
-
-## 🔐 Environment Variables
-
-### `backend/.env`
-
-| Variable         | Required | Description                                  |
-| ---------------- | -------- | -------------------------------------------- |
-| `SECRET_KEY`     | Yes      | Flask session secret                         |
-| `GEMINI_API_KEY` | No       | Google Gemini API key                        |
-| `GROK_API_KEY`   | No       | xAI Grok API key                             |
-| `SESSION_TYPE`   | No       | Session storage type; defaults to filesystem |
-
----
-
-## 📋 6-Step Campaign Studio Workflow
-
-```text
-Step 1 → Brand Kit & Personas
-         Define product details, brand tone, tagline,
-         banned words, and customer personas.
-
-Step 2 → Persona DNA
-         Generate psychological profiles including goals,
-         pain points, motivations, and preferred tone.
-
-Step 3 → Campaign Concepts
-         Generate and select strategic campaign angles,
-         headlines, hooks, and key messages.
-
-Step 4 → Campaign Assets
-         Generate persona-specific social media posts
-         and emails. Edit, regenerate, or auto-fix assets.
-
-Step 5 → Brand Guardian & Compliance
-         Validate content against brand guidelines, review
-         dimension scores, and automatically fix violations.
-
-Step 6 → Campaign Report Card & Export
-         Review 5-axis radar chart, executive letter grade,
-         predicted CTR/engagement, and export PDF/Markdown/JSON.
-```
-
-The Analytics page provides an additional view of campaign data and insights.
-
----
-
-## 🗂️ Campaign History
-
-CampaignGuard AI maintains previous campaigns in the sidebar.
-
-Users can access:
-
-- **Executive Reports** — campaign details, brand kit, strategy, personas, and generated assets.
-- **Quick Edit Mode** — modify product information, taglines, social posts, and emails.
-- **Resume in Studio** — continue working on previously generated campaigns.
-- **Export** — download campaign data in Markdown or JSON.
-
----
-
-## 📊 Analytics Dashboard
-
-The Analytics page provides a centralized view of campaign-related insights.
-
-It is designed to help users understand campaign activity, review performance metrics, and analyze campaign data through visual representations.
-
----
-
-## 🤝 Contributing
-
-```bash
-git checkout -b feature/your-feature-name
-
-git add .
-git commit -m "feat: add your feature"
-
-git push origin feature/your-feature-name
-```
-
-Open a Pull Request to merge your changes.
-
-Please follow the engineering principles documented in `.specify/memory/constitution.md`.
-
----
-
-\<p align="center">   Built with ❤️ using React, Flask, Google Gemini AI and AntiGravity IDE. \</p>
+<p align="center">Built with ❤️ using React, Flask, and Google Gemini AI.</p>
