@@ -22,7 +22,7 @@ export default function DashboardPage({ user, onLogout }) {
 
   return (
     <SidebarLayout user={user} onLogout={onLogout} campaignName="TravelMate" campaignStatus="Ready">
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto pt-6 space-y-8">
         {draftNotice && (
           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2.5">

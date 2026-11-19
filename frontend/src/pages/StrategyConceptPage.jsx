@@ -432,18 +432,11 @@ export default function StrategyConceptPage({ user, onLogout }) {
       campaignName={brand_kit.product_name?.split(' ')[0] || 'TravelMate'}
     >
       <div className="max-w-6xl mx-auto space-y-6">
-        {error && (
-          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-            <span>{error}</span>
-          </div>
-        )}
-
         {/* ─── SCREEN 3: Persona DNA (Strategy — Single-Page Vertical Scroll) ─── */}
         {subStep === 'dna' && (
           <div className="space-y-6">
             {/* Sticky Top Header with Title + Fixed Action Buttons at Top */}
-            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="sticky top-0 z-30 -mx-4 px-4 pt-6 pb-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
@@ -616,7 +609,7 @@ export default function StrategyConceptPage({ user, onLogout }) {
         {subStep === 'concepts' && (
           <div className="space-y-6">
             {/* Sticky Top Header with Title + Fixed Action Buttons at Top */}
-            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="sticky top-0 z-30 -mx-4 px-4 pt-6 pb-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   Campaign Concepts
@@ -667,6 +660,13 @@ export default function StrategyConceptPage({ user, onLogout }) {
                 </button>
               </div>
             </div>
+
+            {error && (
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                <span>{error}</span>
+              </div>
+            )}
 
             {/* 3 Concept Cards matching Image 1 Screen 4 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

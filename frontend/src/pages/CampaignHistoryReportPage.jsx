@@ -786,7 +786,7 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
       campaignName={brandKit.product_name?.split(' ')[0] || activeCampaign.product_name?.split(' ')[0] || 'Workspace'}
       campaignStatus={activeCampaign.status || 'Validated'}
     >
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto pt-6 space-y-6">
         {/* Toast Feedback Notification */}
         {feedbackMessage && (
           <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between shadow-xs animate-in fade-in duration-200">

@@ -541,7 +541,7 @@ export default function SidebarLayout({
         </header>
 
         {/* Page Content Scroll Area */}
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-8 pb-8 pt-0">
           {children}
         </main>
       </div>

@@ -439,7 +439,7 @@ export default function CampaignReportCardPage({ user, onLogout }) {
       campaignName={activeProductName.split(' ')[0]}
       campaignStatus={currentData.launch_readiness || 'Review'}
     >
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto pt-6 space-y-6">
         {/* ─── Top Stepper Navigation ──────────────────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3.5">
           <div className="flex flex-wrap items-center gap-2">

@@ -1320,7 +1320,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
     >
       <div className="max-w-6xl mx-auto space-y-6">
         {/* ─── Top View Switcher Tabs (progressively revealed) ─────────────── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pt-6 pb-3">
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setSearchParams({ tab: 'assets' })}
@@ -1408,7 +1408,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
         {activeView === 'assets' && (
           <div className="space-y-6">
             {/* Sticky Top Header Bar: Title on Left, Step Action Buttons Fixed at Top on Right */}
-            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="sticky top-0 z-30 -mx-4 px-4 py-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
@@ -1816,7 +1816,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
         {activeView === 'guardian' && (
           <div className="space-y-6">
             {/* Sticky Top Header Bar */}
-            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="sticky top-0 z-30 -mx-4 px-4 py-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   Brand Guardian
@@ -1983,7 +1983,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
         {activeView === 'export' && (
           <div className="space-y-6">
             {/* Sticky Top Header Bar */}
-            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="sticky top-0 z-30 -mx-4 px-4 py-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   Export Campaign
@@ -2127,7 +2127,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
         {activeView === 'ad' && (
           <div className="space-y-6">
             {/* Sticky Top Header Bar */}
-            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="sticky top-0 z-30 -mx-4 px-4 py-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[11px] font-extrabold mb-1">
                   <Sparkles className="w-3 h-3 text-purple-600" />

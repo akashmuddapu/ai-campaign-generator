@@ -753,7 +753,7 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
     <SidebarLayout user={user} onLogout={onLogout} currentStep="Step 1 of 5" campaignName={productName.split(' ')[0] || 'TravelMate'}>
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Sticky Top Header Bar: Title & Presets on Left, Save Draft & Next Step Buttons Fixed at Top on Right */}
-        <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="sticky top-0 z-30 -mx-4 px-4 pt-6 pb-4 bg-[#F6F7FB] border-b border-slate-200 shadow-[0_4px_12px_-2px_rgba(15,23,42,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
