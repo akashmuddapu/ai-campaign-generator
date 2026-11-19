@@ -100,6 +100,40 @@ class ImprovementOption:
 
 
 @dataclass
+class BrandKitAlignment:
+    product_name: str = ""
+    tagline: str = ""
+    product_description: str = ""
+    brand_tones: List[str] = field(default_factory=list)
+    matched_tones: List[str] = field(default_factory=list)
+    banned_words: List[str] = field(default_factory=list)
+    flagged_banned_words: List[str] = field(default_factory=list)
+    product_mentioned: bool = True
+    tagline_aligned: bool = True
+    concept_title: str = ""
+    concept_hook: str = ""
+    alignment_summary: str = ""
+    channel_checks: List[Dict[str, Any]] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "product_name": self.product_name,
+            "tagline": self.tagline,
+            "product_description": self.product_description,
+            "brand_tones": self.brand_tones,
+            "matched_tones": self.matched_tones,
+            "banned_words": self.banned_words,
+            "flagged_banned_words": self.flagged_banned_words,
+            "product_mentioned": self.product_mentioned,
+            "tagline_aligned": self.tagline_aligned,
+            "concept_title": self.concept_title,
+            "concept_hook": self.concept_hook,
+            "alignment_summary": self.alignment_summary,
+            "channel_checks": self.channel_checks,
+        }
+
+
+@dataclass
 class CampaignReportCard:
     campaign_id: str
     overall_score: int
@@ -109,6 +143,7 @@ class CampaignReportCard:
     persona_impacts: List[PersonaImpact] = field(default_factory=list)
     predicted_performance: PredictedPerformance = field(default_factory=PredictedPerformance)
     ai_insights: AIInsights = field(default_factory=AIInsights)
+    brand_kit_alignment: BrandKitAlignment = field(default_factory=BrandKitAlignment)
     id: str = field(default_factory=lambda: f"rc-{uuid.uuid4().hex[:8]}")
     generated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -123,5 +158,6 @@ class CampaignReportCard:
             "persona_impacts": [p.to_dict() for p in self.persona_impacts],
             "predicted_performance": self.predicted_performance.to_dict(),
             "ai_insights": self.ai_insights.to_dict(),
+            "brand_kit_alignment": self.brand_kit_alignment.to_dict(),
             "generated_at": self.generated_at,
         }

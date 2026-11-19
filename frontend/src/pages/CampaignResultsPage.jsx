@@ -205,7 +205,17 @@ export default function CampaignResultsPage({ user, onLogout }) {
       hook: '"Your schedule changes. Your drink doesn\'t have to."',
     }
 
-  const campaignId = location.state?.campaign_id || 'camp-travelmate-001'
+  const campaignId =
+    location.state?.campaign_id ||
+    searchParams.get('id') ||
+    (() => {
+      try {
+        return sessionStorage.getItem('cg_active_campaign_id') || null
+      } catch {
+        return null
+      }
+    })() ||
+    'camp-travelmate-001'
 
   // Guard: if no meaningful state loaded (direct URL access), show empty state
   const hasRealData = !!(location.state?.brand_kit || sessionStorage.getItem('cg_brand_kit'))
@@ -853,6 +863,31 @@ export default function CampaignResultsPage({ user, onLogout }) {
     showFeedback(`Downloading ${format === 'markdown' ? 'Markdown' : 'JSON'} export…`)
   }
 
+  const handleOpenReportCard = () => {
+    const serializablePersonas = all_personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+    const activeP = serializablePersonas.find((p) => p.persona_name === activePersonaName) || serializablePersonas[0]
+    try {
+      sessionStorage.setItem('cg_brand_kit', JSON.stringify(brand_kit))
+      sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
+      sessionStorage.setItem('cg_selected_concept', JSON.stringify(selected_concept))
+      sessionStorage.setItem('cg_persona_assets', JSON.stringify(personaAssets))
+      if (campaignId && campaignId !== 'camp-travelmate-001') {
+        sessionStorage.setItem('cg_active_campaign_id', campaignId)
+      }
+    } catch {}
+    navigate(campaignId && campaignId !== 'camp-travelmate-001' ? `/report-card?id=${campaignId}` : '/report-card', {
+      state: {
+        campaign_id: campaignId,
+        brand_kit,
+        persona: activeP,
+        all_personas: serializablePersonas,
+        selected_concept,
+        assets: currentAssets,
+        assets_by_persona: personaAssets,
+      },
+    })
+  }
+
   return (
     <SidebarLayout
       user={user}
@@ -863,8 +898,8 @@ export default function CampaignResultsPage({ user, onLogout }) {
     >
       <div className="max-w-6xl mx-auto space-y-6">
         {/* ─── Top View Switcher Tabs (progressively revealed) ─────────────── */}
-        <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setSearchParams({ tab: 'assets' })}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -889,7 +924,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
                   <span>Brand Guardian</span>
                 </button>
                 <button
-                  onClick={() => navigate('/report-card')}
+                  onClick={handleOpenReportCard}
                   className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
                 >
                   <Award className="w-3.5 h-3.5 text-purple-600" />
@@ -1388,7 +1423,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => navigate('/report-card')}
+                  onClick={handleOpenReportCard}
                   className="px-5 py-2.5 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Award className="w-4 h-4" />
