@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Shield, Lock, Mail, ArrowRight, AlertCircle, Sparkles } from 'lucide-react'
+import { Shield, Lock, Mail, ArrowRight, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react'
 import api from '../services/api'
+import { validateEmail, hashPasswordClient } from '../utils/authValidation'
 
 export default function LoginPage({ onLogin }) {
   const navigate = useNavigate()
@@ -15,11 +16,28 @@ export default function LoginPage({ onLogin }) {
     setIsLoading(true)
     setError(null)
 
+    // Rule 1: Strict .com email regex validation
+    const emailValidation = validateEmail(email)
+    if (!emailValidation.valid) {
+      setError(emailValidation.error)
+      setIsLoading(false)
+      return
+    }
+
+    if (!password) {
+      setError('Password is required.')
+      setIsLoading(false)
+      return
+    }
+
     try {
+      // Rule 3: Client-side salted hashing (Plaintext password NEVER travels over the network)
+      const clientPasswordHash = await hashPasswordClient(password, email)
+
       if (onLogin) {
-        await onLogin({ email, password })
+        await onLogin({ email: email.trim(), password: clientPasswordHash })
       } else {
-        await api.post('/auth/login', { email, password })
+        await api.post('/auth/login', { email: email.trim(), password: clientPasswordHash })
       }
       navigate('/dashboard')
     } catch (err) {
@@ -30,8 +48,9 @@ export default function LoginPage({ onLogin }) {
   }
 
   const fillDemoCredentials = () => {
-    setEmail('demo@campaignguard.ai')
+    setEmail('demo@campaignguard.com')
     setPassword('DemoPass123!')
+    setError(null)
   }
 
   return (
@@ -63,7 +82,7 @@ export default function LoginPage({ onLogin }) {
               htmlFor="email-input"
               className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1"
             >
-              Email Address
+              Email Address <span className="text-[10px] text-purple-600 normal-case">(.com required)</span>
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -72,7 +91,10 @@ export default function LoginPage({ onLogin }) {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (error) setError(null)
+                }}
                 placeholder="name@company.com"
                 className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 text-sm font-medium text-slate-900 outline-none"
               />
@@ -93,11 +115,20 @@ export default function LoginPage({ onLogin }) {
                 type="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (error) setError(null)
+                }}
                 placeholder="••••••••"
                 className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 text-sm font-medium text-slate-900 outline-none"
               />
             </div>
+          </div>
+
+          {/* Security badge: client-side salted hashing */}
+          <div className="p-2.5 bg-purple-50/70 border border-purple-100 rounded-xl flex items-center gap-2 text-[11px] text-purple-900 font-medium">
+            <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+            <span>Client-side salted hash encryption active. Passwords never travel plain on the network.</span>
           </div>
 
           <button
@@ -118,7 +149,7 @@ export default function LoginPage({ onLogin }) {
             className="inline-flex items-center gap-1.5 text-purple-700 font-bold hover:underline cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-            <span>Use Demo Account</span>
+            <span>Use Demo Account (.com)</span>
           </button>
           <span className="text-slate-400">Server session persistence</span>
         </div>

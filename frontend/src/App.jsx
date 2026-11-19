@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import api from './services/api'
+import { hashPasswordClient } from './utils/authValidation'
 
 import Navbar from './components/Navbar'
 import LandingPage from './pages/LandingPage'
@@ -100,7 +101,12 @@ function AppShell() {
   }, [])
 
   const handleLogin = async (credentials) => {
-    const res = await api.post('/auth/login', credentials)
+    let payload = { ...credentials }
+    // Ensure password is client-side hashed if passed as plain text
+    if (payload.password && !/^[a-f0-9]{64}$/i.test(payload.password)) {
+      payload.password = await hashPasswordClient(payload.password, payload.email)
+    }
+    const res = await api.post('/auth/login', payload)
     const userData = res.data?.user || res.data
     setUser(userData)
     try {
@@ -113,7 +119,12 @@ function AppShell() {
   }
 
   const handleSignup = async (credentials) => {
-    const res = await api.post('/auth/signup', credentials)
+    let payload = { ...credentials }
+    // Ensure password is client-side hashed if passed as plain text
+    if (payload.password && !/^[a-f0-9]{64}$/i.test(payload.password)) {
+      payload.password = await hashPasswordClient(payload.password, payload.email)
+    }
+    const res = await api.post('/auth/signup', payload)
     const userData = res.data?.user || res.data
     setUser(userData)
     try {

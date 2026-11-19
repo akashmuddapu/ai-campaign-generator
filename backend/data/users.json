@@ -1,9 +1,9 @@
 [
   {
     "id": "demo-user-001",
-    "email": "demo@campaignguard.ai",
+    "email": "demo@campaignguard.com",
     "name": "Demo Marketer",
-    "password_hash": "scrypt:32768:8:1$TceQowJd0b6KvYuD$42cb538fff459826083a9ba87183e18d5d5ab8e10b6f0d38babf7af40fa8afc2fb713cbe0a2960cfb8bedc72684ade31dbdb2615160e488649add05a94fd6a9b"
+    "password_hash": "scrypt:32768:8:1$hKlFt34EL5nTW164$799267b7c0a74da6ef0470ea0e6919b06630f5c52a549c998ba8509fd33878a96d573aeda8ae0e90cbdeab9aacc816d22ea9c76ab2a0330b353cd550b8a7576c"
   },
   {
     "id": "c8ee3606-8e44-4605-983c-9b4b706f3c48",
