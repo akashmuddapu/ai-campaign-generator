@@ -10,6 +10,20 @@ const api = axios.create({
   },
 })
 
+// Request interceptor to attach authenticated user id if present in storage
+api.interceptors.request.use(
+  (config) => {
+    try {
+      const userId = localStorage.getItem('cg_user_id')
+      if (userId && !config.headers['X-User-Id']) {
+        config.headers['X-User-Id'] = userId
+      }
+    } catch {}
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
 // Global response interceptor for consistent error handling
 api.interceptors.response.use(
   (response) => response,

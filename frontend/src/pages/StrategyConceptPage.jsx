@@ -137,25 +137,43 @@ export default function StrategyConceptPage({ user, onLogout }) {
       // Strip icon/color (React components) before sending to API and before navigate
       // eslint-disable-next-line no-unused-vars
       const { icon: _ci, color: _cc, ...serializablePersona } = currentPersona
+      const serializablePersonas = all_personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+      const userId = user?.id || localStorage.getItem('cg_user_id')
 
       const response = await api.post('/campaigns/generate-assets', {
         brand_kit,
         persona: serializablePersona,
+        all_personas: serializablePersonas,
         selected_concept: selectedConcept,
+        user_id: userId,
       })
 
-      const assets = response.data.assets
+      const createdCampaign = response.data
+      const assets = createdCampaign?.assets || {}
 
-      // Strip icon/color from all_personas before passing through History API
-      const serializablePersonas = all_personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+      // Invalidate sidebar cache so the new campaign is fetched fresh
+      if (userId) {
+        try {
+          sessionStorage.removeItem(`cg_campaign_history_${userId}`)
+          sessionStorage.removeItem('cg_campaign_history')
+        } catch {}
+      }
 
       // Persist across browser refresh/tab changes
       try {
         sessionStorage.setItem('cg_brand_kit', JSON.stringify(brand_kit))
         sessionStorage.setItem('cg_selected_concept', JSON.stringify(selectedConcept))
         sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
+        if (createdCampaign?.id) {
+          sessionStorage.setItem('cg_active_campaign_id', createdCampaign.id)
+        }
       } catch {
         // Ignore storage errors in restricted contexts
+      }
+
+      // Broadcast event so SidebarLayout immediately updates its list without page reload
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cg_campaign_created', { detail: createdCampaign }))
       }
 
       navigate('/results', {
@@ -165,7 +183,7 @@ export default function StrategyConceptPage({ user, onLogout }) {
           all_personas: serializablePersonas,
           selected_concept: selectedConcept,
           assets,
-          campaign_id: response.data.id,
+          campaign_id: createdCampaign?.id,
         },
       })
     } catch (err) {

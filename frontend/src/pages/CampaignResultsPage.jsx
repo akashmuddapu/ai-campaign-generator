@@ -387,11 +387,13 @@ export default function CampaignResultsPage({ user, onLogout }) {
       persona_name: activePersonaName,
     }
 
+    const userId = user?.id || localStorage.getItem('cg_user_id')
     try {
       const response = await api.post('/campaigns/generate-assets', {
         brand_kit,
         persona: activePersonaObj,
         selected_concept,
+        user_id: userId,
       })
 
       if (response.data?.assets) {
@@ -444,11 +446,13 @@ export default function CampaignResultsPage({ user, onLogout }) {
       persona_name: activePersonaName,
     }
 
+    const userId = user?.id || localStorage.getItem('cg_user_id')
     try {
       const response = await api.post('/campaigns/generate-assets', {
         brand_kit,
         persona: activePersonaObj,
         selected_concept,
+        user_id: userId,
       })
 
       if (response.data?.assets) {
