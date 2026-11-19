@@ -439,120 +439,27 @@ export default function StrategyConceptPage({ user, onLogout }) {
           </div>
         )}
 
-        {/* ─── SCREEN 3: Persona DNA (Strategy) ────────────────────────────── */}
+        {/* ─── SCREEN 3: Persona DNA (Strategy — Single-Page Vertical Scroll) ─── */}
         {subStep === 'dna' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Persona DNA — Audience Strategy
-                </h1>
+            {/* Sticky Top Header with Title + Fixed Action Buttons at Top */}
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
+                    Persona DNA — Audience Strategy
+                  </h1>
+                  <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200 whitespace-nowrap">
+                    {all_personas.length} {all_personas.length === 1 ? 'Persona' : 'Personas'}
+                  </span>
+                </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  AI-generated marketing strategy for each persona
+                  AI-generated marketing strategy for each persona — scroll down to review all segments one by one
                 </p>
               </div>
 
-              {/* Persona Switcher Tabs matching Image 1 Screen 3 */}
-              <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                {all_personas.map((p) => {
-                  const isActive = activePersonaTab === p.persona_name
-                  return (
-                    <button
-                      key={p.persona_name}
-                      type="button"
-                      onClick={() => setActivePersonaTab(p.persona_name)}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        isActive
-                          ? 'bg-purple-700 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      {p.persona_name}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Persona DNA Card matching Image 1 Screen 3 */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 md:p-8 shadow-xs space-y-6">
-              {/* Persona Title Header */}
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shadow-xs">
-                  <GraduationCap className="w-8 h-8" />
-                </div>
-                <div>
-                  <h2 className="text-base font-black text-slate-900">
-                    {activePersonaTab} Persona DNA
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Audience strategy and key insights for campaign messaging
-                  </p>
-                </div>
-              </div>
-
-              {/* 6 Grid Tiles matching Image 1 Screen 3 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">Goal</span>
-                  <p className="text-xs text-slate-800 font-medium">
-                    {currentPersona.primary_goals || 'Stay energized during long study hours'}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-rose-600">Pain Point</span>
-                  <p className="text-xs text-slate-800 font-medium">
-                    {currentPersona.pain_points || 'Drinks get cold during classes'}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600">Motivation</span>
-                  <p className="text-xs text-slate-800 font-medium">
-                    {currentPersona.core_motivations || 'Convenience & reliability'}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Emotional Trigger</span>
-                  <p className="text-xs text-slate-800 font-medium">
-                    {currentPersona.emotional_triggers || 'Fun, relatable, energetic'}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Preferred Message</span>
-                  <p className="text-xs text-slate-800 font-medium">
-                    {currentPersona.preferred_message_style || 'Short, energetic, student-friendly'}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600">Buying Trigger</span>
-                  <p className="text-xs text-slate-800 font-medium">
-                    {currentPersona.buying_triggers || 'Keeps drink at the right temperature'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Recommended Marketing Angle Banner matching Image 1 */}
-              <div className="p-4 rounded-xl bg-purple-50/80 border border-purple-200 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-purple-900 block">
-                    Recommended Marketing Angle
-                  </span>
-                  <span className="text-xs font-semibold text-purple-800">
-                    "{persona_dna.primary_hook || 'Keep your favorite drink ready between classes.'}"
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              {/* Action Buttons Fixed at Top */}
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() =>
@@ -563,42 +470,144 @@ export default function StrategyConceptPage({ user, onLogout }) {
                       },
                     })
                   }
-                  className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Step 1: Brand Kit</span>
                 </button>
 
-                <div className="flex items-center gap-3">
-                  {draftSaved && (
-                    <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 animate-pulse">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />Draft saved
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => handleSaveDraftAndReset(2)}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer"
-                  >
-                    Save Draft
-                  </button>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      const savedId = await saveDraft({ step: 3 })
-                      unlockStep(3)
-                      const nextParams = { step: 'concepts' }
-                      if (savedId || draftId) nextParams.draft_id = savedId || draftId
-                      setSearchParams(nextParams)
-                      setSubStep('concepts')
-                    }}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
-                  >
-                    <span>Next: Campaign Concepts</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
+                {draftSaved && (
+                  <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 animate-pulse whitespace-nowrap">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />Draft saved
+                  </span>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleSaveDraftAndReset(2)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer shadow-2xs whitespace-nowrap"
+                >
+                  Save Draft
+                </button>
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const savedId = await saveDraft({ step: 3 })
+                    unlockStep(3)
+                    const nextParams = { step: 'concepts' }
+                    if (savedId || draftId) nextParams.draft_id = savedId || draftId
+                    setSearchParams(nextParams)
+                    setSubStep('concepts')
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer whitespace-nowrap"
+                >
+                  <span>Next: Campaign Concepts</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
+            </div>
+
+            {/* All Personas Stacked Vertically One by One */}
+            <div className="space-y-6">
+              {all_personas.map((personaItem, idx) => {
+                const PersonaIcon = personaItem.icon || getPersonaIcon(personaItem.persona_name, idx)
+                const colorClass = personaItem.color || getPersonaColor(idx)
+                const recommendedHook =
+                  idx === 0 && persona_dna?.primary_hook
+                    ? persona_dna.primary_hook
+                    : personaItem.summary ||
+                      personaItem.primary_goals ||
+                      `Experience ${brand_kit.product_name || 'our solution'} tailored specifically for ${personaItem.persona_name}.`
+
+                return (
+                  <div
+                    key={personaItem.persona_name || idx}
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 md:p-7 shadow-xs space-y-5"
+                  >
+                    {/* Persona Title Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className={`w-12 h-12 rounded-2xl ${colorClass} flex items-center justify-center font-bold shadow-xs shrink-0`}>
+                          <PersonaIcon className="w-6 h-6" />
+                        </div>
+                        <div className="min-w-0">
+                          <h2 className="text-base font-black text-slate-900 truncate">
+                            {personaItem.persona_name} — Persona DNA
+                          </h2>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            Audience strategy and psychological insights for campaign messaging
+                          </p>
+                        </div>
+                      </div>
+
+                      <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 shrink-0">
+                        Persona {idx + 1} of {all_personas.length}
+                      </span>
+                    </div>
+
+                    {/* 6 Grid Tiles */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">Goal</span>
+                        <p className="text-xs text-slate-800 font-medium">
+                          {personaItem.primary_goals || 'Stay energized and productive throughout daily routine'}
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-rose-600">Pain Point</span>
+                        <p className="text-xs text-slate-800 font-medium">
+                          {personaItem.pain_points || 'Inconvenient, unreliable options during busy schedules'}
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600">Motivation</span>
+                        <p className="text-xs text-slate-800 font-medium">
+                          {personaItem.core_motivations || 'Convenience, reliability, and high daily performance'}
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Emotional Trigger</span>
+                        <p className="text-xs text-slate-800 font-medium">
+                          {personaItem.emotional_triggers || 'Comfort, confidence, and seamless daily workflow'}
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Preferred Message</span>
+                        <p className="text-xs text-slate-800 font-medium">
+                          {personaItem.preferred_message_style || 'Clear, benefit-driven, relatable, and modern'}
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600">Buying Trigger</span>
+                        <p className="text-xs text-slate-800 font-medium">
+                          {personaItem.buying_triggers || 'Proven quality, reliability, and sleek design'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Recommended Marketing Angle Banner */}
+                    <div className="p-4 rounded-xl bg-purple-50/80 border border-purple-200 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-purple-900 block">
+                          Recommended Marketing Angle
+                        </span>
+                        <span className="text-xs font-semibold text-purple-800">
+                          "{recommendedHook}"
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
@@ -606,13 +615,57 @@ export default function StrategyConceptPage({ user, onLogout }) {
         {/* ─── SCREEN 4: Campaign Concepts ─────────────────────────────────── */}
         {subStep === 'concepts' && (
           <div className="space-y-6">
-            <div className="border-b border-slate-200/80 pb-4">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Campaign Concepts
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                AI-generated strategic campaign directions
-              </p>
+            {/* Sticky Top Header with Title + Fixed Action Buttons at Top */}
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Campaign Concepts
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Select 1 of 3 AI-generated strategic campaign directions
+                </p>
+              </div>
+
+              {/* Action Buttons Fixed at Top */}
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextParams = { step: 'dna' }
+                    if (draftId) nextParams.draft_id = draftId
+                    setSearchParams(nextParams)
+                    setSubStep('dna')
+                  }}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Step 2: Persona Strategy</span>
+                </button>
+
+                {draftSaved && (
+                  <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 animate-pulse whitespace-nowrap">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />Draft saved
+                  </span>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleSaveDraftAndReset(3)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer shadow-2xs whitespace-nowrap"
+                >
+                  Save Draft
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGenerateAssets}
+                  disabled={isLoading}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer disabled:opacity-50 whitespace-nowrap"
+                >
+                  <span>{isLoading ? 'Generating Assets...' : 'Generate Campaign Assets'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* 3 Concept Cards matching Image 1 Screen 4 */}
@@ -676,47 +729,6 @@ export default function StrategyConceptPage({ user, onLogout }) {
                   </div>
                 )
               })}
-            </div>
-
-            {/* Bottom Navigation */}
-            <div className="flex items-center justify-between pt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  const nextParams = { step: 'dna' }
-                  if (draftId) nextParams.draft_id = draftId
-                  setSearchParams(nextParams)
-                  setSubStep('dna')
-                }}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Step 2: Persona Strategy</span>
-              </button>
-
-              <div className="flex items-center gap-3">
-                {draftSaved && (
-                  <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 animate-pulse">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />Draft saved
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleSaveDraftAndReset(3)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer"
-                >
-                  Save Draft
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGenerateAssets}
-                  disabled={isLoading}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer disabled:opacity-50"
-                >
-                  <span>{isLoading ? 'Generating Assets...' : 'Generate Campaign Assets'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
             </div>
           </div>
         )}

@@ -752,30 +752,20 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
   return (
     <SidebarLayout user={user} onLogout={onLogout} currentStep="Step 1 of 5" campaignName={productName.split(' ')[0] || 'TravelMate'}>
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Brand Kit & Personas
-            </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Define your brand, product and target audiences
-            </p>
-          </div>
-
+        {/* Sticky Top Header Bar: Title & Presets on Left, Save Draft & Next Step Buttons Fixed at Top on Right */}
+        <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            {/* Step 1 of 5 Indicator with Dots matching Image 1 */}
-            <div className="flex items-center gap-1.5 self-end sm:self-auto">
-              <span className="text-xs font-semibold text-slate-500 mr-1">Step 1 of 5</span>
-              <span className="w-2 h-2 rounded-full bg-purple-700"></span>
-              <span className="w-2 h-2 rounded-full bg-purple-200"></span>
-              <span className="w-2 h-2 rounded-full bg-purple-200"></span>
-              <span className="w-2 h-2 rounded-full bg-purple-200"></span>
-              <span className="w-2 h-2 rounded-full bg-purple-200"></span>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
+                Brand Kit &amp; Personas
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Define your brand, product and target audiences
+              </p>
             </div>
 
             {/* 1-Click Preset Buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
                 Sample Presets:
               </span>
@@ -791,6 +781,50 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Action Buttons Fixed at Top */}
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            {draftSaved && (
+              <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                Draft saved
+              </span>
+            )}
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={async () => {
+                const bk = {
+                  product_name: productName,
+                  product_description: productDescription,
+                  brand_tone: brandTones.join(', '),
+                  tagline,
+                  banned_words: bannedWords,
+                  example_brand_lines: exampleBrandLines.split('\n').filter((l) => l.trim()),
+                }
+                const sp = personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+                await saveDraft({ step: 1, brandKit: bk, serializablePersonas: sp })
+                resetWizardSession()
+                navigate('/dashboard', {
+                  state: {
+                    draftSavedNotice: `Draft "${productName || 'Campaign'}" saved at Step 1 of 5. You can resume anytime from Previous Campaigns or Campaign History.`,
+                  },
+                })
+              }}
+              className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer disabled:opacity-40 shadow-2xs"
+            >
+              Save Draft
+            </button>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={handleSubmit}
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-md shadow-purple-200 transition-all cursor-pointer disabled:opacity-50"
+            >
+              <span>{isLoading ? 'Synthesizing...' : 'Next Step: Persona Strategy'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 
@@ -1045,45 +1079,6 @@ export default function BrandPersonaSetupPage({ user, onLogout }) {
                     </div>
                   )
                 })}
-              </div>
-            </div>
-
-            {/* Bottom Continue Action Button */}
-            <div className="flex items-center justify-between gap-3 pt-2">
-              {/* Draft save indicator */}
-              {draftSaved && (
-                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
-                  Draft saved
-                </span>
-              )}
-              <div className="ml-auto flex items-center gap-3">
-                <button
-                  type="button"
-                  disabled={isLoading}
-                  onClick={async () => {
-                    const bk = { product_name: productName, product_description: productDescription, brand_tone: brandTones.join(', '), tagline, banned_words: bannedWords, example_brand_lines: exampleBrandLines.split('\n').filter(l => l.trim()) }
-                    const sp = personas.map(({ icon: _i, color: _c, ...rest }) => rest)
-                    await saveDraft({ step: 1, brandKit: bk, serializablePersonas: sp })
-                    resetWizardSession()
-                    navigate('/dashboard', {
-                      state: {
-                        draftSavedNotice: `Draft "${productName || 'Campaign'}" saved at Step 1 of 5. You can resume anytime from Previous Campaigns or Campaign History.`,
-                      },
-                    })
-                  }}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer disabled:opacity-40"
-                >
-                  Save Draft
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex items-center gap-2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-200 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <span>{isLoading ? 'Synthesizing...' : 'Next Step: Persona Strategy'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </div>

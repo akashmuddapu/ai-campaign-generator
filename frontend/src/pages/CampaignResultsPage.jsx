@@ -363,12 +363,30 @@ export default function CampaignResultsPage({ user, onLogout }) {
     setTimeout(() => setActionFeedback(null), 3500)
   }
 
-  // Inline editing state for each card
+  // Inline editing state for each card (tracks which persona is being edited)
   const [isEditingSocial, setIsEditingSocial] = useState(false)
   const [editingSocialText, setEditingSocialText] = useState('')
+  const [editingSocialHashtags, setEditingSocialHashtags] = useState('')
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [editingEmailSubject, setEditingEmailSubject] = useState('')
   const [editingEmailBody, setEditingEmailBody] = useState('')
+
+  // Ensure every social post always has clean hashtags for display & editing
+  const getHashtagsForPersona = (socialContent, pName) => {
+    const rawList = socialContent?.hashtags
+    if (Array.isArray(rawList) && rawList.length > 0) {
+      return rawList.map((t) => {
+        const s = String(t).trim()
+        return s.startsWith('#') ? s : `#${s}`
+      })
+    }
+    const inlineTags = (socialContent?.text || '').match(/#[A-Za-z0-9_]+/g)
+    if (inlineTags && inlineTags.length > 0) return inlineTags
+    const prodTag = (brand_kit.product_name || 'Brand').replace(/[^a-zA-Z0-9]/g, '').slice(0, 16) || 'Campaign'
+    const personaTag = (pName || 'Audience').replace(/[^a-zA-Z0-9]/g, '').slice(0, 18) || 'Spotlight'
+    const conceptTag = (selected_concept?.title || 'Innovation').replace(/[^a-zA-Z0-9]/g, '').slice(0, 16) || 'Growth'
+    return [`#${prodTag}`, `#${personaTag}`, `#${conceptTag}`]
+  }
 
   // Loading states
   const [isRegenerating, setIsRegenerating] = useState(false)
@@ -379,7 +397,8 @@ export default function CampaignResultsPage({ user, onLogout }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeExplainChannel, setActiveExplainChannel] = useState('social_post')
 
-  const handleOpenExplain = (channel) => {
+  const handleOpenExplain = (channel, targetPersonaName) => {
+    if (targetPersonaName) setActivePersonaName(targetPersonaName)
     setActiveExplainChannel(channel)
     setIsModalOpen(true)
   }
@@ -750,62 +769,90 @@ export default function CampaignResultsPage({ user, onLogout }) {
     }
   }
 
-  // Handle Edit toggles
-  const handleStartEditSocial = () => {
-    setEditingSocialText(currentAssets.social_post.content.text)
+  // Handle Edit toggles (supports per-persona card editing in single-page scroll view)
+  const handleStartEditSocial = (targetPersonaName) => {
+    const pName = targetPersonaName || activePersonaName
+    setActivePersonaName(pName)
+    const pAssets = personaAssets[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)
+    const sc = pAssets.social_post?.content || {}
+    setEditingSocialText(sc.text || '')
+    setEditingSocialHashtags(getHashtagsForPersona(sc, pName).join(' '))
     setIsEditingSocial(true)
-  }
-
-  const handleSaveEditSocial = () => {
-    setPersonaAssets((prev) => ({
-      ...prev,
-      [activePersonaName]: {
-        ...prev[activePersonaName],
-        social_post: {
-          ...prev[activePersonaName].social_post,
-          content: {
-            ...prev[activePersonaName].social_post.content,
-            text: editingSocialText,
-            character_count: editingSocialText.length,
-          },
-        },
-      },
-    }))
-    setIsEditingSocial(false)
-    showFeedback('Social post updated successfully!')
-  }
-
-  const handleStartEditEmail = () => {
-    setEditingEmailSubject(currentAssets.email.content.subject)
-    setEditingEmailBody(currentAssets.email.content.body)
-    setIsEditingEmail(true)
-  }
-
-  const handleSaveEditEmail = () => {
-    setPersonaAssets((prev) => ({
-      ...prev,
-      [activePersonaName]: {
-        ...prev[activePersonaName],
-        email: {
-          ...prev[activePersonaName].email,
-          content: {
-            ...prev[activePersonaName].email.content,
-            subject: editingEmailSubject,
-            body: editingEmailBody,
-            word_count: editingEmailBody.trim().split(/\s+/).length,
-          },
-        },
-      },
-    }))
     setIsEditingEmail(false)
-    showFeedback('Email updated successfully!')
   }
 
-  // Handle Regenerate for a single channel
-  const handleRegenerate = async (channelType) => {
+  const handleSaveEditSocial = (targetPersonaName) => {
+    const pName = targetPersonaName || activePersonaName
+    const parsedTags = editingSocialHashtags
+      .split(/[\s,]+/)
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((t) => (t.startsWith('#') ? t : `#${t}`))
+
+    setPersonaAssets((prev) => {
+      const base = prev[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)
+      return {
+        ...prev,
+        [pName]: {
+          ...base,
+          social_post: {
+            ...base.social_post,
+            content: {
+              ...base.social_post.content,
+              text: editingSocialText,
+              character_count: editingSocialText.length,
+              hashtags: parsedTags.length > 0 ? parsedTags : getHashtagsForPersona(base.social_post.content, pName),
+            },
+          },
+        },
+      }
+    })
+    setIsEditingSocial(false)
+    showFeedback(`Social post & hashtags updated for ${pName}!`)
+  }
+
+  const handleStartEditEmail = (targetPersonaName) => {
+    const pName = targetPersonaName || activePersonaName
+    setActivePersonaName(pName)
+    const pAssets = personaAssets[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)
+    const ec = pAssets.email?.content || {}
+    setEditingEmailSubject(ec.subject || '')
+    setEditingEmailBody(ec.body || '')
+    setIsEditingEmail(true)
+    setIsEditingSocial(false)
+  }
+
+  const handleSaveEditEmail = (targetPersonaName) => {
+    const pName = targetPersonaName || activePersonaName
+    setPersonaAssets((prev) => {
+      const base = prev[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)
+      return {
+        ...prev,
+        [pName]: {
+          ...base,
+          email: {
+            ...base.email,
+            content: {
+              ...base.email.content,
+              subject: editingEmailSubject,
+              body: editingEmailBody,
+              word_count: editingEmailBody.trim().split(/\s+/).filter(Boolean).length,
+            },
+          },
+        },
+      }
+    })
+    setIsEditingEmail(false)
+    showFeedback(`Email subject & body updated for ${pName}!`)
+  }
+
+  // Handle Regenerate for a single channel and persona
+  const handleRegenerate = async (channelType, targetPersonaName) => {
+    const pName = targetPersonaName || activePersonaName
+    setActivePersonaName(pName)
     setIsRegenerating(true)
-    const activePersonaObj = all_personas.find((p) => p.persona_name === activePersonaName) || {
-      persona_name: activePersonaName,
+    const activePersonaObj = all_personas.find((p) => p.persona_name === pName) || {
+      persona_name: pName,
     }
 
     const userId = user?.id || localStorage.getItem('cg_user_id')
@@ -820,13 +867,13 @@ export default function CampaignResultsPage({ user, onLogout }) {
       if (response.data?.assets) {
         setPersonaAssets((prev) => ({
           ...prev,
-          [activePersonaName]: {
-            ...prev[activePersonaName],
+          [pName]: {
+            ...(prev[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)),
             [channelType]: response.data.assets[channelType] || response.data.assets,
           },
         }))
         setIsRegenerating(false)
-        showFeedback(`Regenerated ${channelType === 'social_post' ? 'Social Post' : 'Email'} for ${activePersonaName}!`)
+        showFeedback(`Regenerated ${channelType === 'social_post' ? 'Social Post' : 'Email'} for ${pName}!`)
         return
       }
     } catch {
@@ -834,7 +881,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
     }
 
     setTimeout(() => {
-      const fresh = getDefaultPersonaAssets(activePersonaName, brand_kit, selected_concept)
+      const fresh = getDefaultPersonaAssets(pName, brand_kit, selected_concept)
       const variations = [
         'Never settle for lukewarm again.',
         'Precision temperature at your fingertips.',
@@ -850,71 +897,78 @@ export default function CampaignResultsPage({ user, onLogout }) {
 
       setPersonaAssets((prev) => ({
         ...prev,
-        [activePersonaName]: {
-          ...prev[activePersonaName],
+        [pName]: {
+          ...(prev[pName] || fresh),
           [channelType]: fresh[channelType],
         },
       }))
       setIsRegenerating(false)
-      showFeedback(`Regenerated ${channelType === 'social_post' ? 'Social Post' : 'Email'} for ${activePersonaName}!`)
+      showFeedback(`Regenerated ${channelType === 'social_post' ? 'Social Post' : 'Email'} for ${pName}!`)
     }, 400)
   }
 
-  // Handle Regenerate All
+  // Handle Regenerate All across all personas
   const handleRegenerateAll = async () => {
     setIsRegenerating(true)
-    const activePersonaObj = all_personas.find((p) => p.persona_name === activePersonaName) || {
-      persona_name: activePersonaName,
-    }
-
     const userId = user?.id || localStorage.getItem('cg_user_id')
     try {
-      const response = await api.post('/campaigns/generate-assets', {
-        brand_kit,
-        persona: activePersonaObj,
-        selected_concept,
-        user_id: userId,
+      const updatedEntries = await Promise.all(
+        all_personas.map(async (p) => {
+          try {
+            const res = await api.post('/campaigns/generate-assets', {
+              brand_kit,
+              persona: { persona_name: p.persona_name, primary_goals: p.primary_goals, pain_points: p.pain_points },
+              selected_concept,
+              user_id: userId,
+            })
+            if (res.data?.assets) return [p.persona_name, res.data.assets]
+          } catch {}
+          return [p.persona_name, getDefaultPersonaAssets(p.persona_name, brand_kit, selected_concept)]
+        })
+      )
+      setPersonaAssets((prev) => {
+        const next = { ...prev }
+        updatedEntries.forEach(([name, assets]) => {
+          next[name] = assets
+        })
+        return next
       })
-
-      if (response.data?.assets) {
-        setPersonaAssets((prev) => ({
-          ...prev,
-          [activePersonaName]: response.data.assets,
-        }))
-        setIsRegenerating(false)
-        showFeedback(`Regenerated all assets for ${activePersonaName}!`)
-        return
-      }
-    } catch {
-      // Client variation
-    }
+      setIsRegenerating(false)
+      showFeedback(`Regenerated assets for all ${all_personas.length} personas!`)
+      return
+    } catch {}
 
     setTimeout(() => {
-      const fresh = getDefaultPersonaAssets(activePersonaName, brand_kit, selected_concept)
-      setPersonaAssets((prev) => ({
-        ...prev,
-        [activePersonaName]: fresh,
-      }))
+      setPersonaAssets((prev) => {
+        const next = { ...prev }
+        all_personas.forEach((p) => {
+          next[p.persona_name] = getDefaultPersonaAssets(p.persona_name, brand_kit, selected_concept)
+        })
+        return next
+      })
       setIsRegenerating(false)
-      showFeedback(`Regenerated all assets for ${activePersonaName}!`)
+      showFeedback(`Regenerated assets for all ${all_personas.length} personas!`)
     }, 450)
   }
 
-  // Handle Auto-Fix with deterministic brand compliance
-  const handleAutoFix = async (channelType) => {
-    if (_autoFixCount >= 3) {
+  // Handle Auto-Fix with deterministic brand compliance for a specific persona
+  const handleAutoFix = async (channelType, targetPersonaName) => {
+    const pName = targetPersonaName || activePersonaName
+    setActivePersonaName(pName)
+    if (_autoFixCount >= 6) {
       showFeedback('Maximum auto-fix remediation iterations reached.')
       return
     }
     setIsAutoFixing(true)
-    const activePersonaObj = all_personas.find((p) => p.persona_name === activePersonaName) || {
-      persona_name: activePersonaName,
+    const activePersonaObj = all_personas.find((p) => p.persona_name === pName) || {
+      persona_name: pName,
     }
+    const targetAssets = personaAssets[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)
 
     try {
       const response = await api.post('/campaigns/auto-fix', {
         channel_type: channelType,
-        current_content: currentAssets[channelType].content,
+        current_content: targetAssets[channelType].content,
         brand_kit,
         persona: activePersonaObj,
         concept: selected_concept,
@@ -925,10 +979,10 @@ export default function CampaignResultsPage({ user, onLogout }) {
 
       setPersonaAssets((prev) => ({
         ...prev,
-        [activePersonaName]: {
-          ...prev[activePersonaName],
+        [pName]: {
+          ...(prev[pName] || targetAssets),
           [channelType]: {
-            ...prev[activePersonaName][channelType],
+            ...(prev[pName]?.[channelType] || targetAssets[channelType]),
             content: remediated,
             validation_report: report,
             fixed: true,
@@ -937,14 +991,14 @@ export default function CampaignResultsPage({ user, onLogout }) {
       }))
       setAutoFixCount((c) => c + 1)
       setIsAutoFixing(false)
-      showFeedback('Auto-Fix applied: Remediated to 100% brand compliance!')
+      showFeedback(`Auto-Fix applied for ${pName}: Remediated to 100% brand compliance!`)
       return
     } catch {
       // Deterministic client remediation fallback
     }
 
     setTimeout(() => {
-      const asset = currentAssets[channelType]
+      const asset = targetAssets[channelType]
       const banned = (brand_kit.banned_words || ['cheap', 'guaranteed', 'best']).map((w) => w.toLowerCase())
       const replacements = {
         cheap: 'affordable',
@@ -982,10 +1036,10 @@ export default function CampaignResultsPage({ user, onLogout }) {
 
       setPersonaAssets((prev) => ({
         ...prev,
-        [activePersonaName]: {
-          ...prev[activePersonaName],
+        [pName]: {
+          ...(prev[pName] || targetAssets),
           [channelType]: {
-            ...prev[activePersonaName][channelType],
+            ...(prev[pName]?.[channelType] || targetAssets[channelType]),
             content: updatedContent,
             validation_report: {
               overall_score: 98,
@@ -998,7 +1052,7 @@ export default function CampaignResultsPage({ user, onLogout }) {
       }))
       setAutoFixCount((c) => c + 1)
       setIsAutoFixing(false)
-      showFeedback('Auto-Fix applied: Remediated to 100% brand compliance!')
+      showFeedback(`Auto-Fix applied for ${pName}: Remediated to 100% brand compliance!`)
     }, 400)
   }
 
@@ -1350,328 +1404,459 @@ export default function CampaignResultsPage({ user, onLogout }) {
           </div>
         )}
 
-        {/* ─── VIEW 1: CAMPAIGN ASSETS matching Image 1 Screen 6 ───────────── */}
+        {/* ─── VIEW 1: CAMPAIGN ASSETS (Sticky Top Actions + Single-Page Vertical Persona Scroll + Explicit Content/Hashtags & Subject/Body) ─── */}
         {activeView === 'assets' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Campaign Assets
-                </h1>
+            {/* Sticky Top Header Bar: Title on Left, Step Action Buttons Fixed at Top on Right */}
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
+                    Campaign Assets
+                  </h1>
+                  <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200 text-xs font-extrabold">
+                    {all_personas.length} {all_personas.length === 1 ? 'Persona' : 'Personas'}
+                  </span>
+                </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Personalized social posts and emails for each persona
+                  Personalized social media posts (content &amp; hashtags) and marketing emails (subject &amp; body) — scroll down to review all personas one by one
                 </p>
               </div>
 
-              {/* Persona Switcher Tabs matching Image 1 Screen 6 */}
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                  {all_personas.map((p, idx) => {
-                    const isActive = activePersonaName === p.persona_name
-                    return (
-                      <button
-                        key={p.persona_name || idx}
-                        onClick={() => {
-                          setActivePersonaName(p.persona_name)
-                          setIsEditingSocial(false)
-                          setIsEditingEmail(false)
-                        }}
-                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          isActive
-                            ? 'bg-purple-700 text-white shadow-xs'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        {p.persona_name}
-                      </button>
-                    )
-                  })}
-                </div>
+              {/* Action Buttons Fixed at Top */}
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('/strategy-concept?step=concepts', {
+                      state: {
+                        brand_kit,
+                        all_personas: all_personas.map(({ icon: _i, color: _c, ...rest }) => rest),
+                        selected_concept,
+                      },
+                    })
+                  }
+                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Step 3: Campaign Concepts</span>
+                </button>
 
                 <button
                   type="button"
                   disabled={isRegenerating}
                   onClick={handleRegenerateAll}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all disabled:opacity-50"
                 >
                   <RotateCw className={`w-3.5 h-3.5 text-purple-600 ${isRegenerating ? 'animate-spin' : ''}`} />
                   <span>{isRegenerating ? 'Regenerating...' : 'Regenerate All'}</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    unlockStep(5)
+                    setSearchParams({ tab: 'guardian' })
+                  }}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Step 5: Brand Guardian</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
 
-            {/* Persona Header Banner matching Image 1 Screen 6 */}
-            {(() => {
-              const activeIndex = all_personas.findIndex((p) => p.persona_name === activePersonaName)
-              const PersonaIcon = getPersonaIcon(activePersonaName, activeIndex >= 0 ? activeIndex : 0)
-              const colorClass = getPersonaColor(activeIndex >= 0 ? activeIndex : 0)
-              return (
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-xs">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl ${colorClass} flex items-center justify-center font-bold shadow-2xs`}>
-                      <PersonaIcon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900">
-                        {activePersonaName} — Campaign Assets
-                      </h3>
-                      <p className="text-[11px] text-slate-500">
-                        Concept: {selected_concept.title}
-                      </p>
-                    </div>
-                  </div>
+            {/* Single-Page Vertical List: All Personas Stacked One by One */}
+            <div className="space-y-8">
+              {all_personas.map((personaItem, pIdx) => {
+                const pName = personaItem.persona_name
+                const pAssets = personaAssets[pName] || getDefaultPersonaAssets(pName, brand_kit, selected_concept)
+                const pSocialCheck = validateAssetContent(
+                  pAssets.social_post?.content,
+                  'social_post',
+                  brand_kit,
+                  pAssets.social_post?.fixed
+                )
+                const pEmailCheck = validateAssetContent(
+                  pAssets.email?.content,
+                  'email',
+                  brand_kit,
+                  pAssets.email?.fixed
+                )
+                const pScore = ((pSocialCheck.score + pEmailCheck.score) / 2).toFixed(1)
+                const PersonaIcon = getPersonaIcon(pName, pIdx)
+                const colorClass = getPersonaColor(pIdx)
+                const hashtagsList = getHashtagsForPersona(pAssets.social_post?.content, pName)
+                const isEditingThisSocial = isEditingSocial && activePersonaName === pName
+                const isEditingThisEmail = isEditingEmail && activePersonaName === pName
+                const socialText = pAssets.social_post?.content?.text || ''
+                const emailSubject = pAssets.email?.content?.subject || ''
+                const emailBody = pAssets.email?.content?.body || ''
 
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Brand Score: {activePersonaScore} / 5</span>
-                    </span>
-                  </div>
-                </div>
-              )
-            })()}
-
-            {/* 2 Assets Side-by-Side: Social Post & Email matching Image 1 Screen 6 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-              {/* Asset 1: Social Post */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between space-y-4">
-                <div className="space-y-3 flex-1">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <FileText className="w-4 h-4 text-purple-600" /> Social Post
-                    </span>
-                    <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Check className="w-3 h-3" /> Valid
-                    </span>
-                  </div>
-
-                  {/* Post Content: View or Edit Mode */}
-                  {isEditingSocial ? (
-                    <div className="space-y-2">
-                      <textarea
-                        rows={5}
-                        value={editingSocialText}
-                        onChange={(e) => setEditingSocialText(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-purple-300 focus:ring-2 focus:ring-purple-600/20 text-xs text-slate-800 leading-relaxed outline-none"
-                      />
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsEditingSocial(false)}
-                          className="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleSaveEditSocial}
-                          className="px-3 py-1 rounded-lg text-xs font-bold bg-purple-700 text-white hover:bg-purple-800 cursor-pointer"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200/70 text-xs text-slate-800 leading-relaxed min-h-[110px] whitespace-pre-wrap font-medium">
-                      {currentAssets.social_post.content.text}
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold pt-1">
-                    <span>
-                      {isEditingSocial ? editingSocialText.length : (currentAssets.social_post.content.character_count || currentAssets.social_post.content.text.length)} / 280 characters
-                    </span>
-                    <span className="text-emerald-600 font-bold">No banned words</span>
-                  </div>
-                </div>
-
-                {/* 3 Action Buttons matching Image 1 Screen 6: [Edit] [Regenerate] [Why this content?] */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleStartEditSocial}
-                      className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-purple-700 hover:bg-purple-50 flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                      <span>Edit</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      disabled={isRegenerating}
-                      onClick={() => handleRegenerate('social_post')}
-                      className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-purple-700 hover:bg-purple-50 flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <RotateCw className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin' : ''}`} />
-                      <span>Regenerate</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      disabled={isAutoFixing}
-                      onClick={() => handleAutoFix('social_post')}
-                      className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Wand2 className={`w-3.5 h-3.5 text-emerald-600 ${isAutoFixing ? 'animate-spin' : ''}`} />
-                      <span>Auto-Fix</span>
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleOpenExplain('social_post')}
-                    className="text-purple-700 hover:text-purple-800 flex items-center gap-1 cursor-pointer"
+                return (
+                  <div
+                    key={pName || pIdx}
+                    className="bg-slate-100/70 border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs space-y-5"
                   >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    <span>Why this content?</span>
-                  </button>
-                </div>
-              </div>
+                    {/* Persona Header Banner */}
+                    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl ${colorClass} flex items-center justify-center font-bold shadow-2xs shrink-0`}>
+                          <PersonaIcon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200/60 text-[10px] font-extrabold uppercase tracking-wider">
+                              Persona {pIdx + 1} of {all_personas.length}
+                            </span>
+                            <h3 className="text-sm sm:text-base font-black text-slate-900">
+                              {pName} — Campaign Assets
+                            </h3>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Concept: <strong className="text-slate-700">{selected_concept.title}</strong>
+                          </p>
+                        </div>
+                      </div>
 
-              {/* Asset 2: Email */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between space-y-4">
-                <div className="space-y-3 flex-1">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <FileText className="w-4 h-4 text-indigo-600" /> Email
-                    </span>
-                    <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Check className="w-3 h-3" /> Valid
-                    </span>
-                  </div>
-
-                  {/* Email Content: View or Edit Mode */}
-                  {isEditingEmail ? (
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        value={editingEmailSubject}
-                        onChange={(e) => setEditingEmailSubject(e.target.value)}
-                        placeholder="Email subject..."
-                        className="w-full p-2.5 rounded-xl border border-indigo-300 focus:ring-2 focus:ring-indigo-600/20 text-xs font-bold text-slate-900 outline-none"
-                      />
-                      <textarea
-                        rows={5}
-                        value={editingEmailBody}
-                        onChange={(e) => setEditingEmailBody(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-indigo-300 focus:ring-2 focus:ring-indigo-600/20 text-xs text-slate-800 leading-relaxed outline-none"
-                      />
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsEditingEmail(false)}
-                          className="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleSaveEditEmail}
-                          className="px-3 py-1 rounded-lg text-xs font-bold bg-indigo-700 text-white hover:bg-indigo-800 cursor-pointer"
-                        >
-                          Save
-                        </button>
+                      <div className="flex items-center gap-2 self-start sm:self-center">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Brand Score: {pScore} / 5</span>
+                        </span>
                       </div>
                     </div>
-                  ) : (
-                    <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200/70 text-xs text-slate-800 leading-relaxed min-h-[110px] space-y-2">
-                      <div className="font-bold text-slate-900 border-b border-slate-200/80 pb-1.5">
-                        {currentAssets.email.content.subject}
+
+                    {/* 2 Assets Side-by-Side: Social Post (Content + Hashtags) & Email (Subject + Body) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                      {/* Asset 1: Social Post */}
+                      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between space-y-4">
+                        <div className="space-y-3.5 flex-1">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <FileText className="w-4 h-4 text-purple-600" /> Social Post
+                            </span>
+                            <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <Check className="w-3 h-3" /> Valid
+                            </span>
+                          </div>
+
+                          {/* Post Content + Hashtags: View or Edit Mode */}
+                          {isEditingThisSocial ? (
+                            <div className="space-y-3">
+                              <div>
+                                <label className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 block mb-1">
+                                  Post Content
+                                </label>
+                                <textarea
+                                  rows={4}
+                                  value={editingSocialText}
+                                  onChange={(e) => setEditingSocialText(e.target.value)}
+                                  className="w-full p-3 rounded-xl border border-purple-300 focus:ring-2 focus:ring-purple-600/20 text-xs text-slate-800 leading-relaxed outline-none"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 block mb-1">
+                                  Hashtags (space or comma separated)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={editingSocialHashtags}
+                                  onChange={(e) => setEditingSocialHashtags(e.target.value)}
+                                  placeholder="#SmartSip #CoffeeTech #MorningRitual"
+                                  className="w-full p-2.5 rounded-xl border border-purple-300 focus:ring-2 focus:ring-purple-600/20 text-xs font-bold text-purple-800 outline-none"
+                                />
+                              </div>
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setIsEditingSocial(false)}
+                                  className="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 cursor-pointer"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSaveEditSocial(pName)}
+                                  className="px-3 py-1 rounded-lg text-xs font-bold bg-purple-700 text-white hover:bg-purple-800 cursor-pointer"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              {/* Explicit Post Content Section */}
+                              <div>
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 block mb-1.5">
+                                  Post Content
+                                </span>
+                                <div className="bg-slate-50/80 p-4 rounded-xl border border-slate-200/70 text-xs text-slate-800 leading-relaxed min-h-[96px] whitespace-pre-wrap font-medium">
+                                  {socialText}
+                                </div>
+                              </div>
+
+                              {/* Explicit Hashtags Section */}
+                              <div>
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 block mb-1.5">
+                                  Hashtags
+                                </span>
+                                <div className="flex flex-wrap items-center gap-1.5 bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                                  {hashtagsList.map((tag, tIdx) => (
+                                    <span
+                                      key={tIdx}
+                                      className="px-2.5 py-1 rounded-lg bg-purple-100/90 text-purple-800 border border-purple-200/80 text-xs font-bold"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold pt-1">
+                            <span>
+                              {isEditingThisSocial
+                                ? editingSocialText.length
+                                : pAssets.social_post?.content?.character_count || socialText.length}{' '}
+                              / 280 characters • {hashtagsList.length} hashtags
+                            </span>
+                            <span className="text-emerald-600 font-bold">No banned words</span>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditSocial(pName)}
+                              className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-purple-700 hover:bg-purple-50 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              <span>Edit</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={isRegenerating}
+                              onClick={() => handleRegenerate('social_post', pName)}
+                              className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-purple-700 hover:bg-purple-50 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <RotateCw className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin' : ''}`} />
+                              <span>Regenerate</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={isAutoFixing}
+                              onClick={() => handleAutoFix('social_post', pName)}
+                              className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Wand2 className={`w-3.5 h-3.5 text-emerald-600 ${isAutoFixing ? 'animate-spin' : ''}`} />
+                              <span>Auto-Fix</span>
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleOpenExplain('social_post', pName)}
+                            className="text-purple-700 hover:text-purple-800 flex items-center gap-1 cursor-pointer"
+                          >
+                            <HelpCircle className="w-3.5 h-3.5" />
+                            <span>Why this content?</span>
+                          </button>
+                        </div>
                       </div>
-                      <div className="whitespace-pre-wrap font-medium text-slate-700">
-                        {currentAssets.email.content.body}
+
+                      {/* Asset 2: Email */}
+                      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between space-y-4">
+                        <div className="space-y-3.5 flex-1">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <FileText className="w-4 h-4 text-indigo-600" /> Email
+                            </span>
+                            <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <Check className="w-3 h-3" /> Valid
+                            </span>
+                          </div>
+
+                          {/* Email Subject + Body: View or Edit Mode */}
+                          {isEditingThisEmail ? (
+                            <div className="space-y-3">
+                              <div>
+                                <label className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1">
+                                  Subject Line
+                                </label>
+                                <input
+                                  type="text"
+                                  value={editingEmailSubject}
+                                  onChange={(e) => setEditingEmailSubject(e.target.value)}
+                                  placeholder="Email subject..."
+                                  className="w-full p-2.5 rounded-xl border border-indigo-300 focus:ring-2 focus:ring-indigo-600/20 text-xs font-bold text-slate-900 outline-none"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1">
+                                  Email Body
+                                </label>
+                                <textarea
+                                  rows={5}
+                                  value={editingEmailBody}
+                                  onChange={(e) => setEditingEmailBody(e.target.value)}
+                                  className="w-full p-3 rounded-xl border border-indigo-300 focus:ring-2 focus:ring-indigo-600/20 text-xs text-slate-800 leading-relaxed outline-none"
+                                />
+                              </div>
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setIsEditingEmail(false)}
+                                  className="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 cursor-pointer"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSaveEditEmail(pName)}
+                                  className="px-3 py-1 rounded-lg text-xs font-bold bg-indigo-700 text-white hover:bg-indigo-800 cursor-pointer"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              {/* Explicit Subject Line Section */}
+                              <div>
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1.5">
+                                  Subject Line
+                                </span>
+                                <div className="bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100 text-xs font-bold text-slate-900">
+                                  {emailSubject}
+                                </div>
+                              </div>
+
+                              {/* Explicit Email Body Section */}
+                              <div>
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1.5">
+                                  Email Body
+                                </span>
+                                <div className="bg-slate-50/80 p-4 rounded-xl border border-slate-200/70 text-xs text-slate-700 leading-relaxed min-h-[110px] whitespace-pre-wrap font-medium">
+                                  {emailBody}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold pt-1">
+                            <span>
+                              {isEditingThisEmail
+                                ? editingEmailBody.trim().split(/\s+/).length
+                                : pAssets.email?.content?.word_count || emailBody.trim().split(/\s+/).length}{' '}
+                              words (target 75–250)
+                            </span>
+                            <span className="text-emerald-600 font-bold">Subject ≤ 60 chars</span>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditEmail(pName)}
+                              className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              <span>Edit</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={isRegenerating}
+                              onClick={() => handleRegenerate('email', pName)}
+                              className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <RotateCw className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin' : ''}`} />
+                              <span>Regenerate</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={isAutoFixing}
+                              onClick={() => handleAutoFix('email', pName)}
+                              className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Wand2 className={`w-3.5 h-3.5 text-emerald-600 ${isAutoFixing ? 'animate-spin' : ''}`} />
+                              <span>Auto-Fix</span>
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleOpenExplain('email', pName)}
+                            className="text-purple-700 hover:text-purple-800 flex items-center gap-1 cursor-pointer"
+                          >
+                            <HelpCircle className="w-3.5 h-3.5" />
+                            <span>Why this content?</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  )}
-
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold pt-1">
-                    <span>
-                      {isEditingEmail ? editingEmailBody.trim().split(/\s+/).length : (currentAssets.email.content.word_count || currentAssets.email.content.body.trim().split(/\s+/).length)} words (target 75–250)
-                    </span>
-                    <span className="text-emerald-600 font-bold">Subject ≤ 60 chars</span>
                   </div>
-                </div>
-
-                {/* 3 Action Buttons matching Image 1 Screen 6: [Edit] [Regenerate] [Why this content?] */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleStartEditEmail}
-                      className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                      <span>Edit</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      disabled={isRegenerating}
-                      onClick={() => handleRegenerate('email')}
-                      className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <RotateCw className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin' : ''}`} />
-                      <span>Regenerate</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      disabled={isAutoFixing}
-                      onClick={() => handleAutoFix('email')}
-                      className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Wand2 className={`w-3.5 h-3.5 text-emerald-600 ${isAutoFixing ? 'animate-spin' : ''}`} />
-                      <span>Auto-Fix</span>
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleOpenExplain('email')}
-                    className="text-purple-700 hover:text-purple-800 flex items-center gap-1 cursor-pointer"
-                  >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    <span>Why this content?</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ─── Step navigation for Assets view (Step 4) ───────────────────── */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => navigate('/strategy-concept?step=concepts', { state: { brand_kit, all_personas: all_personas.map(({ icon: _i, color: _c, ...rest }) => rest), selected_concept } })}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <span>← Step 3: Campaign Concepts</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  unlockStep(5)
-                  setSearchParams({ tab: 'guardian' })
-                }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>Step 5: Brand Guardian →</span>
-              </button>
+                )
+              })}
             </div>
           </div>
         )}
 
-        {/* ─── VIEW 2: BRAND GUARDIAN VALIDATION matching Image 1 Screen 8 ─── */}
+        {/* ─── VIEW 2: BRAND GUARDIAN VALIDATION (Sticky Top Actions) ─── */}
         {activeView === 'guardian' && (
           <div className="space-y-6">
-            <div className="border-b border-slate-200/80 pb-4">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Brand Guardian
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Campaign health & brand compliance
-              </p>
+            {/* Sticky Top Header Bar */}
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Brand Guardian
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Campaign health &amp; brand compliance across all {all_personas.length} personas
+                </p>
+              </div>
+
+              {/* Action Buttons Fixed at Top */}
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setSearchParams({ tab: 'assets' })}
+                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Step 4: Campaign Assets</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenReportCard}
+                  className="px-4 py-2 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>Campaign Report Card</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    unlockStep(6)
+                    setSearchParams({ tab: 'export' })
+                  }}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Export Campaign</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             {/* Overall Score Hero Card matching Image 1 Screen 8 */}
@@ -1791,51 +1976,54 @@ export default function CampaignResultsPage({ user, onLogout }) {
                 </table>
               </div>
             </div>
+          </div>
+        )}
 
-            {/* ─── Step navigation for Brand Guardian view (Step 5) ──────────── */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setSearchParams({ tab: 'assets' })}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <span>← Step 4: Campaign Assets</span>
-              </button>
-              <div className="flex items-center gap-3">
+        {/* ─── VIEW 3: EXPORT CAMPAIGN (Sticky Top Actions) ───────────── */}
+        {activeView === 'export' && (
+          <div className="space-y-6">
+            {/* Sticky Top Header Bar */}
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Export Campaign
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Download your complete campaign and assets
+                </p>
+              </div>
+
+              {/* Action Buttons Fixed at Top */}
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
                 <button
                   type="button"
-                  onClick={handleOpenReportCard}
-                  className="px-5 py-2.5 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+                  onClick={() => setSearchParams({ tab: 'guardian' })}
+                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                 >
-                  <Award className="w-4 h-4" />
-                  <span>Campaign Report Card</span>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Step 5: Brand Guardian</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchParams({ tab: 'ad' })}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-purple-200 cursor-pointer"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>Generate AI Image Ad</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    unlockStep(6)
-                    setSearchParams({ tab: 'export' })
+                    resetWizardSession()
+                    navigate('/dashboard')
                   }}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-200 cursor-pointer"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Export Campaign →</span>
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Finish &amp; Return Home</span>
                 </button>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* ─── VIEW 3: EXPORT CAMPAIGN matching Image 1 Screen 9 ───────────── */}
-        {activeView === 'export' && (
-          <div className="space-y-6">
-            <div className="border-b border-slate-200/80 pb-4">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Export Campaign
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Download your complete campaign and assets
-              </p>
             </div>
 
             {/* Campaign Ready Card matching Image 1 Screen 9 */}
@@ -1932,46 +2120,14 @@ export default function CampaignResultsPage({ user, onLogout }) {
                 </div>
               </button>
             </div>
-
-            {/* ─── Step navigation for Export view ────────────────────────────── */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setSearchParams({ tab: 'guardian' })}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <span>← Step 5: Brand Guardian</span>
-              </button>
-              <div className="flex items-center gap-3 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => setSearchParams({ tab: 'ad' })}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
-                >
-                  <ImageIcon className="w-4 h-4" />
-                  <span>Generate AI Image Ad</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetWizardSession()
-                    navigate('/dashboard')
-                  }}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-200 cursor-pointer"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Finish &amp; Return Home</span>
-                </button>
-              </div>
-            </div>
           </div>
         )}
 
-        {/* ─── VIEW 4: AI IMAGE AD GENERATOR (PR #2) ───────────────────────── */}
+        {/* ─── VIEW 4: AI IMAGE AD GENERATOR (PR #2 — Sticky Top Actions) ───────── */}
         {activeView === 'ad' && (
           <div className="space-y-6">
-            <div className="border-b border-slate-200/80 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Sticky Top Header Bar */}
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-3.5 bg-[#F6F7FB]/95 backdrop-blur-md border-b border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[11px] font-extrabold mb-1">
                   <Sparkles className="w-3 h-3 text-purple-600" />
@@ -1985,29 +2141,52 @@ export default function CampaignResultsPage({ user, onLogout }) {
                 </p>
               </div>
 
-              {/* Persona Selector Tabs */}
-              <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex-wrap">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 hidden md:inline">
-                  Persona:
-                </span>
-                {all_personas.map((p) => {
-                  const isSelected = adPersonaName === p.persona_name
-                  return (
-                    <button
-                      key={p.persona_name}
-                      type="button"
-                      onClick={() => handleSelectAdPersona(p.persona_name)}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-purple-700 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                      }`}
-                    >
-                      {p.persona_name}
-                    </button>
-                  )
-                })}
+              {/* Action Buttons Fixed at Top */}
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setSearchParams({ tab: 'export' })}
+                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Export</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetWizardSession()
+                    navigate('/dashboard')
+                  }}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-200 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Finish &amp; Return Home</span>
+                </button>
               </div>
+            </div>
+
+            {/* Persona Selector Bar for Ad Generation */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center gap-2 flex-wrap shadow-2xs">
+              <span className="text-xs font-bold text-slate-500 px-2">
+                Target Persona for Ad:
+              </span>
+              {all_personas.map((p) => {
+                const isSelected = adPersonaName === p.persona_name
+                return (
+                  <button
+                    key={p.persona_name}
+                    type="button"
+                    onClick={() => handleSelectAdPersona(p.persona_name)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-purple-700 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
+                    }`}
+                  >
+                    {p.persona_name}
+                  </button>
+                )
+              })}
             </div>
 
             {/* Main Creative Studio Grid */}
@@ -2393,29 +2572,6 @@ export default function CampaignResultsPage({ user, onLogout }) {
                   </div>
                 )}
               </div>
-            </div>
-
-            {/* Bottom Navigation for Ad Studio */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200">
-              <button
-                type="button"
-                onClick={() => setSearchParams({ tab: 'export' })}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back to Export</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  resetWizardSession()
-                  navigate('/dashboard')
-                }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-200 cursor-pointer"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Finish &amp; Return Home</span>
-              </button>
             </div>
           </div>
         )}
