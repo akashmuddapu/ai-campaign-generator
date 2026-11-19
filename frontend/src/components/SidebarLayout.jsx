@@ -17,6 +17,7 @@ import {
   Clock,
   PanelLeftClose,
   PanelLeftOpen,
+  Image as ImageIcon,
 } from 'lucide-react'
 import api from '../services/api'
 import { getMaxUnlockedStep } from '../utils/wizardProgress'
@@ -217,7 +218,7 @@ export default function SidebarLayout({
   const activeStepParam = searchParams.get('step')
   const effectiveMaxStep = Math.max(
     maxUnlockedStep,
-    currentPath === '/results' && activeTab === 'export'
+    currentPath === '/results' && (activeTab === 'export' || activeTab === 'ad')
       ? 6
       : currentPath === '/report-card'
       ? 5
@@ -233,6 +234,7 @@ export default function SidebarLayout({
     { label: 'Brand Guardian', path: '/results?tab=guardian', icon: ShieldCheck, tab: 'guardian', minStep: 5, stepNum: 5 },
     { label: 'Campaign Report Card', path: '/report-card', icon: Award, minStep: 5 },
     { label: 'Export', path: '/results?tab=export', icon: Download, tab: 'export', minStep: 6 },
+    { label: 'Generate Ad', path: '/results?tab=ad', icon: ImageIcon, tab: 'ad', minStep: 6 },
     { label: 'Campaign History', path: '/history', icon: History },
   ]
 

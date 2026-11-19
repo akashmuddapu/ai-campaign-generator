@@ -14,6 +14,7 @@ const SESSION_KEYS_TO_CLEAR = [
   'cg_selected_concept',
   'cg_persona_assets',
   'cg_active_campaign_id',
+  'cg_generated_ad',
 ]
 
 export function getMaxUnlockedStep() {
