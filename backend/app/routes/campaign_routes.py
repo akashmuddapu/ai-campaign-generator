@@ -90,17 +90,21 @@ def generate_assets():
             },
         }
 
-        user_id = session.get("user_id")
+        user_id = data.get("user_id") or request.headers.get("X-User-Id") or session.get("user_id")
         created_at = datetime.now(timezone.utc).isoformat()
+        all_personas = data.get("all_personas")
+        assets_by_persona = data.get("assets_by_persona") or {}
 
         bundle_record = {
             "id": campaign_id,
-            "user_id": user_id,
+            "user_id": str(user_id) if user_id is not None else None,
             "created_at": created_at,
             "status": "success",
             "assets": assets_payload,
             "brand_kit": brand_kit,
             "persona": persona,
+            "all_personas": all_personas if all_personas else [persona],
+            "assets_by_persona": assets_by_persona,
             "concept": concept,
             "social_post": assets_payload["social_post"],
             "email": assets_payload["email"],
@@ -109,7 +113,12 @@ def generate_assets():
         # Store for export and dashboard
         campaigns_path = str(Path(current_app.config["DATA_DIR"]) / "campaigns.json")
         campaigns = storage_service.read_json(campaigns_path, default=[])
-        campaigns.append({"id": campaign_id, "user_id": user_id, "created_at": created_at, "bundle": bundle_record})
+        campaigns.append({
+            "id": campaign_id,
+            "user_id": str(user_id) if user_id is not None else None,
+            "created_at": created_at,
+            "bundle": bundle_record
+        })
         storage_service.write_json(campaigns_path, campaigns)
 
     except Exception as e:
@@ -174,7 +183,7 @@ def auto_fix():
 
 @campaign_bp.get("")
 def list_campaigns():
-    user_id = session.get("user_id")
+    user_id = session.get("user_id") or request.headers.get("X-User-Id") or request.args.get("user_id")
     campaigns_path = str(Path(current_app.config["DATA_DIR"]) / "campaigns.json")
     campaigns = storage_service.read_json(campaigns_path, default=[])
 
@@ -195,7 +204,7 @@ def list_campaigns():
 
         summaries.append({
             "id": c_id,
-            "user_id": c_user,
+            "user_id": str(c_user) if c_user is not None else None,
             "product_name": bk.get("product_name", "Campaign"),
             "tagline": bk.get("tagline", ""),
             "brand_tone": bk.get("brand_tone", ""),
@@ -207,13 +216,18 @@ def list_campaigns():
             "bundle": b,
         })
 
-    # If user logged in and has campaigns, return their campaigns
+    # If an authenticated user is requesting, strictly return ONLY their campaigns
     if user_id:
-        user_campaigns = [c for c in summaries if c["user_id"] == user_id]
-        if user_campaigns:
-            return jsonify({"status": "success", "campaigns": user_campaigns}), 200
+        user_campaigns = [c for c in summaries if c.get("user_id") == str(user_id)]
+        seen = set()
+        deduped = []
+        for s in reversed(user_campaigns):
+            if s["id"] not in seen:
+                seen.add(s["id"])
+                deduped.append(s)
+        return jsonify({"status": "success", "campaigns": deduped}), 200
 
-    # Otherwise return all recent campaigns (seeded / demo history)
+    # Otherwise return all recent campaigns (for unauthenticated / guest testing)
     seen = set()
     deduped = []
     for s in reversed(summaries):
@@ -255,11 +269,16 @@ def update_campaign_detail(campaign_id):
 
     existing = campaigns[idx]
     bundle = existing.get("bundle", existing)
+    c_user = existing.get("user_id") or bundle.get("user_id")
 
     if "brand_kit" in data:
         bundle["brand_kit"] = data["brand_kit"]
     if "persona" in data:
         bundle["persona"] = data["persona"]
+    if "all_personas" in data:
+        bundle["all_personas"] = data["all_personas"]
+    if "assets_by_persona" in data:
+        bundle["assets_by_persona"] = data["assets_by_persona"]
     if "concept" in data:
         bundle["concept"] = data["concept"]
     if "social_post" in data:
@@ -268,8 +287,11 @@ def update_campaign_detail(campaign_id):
         bundle["email"] = data["email"]
     if "assets" in data:
         bundle["assets"] = data["assets"]
+    if "user_id" in data and not c_user:
+        c_user = str(data["user_id"])
+        bundle["user_id"] = c_user
 
-    campaigns[idx] = {"id": campaign_id, "bundle": bundle}
+    campaigns[idx] = {"id": campaign_id, "user_id": c_user, "bundle": bundle}
     storage_service.write_json(campaigns_path, campaigns)
     return jsonify({"status": "success", "campaign": bundle}), 200
 

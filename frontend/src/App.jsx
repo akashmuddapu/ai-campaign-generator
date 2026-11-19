@@ -57,7 +57,14 @@ function PublicRoute({ user, isLoading, children }) {
 
 // ─── App Shell ────────────────────────────────────────────────────────────
 function AppShell() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('cg_user')
+      return stored ? JSON.parse(stored) : null
+    } catch {
+      return null
+    }
+  })
   const [isLoading, setIsLoading] = useState(true)
   const location = useLocation()
 
@@ -67,12 +74,25 @@ function AppShell() {
       .then((res) => {
         if (res.data?.authenticated && res.data?.user) {
           setUser(res.data.user)
+          try {
+            if (res.data.user.id) {
+              localStorage.setItem('cg_user_id', res.data.user.id)
+              localStorage.setItem('cg_user', JSON.stringify(res.data.user))
+            }
+          } catch {}
         } else {
-          setUser(null)
+          const storedUser = localStorage.getItem('cg_user')
+          if (!storedUser) {
+            setUser(null)
+            try {
+              localStorage.removeItem('cg_user_id')
+              localStorage.removeItem('cg_user')
+            } catch {}
+          }
         }
       })
       .catch(() => {
-        setUser(null)
+        // Keep optimistic local user on network blip
       })
       .finally(() => {
         setIsLoading(false)
@@ -83,6 +103,12 @@ function AppShell() {
     const res = await api.post('/auth/login', credentials)
     const userData = res.data?.user || res.data
     setUser(userData)
+    try {
+      if (userData?.id) {
+        localStorage.setItem('cg_user_id', userData.id)
+        localStorage.setItem('cg_user', JSON.stringify(userData))
+      }
+    } catch {}
     return userData
   }
 
@@ -90,6 +116,12 @@ function AppShell() {
     const res = await api.post('/auth/signup', credentials)
     const userData = res.data?.user || res.data
     setUser(userData)
+    try {
+      if (userData?.id) {
+        localStorage.setItem('cg_user_id', userData.id)
+        localStorage.setItem('cg_user', JSON.stringify(userData))
+      }
+    } catch {}
     return userData
   }
 
@@ -98,6 +130,11 @@ function AppShell() {
       await api.post('/auth/logout')
     } finally {
       setUser(null)
+      try {
+        localStorage.removeItem('cg_user_id')
+        localStorage.removeItem('cg_user')
+        sessionStorage.clear()
+      } catch {}
     }
   }
 

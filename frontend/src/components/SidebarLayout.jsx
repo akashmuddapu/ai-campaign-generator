@@ -66,32 +66,72 @@ export default function SidebarLayout({
     })
   }
 
-  // Previous campaigns list for sidebar
+  // Previous campaigns list for sidebar (strictly isolated to current user)
   const [previousCampaigns, setPreviousCampaigns] = useState(() => {
     try {
-      const s = sessionStorage.getItem('cg_campaign_history')
-      return s ? JSON.parse(s) : DEFAULT_PREVIOUS
+      const userId = user?.id || localStorage.getItem('cg_user_id')
+      const cacheKey = userId ? `cg_campaign_history_${userId}` : 'cg_campaign_history'
+      const s = sessionStorage.getItem(cacheKey)
+      if (s) return JSON.parse(s)
+      return []
     } catch {
-      return DEFAULT_PREVIOUS
+      return []
     }
   })
 
-  // Fetch previous campaigns on mount / login
+  // Fetch previous campaigns on mount, user change, or route navigation
   useEffect(() => {
+    const userId = user?.id || localStorage.getItem('cg_user_id')
     api
-      .get('/campaigns')
+      .get('/campaigns', { params: userId ? { user_id: userId } : {} })
       .then((res) => {
-        if (res.data?.campaigns && res.data.campaigns.length > 0) {
-          setPreviousCampaigns(res.data.campaigns)
+        if (res.data?.campaigns) {
+          const list = res.data.campaigns
+          setPreviousCampaigns(list)
           try {
-            sessionStorage.setItem('cg_campaign_history', JSON.stringify(res.data.campaigns))
+            const cacheKey = userId ? `cg_campaign_history_${userId}` : 'cg_campaign_history'
+            sessionStorage.setItem(cacheKey, JSON.stringify(list))
           } catch {}
         }
       })
-      .catch(() => {
-        // Fall back to storage or default
+      .catch(() => {})
+  }, [user?.id, location.pathname])
+
+  // Instantly listen for newly created campaigns to update sidebar with 0 latency
+  useEffect(() => {
+    const handleCampaignCreated = (e) => {
+      const newCamp = e.detail
+      if (!newCamp || !newCamp.id) return
+
+      const bk = newCamp.brand_kit || {}
+      const concept = newCamp.concept || {}
+      const vr = newCamp.assets?.social_post?.validation_report || {}
+      const summary = {
+        id: newCamp.id,
+        user_id: newCamp.user_id,
+        product_name: bk.product_name || 'Campaign',
+        concept_title: concept.title || 'Campaign Concept',
+        score: vr.overall_score || 96,
+        status: vr.passed ? 'Validated' : 'Review',
+        created_at: newCamp.created_at || new Date().toISOString(),
+        bundle: newCamp,
+      }
+
+      setPreviousCampaigns((prev) => {
+        const withoutNew = prev.filter((c) => c.id !== newCamp.id)
+        const updated = [summary, ...withoutNew]
+        const userId = user?.id || localStorage.getItem('cg_user_id')
+        try {
+          const cacheKey = userId ? `cg_campaign_history_${userId}` : 'cg_campaign_history'
+          sessionStorage.setItem(cacheKey, JSON.stringify(updated))
+        } catch {}
+        return updated
       })
-  }, [])
+    }
+
+    window.addEventListener('cg_campaign_created', handleCampaignCreated)
+    return () => window.removeEventListener('cg_campaign_created', handleCampaignCreated)
+  }, [user?.id])
 
   // Dynamically resolve campaign name from props or sessionStorage
   const resolvedCampaignName =
@@ -256,33 +296,46 @@ export default function SidebarLayout({
               </div>
 
               <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
-                {previousCampaigns.map((camp) => {
-                  const isSelected =
-                    currentPath === '/history' && searchParams.get('id') === camp.id
-                  return (
+                {previousCampaigns.length === 0 ? (
+                  <div className="px-3 py-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                    <span className="text-[11px] text-slate-400 block">No saved campaigns yet</span>
                     <Link
-                      key={camp.id}
-                      to={`/history?id=${camp.id}`}
-                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all group ${
-                        isSelected
-                          ? 'bg-purple-600/30 text-white border border-purple-500/30 font-bold'
-                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                      }`}
+                      to="/generator"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-400 hover:text-purple-300 mt-1"
                     >
-                      <div className="truncate mr-2">
-                        <span className="block truncate text-xs font-semibold">
-                          {camp.product_name}
-                        </span>
-                        <span className="block truncate text-[10px] text-slate-400 font-normal">
-                          {camp.concept_title || camp.persona_name || 'Campaign'}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 shrink-0">
-                        {camp.score || 96}%
-                      </span>
+                      <Sparkles className="w-3 h-3" />
+                      <span>Start Campaign →</span>
                     </Link>
-                  )
-                })}
+                  </div>
+                ) : (
+                  previousCampaigns.map((camp) => {
+                    const isSelected =
+                      currentPath === '/history' && searchParams.get('id') === camp.id
+                    return (
+                      <Link
+                        key={camp.id}
+                        to={`/history?id=${camp.id}`}
+                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all group ${
+                          isSelected
+                            ? 'bg-purple-600/30 text-white border border-purple-500/30 font-bold'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <div className="truncate mr-2">
+                          <span className="block truncate text-xs font-semibold">
+                            {camp.product_name}
+                          </span>
+                          <span className="block truncate text-[10px] text-slate-400 font-normal">
+                            {camp.concept_title || camp.persona_name || 'Campaign'}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 shrink-0">
+                          {camp.score || 96}%
+                        </span>
+                      </Link>
+                    )
+                  })
+                )}
               </div>
             </div>
           )}

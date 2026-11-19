@@ -83,18 +83,19 @@ def logout():
 
 @auth_bp.get("/me")
 def me():
-    user_id = session.get("user_id")
+    user_id = session.get("user_id") or request.headers.get("X-User-Id")
     if not user_id:
         return jsonify({"authenticated": False, "user": None}), 200
 
     users = _load_users()
     user_dict = next(
-        (u for u in users if isinstance(u, dict) and u.get("id") == user_id),
+        (u for u in users if isinstance(u, dict) and u.get("id") == str(user_id)),
         None
     )
     if not user_dict:
         session.pop("user_id", None)
         return jsonify({"authenticated": False, "user": None}), 200
 
+    session["user_id"] = str(user_id)
     user = User.from_dict(user_dict)
     return jsonify({"authenticated": True, "user": user.to_public_dict()}), 200
