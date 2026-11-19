@@ -238,6 +238,154 @@ def list_campaigns():
     return jsonify({"status": "success", "campaigns": deduped[:12]}), 200
 
 
+@campaign_bp.post("/generate-ad-hooks")
+def generate_ad_hooks():
+    """Generate high-converting, tailored marketing hook headlines for a given product and persona."""
+    data = request.get_json(silent=True) or {}
+    brand_kit = data.get("brand_kit", {})
+    persona = data.get("persona", {})
+    product_name = brand_kit.get("product_name", "TravelMate Smart Mug")
+    product_desc = brand_kit.get("product_description", "")
+    persona_name = persona.get("persona_name", "Audience")
+
+    n = persona_name.lower()
+    is_beverage = any(w in (f"{product_name} {product_desc}").lower() for w in ["mug", "coffee", "cup", "drink", "temperature", "sip", "tea", "bottle", "travelmate"])
+
+    if is_beverage:
+        if "student" in n:
+            hooks = [
+                f"Fuel all-night study sessions with {product_name}.",
+                f"From morning lectures to late exams, your brew stays 140°F.",
+                f"Never drink cold coffee during study marathons again.",
+                f"Smart heating designed for unstoppable students.",
+            ]
+        elif "professional" in n or "working" in n:
+            hooks = [
+                f"Back-to-back meetings? {product_name} keeps your coffee at 145°F.",
+                f"Boardroom focus starts with coffee that never turns lukewarm.",
+                f"Precision temperature control for high-output workdays.",
+                f"Executive elegance meets all-day temperature perfection with {product_name}.",
+            ]
+        elif "travel" in n:
+            hooks = [
+                f"From takeoff to touchdown, {product_name} keeps your brew hot.",
+                f"100% leakproof smart warmth across every time zone.",
+                f"Never settle for cold travel coffee again.",
+                f"Your perfect sip at 35,000 feet with {product_name}.",
+            ]
+        else:
+            hooks = [
+                f"Your drink. Your exact temperature with {product_name}.",
+                f"Never settle for lukewarm coffee again.",
+                f"Smart all-day heat retention engineered for {persona_name}.",
+                f"Experience the perfect temperature from first sip to last.",
+            ]
+    else:
+        hooks = [
+            f"Elevate your daily standard with {product_name}.",
+            f"Engineered for {persona_name} who refuse to compromise.",
+            f"Smarter, faster, better: Experience {product_name}.",
+            f"The modern solution for {persona_name}: {product_name}.",
+        ]
+
+    return jsonify({
+        "status": "success",
+        "persona_name": persona_name,
+        "product_name": product_name,
+        "hooks": hooks,
+    }), 200
+
+
+@campaign_bp.post("/generate-ad-image")
+def generate_ad_image():
+    """Generate a high-converting AI marketing image ad tailored to the brand, persona, and concept."""
+    import urllib.parse
+    import random
+
+    data = request.get_json(silent=True) or {}
+    brand_kit = data.get("brand_kit", {})
+    persona = data.get("persona", {})
+    concept = data.get("concept", {}) or data.get("selected_concept", {})
+    style = data.get("style", "Commercial Studio")
+    aspect_ratio = data.get("aspect_ratio", "1:1")
+    custom_prompt = data.get("custom_prompt")
+    headline = data.get("headline")
+
+    product_name = brand_kit.get("product_name", "TravelMate Smart Mug")
+    product_desc = brand_kit.get("product_description", "A smart travel mug that keeps drinks at your preferred temperature.")
+    persona_name = persona.get("persona_name", "Target Audience")
+    hook = (concept.get("hook") or concept.get("tagline") or brand_kit.get("tagline") or "Experience the difference.").replace('"', '')
+    title = concept.get("title", "Elevate Your Day")
+
+    # Dimensions based on standard marketing aspect ratios (divisible by 8/16 for neural rendering)
+    dimensions = {
+        "1:1": (1080, 1080),
+        "16:9": (1280, 720),
+        "9:16": (720, 1280),
+    }
+    width, height = dimensions.get(aspect_ratio, (1080, 1080))
+
+    # Curate style prompt for ad creative
+    style_prompts = {
+        "Commercial Studio": "sleek minimalist commercial product photography, dramatic soft studio key lights, high-end editorial product placement, hyper-detailed, clean elegant backdrop",
+        "Lifestyle in Context": f"candid authentic lifestyle advertisement, showing a {persona_name} naturally using {product_name}, golden hour natural ambient lighting, cinematic 35mm photography",
+        "Vibrant Digital Banner": "bold modern tech marketing banner, dynamic neon and vibrant gradient accents, high energy, commercial hero shot, award-winning social media ad",
+        "Cinematic 3D": "premium 3D product render, Octane Render style, subsurface scattering, elegant luxury finish, photorealistic reflections, 8k resolution",
+    }
+    style_desc = style_prompts.get(style, style_prompts["Commercial Studio"])
+
+    # Determine scenario by persona
+    n = persona_name.lower()
+    if "student" in n:
+        context_scene = "college study session, modern university library with natural window light"
+    elif "professional" in n or "working" in n or "ciso" in n:
+        context_scene = "contemporary executive boardroom, clean glass desk, high-rise cityscape view"
+    elif "travel" in n:
+        context_scene = "sleek airport terminal lounge with airplane wing visible through windows"
+    else:
+        context_scene = "modern aesthetic lifestyle environment"
+
+    is_mug_or_beverage = any(w in (f"{product_name} {product_desc}").lower() for w in ["mug", "coffee", "cup", "thermos", "bottle", "drink", "temperature", "sip", "travelmate"])
+
+    if is_mug_or_beverage:
+        product_detail = (
+            f"Commercial hero shot of the '{product_name}', a sleek modern smart travel coffee mug "
+            f"with brushed stainless steel and matte black finish, digital LED temperature display glowing on the side reading 140°F, "
+            f"insulated leakproof lid, prominently centered and in crisp sharp focus"
+        )
+    else:
+        product_detail = f"Commercial hero shot of the '{product_name}': {product_desc}, prominently positioned and centered in sharp focus"
+
+    if custom_prompt and custom_prompt.strip():
+        final_prompt = custom_prompt.strip()
+    else:
+        final_prompt = (
+            f"Award-winning commercial product advertisement photography of '{product_name}'. "
+            f"{product_detail}. "
+            f"Environment: {context_scene}. {style_desc}. "
+            f"Professional studio advertising photography, razor-sharp focus on {product_name}, 8k resolution, crisp commercial lighting, photorealistic, no blur, no distortion."
+        )
+
+    seed = random.randint(1000, 999999)
+    encoded = urllib.parse.quote(final_prompt)
+    # Using model=turbo for instant, rate-limit-free image generation (avoids 'At its limit right now' queue error)
+    image_url = f"https://image.pollinations.ai/prompt/{encoded}?width={width}&height={height}&model=turbo&nologo=true&seed={seed}"
+
+    return jsonify({
+        "status": "success",
+        "image_url": image_url,
+        "prompt": final_prompt,
+        "aspect_ratio": aspect_ratio,
+        "width": width,
+        "height": height,
+        "persona_name": persona_name,
+        "product_name": product_name,
+        "headline": headline or hook or title,
+        "style": style,
+        "seed": seed,
+    }), 200
+
+
 @campaign_bp.get("/<campaign_id>")
 def get_campaign_detail(campaign_id):
     campaigns_path = str(Path(current_app.config["DATA_DIR"]) / "campaigns.json")
@@ -332,3 +480,4 @@ def export_campaign(campaign_id):
             mimetype="application/json",
             headers={"Content-Disposition": f"attachment; filename=campaign_{campaign_id}.json"}
         ), 200
+

@@ -1,129 +1,49 @@
-# CampaignGuard AI 🛡️
+\# 🛡️ CampaignGuard AI
 
-> **AI-powered marketing campaign generator with built-in brand compliance.**
-> Generate persona-targeted social posts and emails — validated against your brand rules in real time.
+**AI-Powered Marketing Campaign Generator with Brand Protection**
 
+CampaignGuard AI helps businesses create personalized marketing campaigns while keeping every message consistent with their brand identity.
 
+Simply enter your brand details, select your target customers, and let AI generate ready-to-use marketing content.
 
+## 🚀 Key Features
 
-\
+- **Brand Kit:** Define your product, brand tone, tagline, and words to avoid.
+- **Customer Personas:** Target different audiences such as students, professionals, and travellers.
+- **AI Campaign Ideas:** Generate three creative campaign strategies.
+- **Content Generation:** Create personalized social media posts and marketing emails for each persona.
+- **Brand Guardian:** Checks generated content against brand guidelines.
+- **Auto-Fix:** Detects and fixes content that violates brand rules.
+- **Campaign Analytics:** Explore campaign activity and insights through a dashboard.
+- **Campaign History:** View, edit, and continue previous campaigns.
+- **Export:** Download campaigns in Markdown or JSON format.
 
+## 🔄 How It Works
 
----
+1. **Set Up Your Brand** – Enter product details, brand identity, and guidelines.
+2. **Define Your Audience** – Select or create customer personas.
+3. **Generate Campaign Ideas** – Get three AI-generated marketing strategies.
+4. **Create Marketing Content** – Generate personalized social posts and emails.
+5. **Check Brand Compliance** – Use Brand Guardian to validate and fix content.
+6. **Export Your Campaign** – Download your final marketing materials.
 
-## 🎯 What Is This?
+## 🛠️ Technology Stack
 
-**CampaignGuard AI** is a full-stack AI-powered marketing platform that helps marketers create personalized, brand-compliant marketing campaigns.
+| Component | Technology |
+|---|---|
+| Frontend | React 19, Vite, Tailwind CSS |
+| Backend | Python, Flask |
+| AI Integration | Google Gemini, Grok |
+| Authentication | Flask Sessions |
+| Testing | Vitest, Pytest |
 
-The platform allows marketers to:
-
-1. **Define a Brand Kit** — product name, description, tone tags, tagline, and banned words.
-2. **Configure Customer Personas** — Student, Working Professional, Traveller, or custom personas.
-3. **Generate Campaign Concepts** — AI generates three strategic campaign angles with hooks and key messages.
-4. **Generate Personalized Assets** — unique social media posts (≤280 characters) and emails (75–250 words) for each persona.
-5. **Run Brand Guardian** — validates assets against brand rules, including banned words, content length, and tone.
-6. **Auto-Fix Violations** — automatically fixes brand compliance violations.
-7. **Analyze Campaign Performance** — view campaign analytics and insights through the Analytics page.
-8. **Export Campaigns** — download complete campaigns as Markdown or JSON.
-
-All through a guided campaign studio with no AI prompt engineering required.
-
----
-
-## 📸 App Screenshots
-
-| Feature              | Description                                                           |
-| -------------------- | --------------------------------------------------------------------- |
-| Brand Kit & Personas | Define products, brand tone, banned words, and customer personas.     |
-| Campaign Assets      | Generate persona-specific social media posts and emails.              |
-| Brand Guardian       | Review asset-wise compliance scores and automatically fix violations. |
-| Analytics Dashboard  | Explore campaign analytics, performance metrics, and insights.        |
-| Export               | Download complete campaigns in Markdown or JSON.                      |
-
----
-
-## ✨ Key Features
-
-| Feature                        | Description                                                                                    |
-| ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| 🧠 **AI Provider Abstraction** | Pluggable Gemini / Grok / Mock providers that can be switched without changing business logic. |
-| 🛡️ **Brand Guardian**         | Deterministic banned-word detection, content-length validation, and semantic scoring.          |
-| ⚡ **Auto-Fix Engine**          | Automatically replaces banned words and fixes over-length content.                             |
-| 👤 **Persona DNA**             | Generates distinct marketing content for each customer persona.                                |
-| 📊 **Analytics Dashboard**     | Provides campaign analytics, performance metrics, and visual insights.                         |
-| 📥 **Offline Export**          | Client-side Markdown and JSON downloads.                                                       |
-| 🕒 **Campaign History**        | Access previous campaigns, executive reports, and quick-edit functionality.                    |
-| 🔐 **Authentication System**   | Server-side Flask sessions with password hashing.                                              |
-| 📊 **Live Validation**         | Brand compliance scores update as campaign assets are edited.                                  |
-| 🎨 **Sample Presets**          | TravelMate, CyberShield, and ZenBrew sample brand kits.                                        |
-
----
-
-## 🏗️ Project Structure
-
-```text
-ai-campaign-generator/
-├── frontend/                         # React 19 + Vite + Tailwind CSS 4
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── LandingPage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── SignupPage.jsx
-│   │   │   ├── DashboardPage.jsx
-│   │   │   ├── BrandPersonaSetupPage.jsx
-│   │   │   ├── StrategyConceptPage.jsx
-│   │   │   ├── CampaignResultsPage.jsx
-│   │   │   ├── CampaignHistoryReportPage.jsx
-│   │   │   └── AnalyticsPage.jsx       # Campaign analytics dashboard
-│   │   ├── components/
-│   │   │   ├── SidebarLayout.jsx
-│   │   │   ├── AssetCard.jsx
-│   │   │   ├── BrandGuardianBadge.jsx
-│   │   │   ├── WhyThisContentModal.jsx
-│   │   │   ├── PresetSelector.jsx
-│   │   │   └── ValidationReportCard.jsx
-│   │   └── services/
-│   │       └── api.js
-│   └── tests/                          # Vitest + React Testing Library
-│
-├── backend/                            # Python Flask REST API
-│   ├── app/
-│   │   ├── routes/
-│   │   │   ├── auth_routes.py
-│   │   │   ├── campaign_routes.py
-│   │   │   └── preset_routes.py
-│   │   ├── services/
-│   │   │   ├── ai_service.py
-│   │   │   ├── gemini_provider.py
-│   │   │   ├── grok_provider.py
-│   │   │   ├── mock_provider.py
-│   │   │   ├── brand_guardian.py
-│   │   │   ├── export_service.py
-│   │   │   └── storage_service.py
-│   │   ├── models/
-│   │   └── validators/
-│   ├── data/
-│   ├── tests/
-│   ├── requirements.txt
-│   └── wsgi.py
-│
-└── specs/
-    └── 001-campaign-generator-mvp/
-        ├── spec.md
-        ├── plan.md
-        ├── tasks.md
-        └── contracts/
-```
-
----
-
-## 🚀 Quick Start
+## ⚙️ Getting Started
 
 ### Prerequisites
 
-- **Node.js** ≥ 20
-- **Python** ≥ 3.11
-- **Git**
+- Node.js 20 or later
+- Python 3.11 or later
+- Git
 
 ### 1. Clone the Repository
 
@@ -132,61 +52,36 @@ git clone https://github.com/akashmuddapu/ai-campaign-generator.git
 cd ai-campaign-generator
 ```
 
-### 2. Backend Setup
+### 2. Start the Backend
 
 ```bash
 cd backend
 
 python -m venv .venv
-```
 
-Activate the virtual environment:
-
-**Windows:**
-
-```powershell
+# Windows
 .venv\Scripts\activate
-```
 
-**macOS/Linux:**
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure Environment Variables
-
-Create a `.env` file inside the `backend` directory.
+Create a `.env` file inside the `backend` directory:
 
 ```env
-SECRET_KEY=your-super-secret-key-here
+SECRET_KEY=your-secret-key
 GEMINI_API_KEY=your-gemini-api-key
 GROK_API_KEY=your-grok-api-key
 ```
 
-API keys are optional. The application supports Mock mode when external AI providers are unavailable.
-
-### 4. Start the Backend
-
-From the `backend` directory:
+Start the server:
 
 ```bash
 python wsgi.py
 ```
 
-Backend runs at:
+Backend runs at `http://localhost:5000`.
 
-```text
-http://localhost:5000
-```
-
-### 5. Start the Frontend
+### 3. Start the Frontend
 
 Open another terminal:
 
@@ -196,196 +91,36 @@ npm install
 npm run dev
 ```
 
-Frontend runs at:
+Frontend runs at `http://localhost:5173`.
 
-```text
-http://localhost:5173
-```
+Open the frontend URL in your browser to use CampaignGuard AI.
 
-Open `http://localhost:5173` in your browser.
-
----
-
-## 🤖 AI Provider Configuration
-
-CampaignGuard AI uses an AI Provider Abstraction Layer.
-
-Supported providers:
-
-```text
-Gemini → Grok → Mock
-```
-
-- **Gemini:** Google Gemini API integration.
-- **Grok:** xAI Grok API integration.
-- **Mock:** Deterministic fallback responses for offline demonstrations.
-
-### Gemini API Setup
-
-1. Visit [Google AI Studio](https://aistudio.google.com).
-2. Create a project and generate an API key.
-3. Add the key to `backend/.env`:
-
-```env
-GEMINI_API_KEY=your-gemini-api-key
-```
-
----
+**Note:** AI API keys are optional for Mock mode. External AI generation requires the respective provider's API key.
 
 ## 🧪 Running Tests
 
-### Backend Tests
-
-From the `backend` directory:
+**Backend:**
 
 ```bash
+cd backend
 pytest -q
 ```
 
-### Frontend Tests
-
-From the project root:
+**Frontend:**
 
 ```bash
 npm --prefix frontend test
 ```
 
----
+## 🤖 AI Providers
 
-## 🌐 API Reference
+- **Gemini:** AI-powered campaign generation using Google Gemini.
+- **Grok:** Alternative AI-powered generation using xAI.
+- **Mock:** Sample responses for testing and offline demonstrations.
 
-All API endpoints are prefixed with `/api`.
+## 🎯 Our Goal
 
-### Authentication
-
-| Method | Endpoint       | Description                        |
-| ------ | -------------- | ---------------------------------- |
-| POST   | `/auth/signup` | Register a new user                |
-| POST   | `/auth/login`  | Authenticate a user                |
-| POST   | `/auth/logout` | End the current session            |
-| GET    | `/auth/me`     | Get the current authenticated user |
-
-### Campaigns
-
-| Method | Endpoint                     | Description                             |
-| ------ | ---------------------------- | --------------------------------------- |
-| POST   | `/campaigns/persona-dna`     | Generate persona psychological profiles |
-| POST   | `/campaigns/concepts`        | Generate three campaign concepts        |
-| POST   | `/campaigns/generate-assets` | Generate social posts and emails        |
-| POST   | `/campaigns/auto-fix`        | Fix brand compliance violations         |
-| POST   | `/campaigns/validate`        | Validate campaign assets                |
-| GET    | `/campaigns`                 | Retrieve campaign history               |
-| GET    | `/campaigns/<id>`            | Retrieve a campaign                     |
-| PUT    | `/campaigns/<id>`            | Update campaign data                    |
-| DELETE | `/campaigns/<id>`            | Delete a campaign                       |
-| GET    | `/campaigns/export/<id>`     | Export a campaign                       |
-
-### Presets
-
-| Method | Endpoint        | Description                      |
-| ------ | --------------- | -------------------------------- |
-| GET    | `/presets`      | List available sample brand kits |
-| GET    | `/presets/<id>` | Retrieve a specific preset       |
+To make professional marketing campaign creation simple, personalized, and brand-safe — without requiring users to write complex AI prompts.
 
 ---
 
-## 🎨 Tech Stack
-
-| Layer              | Technology                     |
-| ------------------ | ------------------------------ |
-| Frontend Framework | React 19                       |
-| Build Tool         | Vite 8                         |
-| Styling            | Tailwind CSS 4                 |
-| Routing            | React Router 7                 |
-| HTTP Client        | Axios                          |
-| Icons              | Lucide React                   |
-| Frontend Testing   | Vitest + React Testing Library |
-| Backend Framework  | Flask 3.1                      |
-| Session Management | Flask-Session                  |
-| CORS               | Flask-CORS                     |
-| AI Integration     | OpenAI-compatible SDK          |
-| Data Validation    | Pydantic                       |
-| Backend Testing    | Pytest                         |
-
----
-
-## 🔐 Environment Variables
-
-### `backend/.env`
-
-| Variable         | Required | Description                                  |
-| ---------------- | -------- | -------------------------------------------- |
-| `SECRET_KEY`     | Yes      | Flask session secret                         |
-| `GEMINI_API_KEY` | No       | Google Gemini API key                        |
-| `GROK_API_KEY`   | No       | xAI Grok API key                             |
-| `SESSION_TYPE`   | No       | Session storage type; defaults to filesystem |
-
----
-
-## 📋 5-Step Campaign Studio Workflow
-
-```text
-Step 1 → Brand Kit & Personas
-         Define product details, brand tone, tagline,
-         banned words, and customer personas.
-
-Step 2 → Persona DNA
-         Generate psychological profiles including goals,
-         pain points, motivations, and preferred tone.
-
-Step 3 → Campaign Concepts
-         Generate and select strategic campaign angles,
-         headlines, hooks, and key messages.
-
-Step 4 → Campaign Assets
-         Generate persona-specific social media posts
-         and emails. Edit, regenerate, or auto-fix assets.
-
-Step 5 → Brand Guardian & Export
-         Validate content, review compliance scores,
-         automatically fix violations, and export campaigns.
-```
-
-The Analytics page provides an additional view of campaign data and insights.
-
----
-
-## 🗂️ Campaign History
-
-CampaignGuard AI maintains previous campaigns in the sidebar.
-
-Users can access:
-
-- **Executive Reports** — campaign details, brand kit, strategy, personas, and generated assets.
-- **Quick Edit Mode** — modify product information, taglines, social posts, and emails.
-- **Resume in Studio** — continue working on previously generated campaigns.
-- **Export** — download campaign data in Markdown or JSON.
-
----
-
-## 📊 Analytics Dashboard
-
-The Analytics page provides a centralized view of campaign-related insights.
-
-It is designed to help users understand campaign activity, review performance metrics, and analyze campaign data through visual representations.
-
----
-
-## 🤝 Contributing
-
-```bash
-git checkout -b feature/your-feature-name
-
-git add .
-git commit -m "feat: add your feature"
-
-git push origin feature/your-feature-name
-```
-
-Open a Pull Request to merge your changes.
-
-Please follow the engineering principles documented in `.specify/memory/constitution.md`.
-
----
-
-\<p align="center">   Built with ❤️ using React, Flask, Google Gemini AI and AntiGravity IDE. \</p>

@@ -16,5 +16,11 @@
     "email": "test@gmail.com",
     "name": "test",
     "password_hash": "scrypt:32768:8:1$UGeWfC3fphtrb57n$139a3d497b971c7500f0cf4287d0f092b44aa0cbf0e3be641d91cd5602792f70e41c473ce102e1859993c73e227e7fade279026f415d01043fba293a5cda716d"
+  },
+  {
+    "id": "99db6c4f-8d12-45e1-affc-b3aba158b4b0",
+    "email": "anil@gmail.com",
+    "name": "Aniul",
+    "password_hash": "scrypt:32768:8:1$Bx41YHPyfdZiW180$00e050981b3aaae81b89e8513dac640800684dc33ce80a8465042cdf1937064c60279d32f72d97e0f1596cd8c5df466277041ace82783a3efe5af605ddd1ca83"
   }
 ]

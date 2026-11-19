@@ -49,34 +49,93 @@ class MockProvider(BaseAIProvider):
 
     def generate_campaign_concepts(self, brand_kit: dict, persona_dna: dict) -> List[dict]:
         product = brand_kit.get("product_name", "CampaignGuard")
+        desc = brand_kit.get("product_description", "")
         persona_name = persona_dna.get("persona_name", "Decision Maker")
 
-        return [
-            {
-                "id": str(uuid.uuid4()),
-                "title": f"The Proactive Guardrail Initiative",
-                "angle": f"Systematic Risk Elimination for {persona_name}",
-                "hook": f"Stop reacting to threats. Build unshakeable confidence with {product}.",
-                "tone": "Confident, authoritative, forward-thinking",
-                "rationale": f"Appeals directly to {persona_name}'s desire for predictability and seamless governance.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "title": f"Unlocking Velocity Without Compromise",
-                "angle": f"High-Output Agility and Performance",
-                "hook": f"Scale faster without sacrificing quality or security.",
-                "tone": "Dynamic, empowering, high-energy",
-                "rationale": f"Speaks to the ambition of {persona_name} striving for rapid growth without overhead.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "title": f"The Strategic Advantage Benchmark",
-                "angle": f"Competitive Dominance through Smart Systems",
-                "hook": f"How modern market leaders outpace legacy limitations with {product}.",
-                "tone": "Visionary, evidence-backed, premium",
-                "rationale": f"Reinforces executive credibility and market differentiation for {persona_name}.",
-            },
-        ]
+        is_beverage = any(w in (f"{product} {desc}").lower() for w in ["mug", "coffee", "drink", "tea", "beverage", "temperature", "sip", "brew", "travelmate"])
+        is_security = any(w in (f"{product} {desc}").lower() for w in ["security", "cyber", "cloud", "saas", "software", "guardrail", "compliance"])
+
+        if is_beverage:
+            return [
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "Precision Temperature Initiative",
+                    "angle": f"All-Day Beverage Heat Retention for {persona_name}",
+                    "hook": f"Never settle for lukewarm coffee. Keep every sip at your exact temperature with {product}.",
+                    "tone": "Vibrant, sophisticated, modern",
+                    "rationale": f"Appeals directly to {persona_name}'s desire for sustained focus, premium taste, and reliable everyday warmth.",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "Unstoppable Momentum Anywhere",
+                    "angle": "Peak Performance on the Move",
+                    "hook": "Engineered for high achievers who refuse cold coffee.",
+                    "tone": "Empowering, high-energy, ambitious",
+                    "rationale": f"Speaks to {persona_name}'s busy lifestyle requiring dependable hydration without interruptions.",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "The Everyday Luxury Benchmark",
+                    "angle": "Smart Design Meets Premium Comfort",
+                    "hook": f"Elevate your daily ritual with smart temperature control from {product}.",
+                    "tone": "Warm, premium, lifestyle-focused",
+                    "rationale": f"Reinforces everyday well-being and mindful refreshment for {persona_name}.",
+                },
+            ]
+        elif is_security:
+            return [
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "The Proactive Guardrail Initiative",
+                    "angle": f"Systematic Risk Elimination for {persona_name}",
+                    "hook": f"Stop reacting to threats. Build unshakeable confidence with {product}.",
+                    "tone": "Confident, authoritative, forward-thinking",
+                    "rationale": f"Appeals directly to {persona_name}'s desire for predictability and seamless governance.",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "Unlocking Velocity Without Compromise",
+                    "angle": "High-Output Agility and Performance",
+                    "hook": "Scale faster without sacrificing quality or security.",
+                    "tone": "Dynamic, empowering, high-energy",
+                    "rationale": f"Speaks to the ambition of {persona_name} striving for rapid growth without overhead.",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "The Strategic Advantage Benchmark",
+                    "angle": "Competitive Dominance through Smart Systems",
+                    "hook": f"How modern market leaders outpace legacy limitations with {product}.",
+                    "tone": "Visionary, evidence-backed, premium",
+                    "rationale": f"Reinforces executive credibility and market differentiation for {persona_name}.",
+                },
+            ]
+        else:
+            return [
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": f"The {product} Advantage",
+                    "angle": f"Targeted Excellence for {persona_name}",
+                    "hook": f"Elevate your daily experience and discover smarter results with {product}.",
+                    "tone": "Confident, premium, results-oriented",
+                    "rationale": f"Connects directly with {persona_name}'s primary motivations.",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "Uncompromising Quality & Innovation",
+                    "angle": "Effortless Performance and Reliability",
+                    "hook": f"Engineered for {persona_name} who refuse to settle for second best.",
+                    "tone": "Empowering, inspiring, modern",
+                    "rationale": f"Appeals to {persona_name}'s ambition for excellence.",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "The Modern Standard",
+                    "angle": "Seamless Integration into Everyday Routines",
+                    "hook": f"Transform how you work and live with {product}.",
+                    "tone": "Visionary, forward-thinking, clean",
+                    "rationale": f"Positions {product} as an indispensable asset for {persona_name}.",
+                },
+            ]
 
     def generate_social_post(self, brand_kit: dict, persona: dict, concept: dict) -> dict:
         product = brand_kit.get("product_name", "CampaignGuard")
