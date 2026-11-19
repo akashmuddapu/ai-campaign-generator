@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import {
   ShieldCheck,
@@ -18,6 +18,8 @@ import {
   Wand2,
   Sparkles,
   ArrowRight,
+  ArrowLeft,
+  Image as ImageIcon,
   FileDown,
   Shield,
   Cpu,
@@ -33,6 +35,7 @@ import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import WhyThisContentModal from '../components/WhyThisContentModal'
 import { generateCampaignPdf } from '../utils/generateCampaignPdf'
+import { unlockStep, getMaxUnlockedStep, resetWizardSession } from '../utils/wizardProgress'
 
 // Re-derive persona icon from name/index
 function getPersonaIcon(name, idx) {
@@ -136,6 +139,24 @@ export default function CampaignResultsPage({ user, onLogout }) {
   // Active view tab: 'assets' | 'guardian' | 'export'
   const activeView = searchParams.get('tab') || 'assets'
 
+  // Track progressive wizard step unlocking
+  const [maxStep, setMaxStep] = useState(() => getMaxUnlockedStep())
+  useEffect(() => {
+    const syncStep = (e) => setMaxStep(e?.detail?.maxStep || getMaxUnlockedStep())
+    window.addEventListener('cg_step_unlocked', syncStep)
+    return () => window.removeEventListener('cg_step_unlocked', syncStep)
+  }, [])
+  useEffect(() => {
+    if (activeView === 'guardian') unlockStep(5)
+    else if (activeView === 'export' || activeView === 'ad') unlockStep(6)
+    else unlockStep(4)
+  }, [activeView])
+
+  const effectiveMaxStep = Math.max(
+    maxStep,
+    activeView === 'export' || activeView === 'ad' ? 6 : activeView === 'guardian' ? 5 : 4
+  )
+
   // Retrieve state or use complete fallbacks (with sessionStorage refresh resilience)
   const brand_kit =
     location.state?.brand_kit ||
@@ -186,7 +207,17 @@ export default function CampaignResultsPage({ user, onLogout }) {
       hook: '"Your schedule changes. Your drink doesn\'t have to."',
     }
 
-  const campaignId = location.state?.campaign_id || 'camp-travelmate-001'
+  const campaignId =
+    location.state?.campaign_id ||
+    searchParams.get('id') ||
+    (() => {
+      try {
+        return sessionStorage.getItem('cg_active_campaign_id') || null
+      } catch {
+        return null
+      }
+    })() ||
+    'camp-travelmate-001'
 
   // Guard: if no meaningful state loaded (direct URL access), show empty state
   const hasRealData = !!(location.state?.brand_kit || sessionStorage.getItem('cg_brand_kit'))
@@ -351,6 +382,372 @@ export default function CampaignResultsPage({ user, onLogout }) {
   const handleOpenExplain = (channel) => {
     setActiveExplainChannel(channel)
     setIsModalOpen(true)
+  }
+
+  // ─── AI Ad Generator State (PR #2: Ad Image Generation) ──────────────────
+  const getSmartHooksForPersona = (pName, productName) => {
+    const prod = productName || brand_kit.product_name || 'TravelMate Smart Mug'
+    const desc = brand_kit.product_description || ''
+    const isMug = /mug|coffee|cup|thermos|bottle|drink|temperature|sip|travelmate/i.test(`${prod} ${desc}`)
+    const n = (pName || '').toLowerCase()
+
+    if (isMug) {
+      if (n.includes('student')) {
+        return [
+          `Fuel all-night study sessions with ${prod}.`,
+          `From 8 AM lectures to late-night exams, keep your brew hot.`,
+          `Never drink cold coffee during study marathons again.`,
+          `Smart heating designed for unstoppable students.`,
+        ]
+      }
+      if (n.includes('professional') || n.includes('working')) {
+        return [
+          `Back-to-back meetings? ${prod} keeps your coffee at 145°F.`,
+          `Boardroom focus starts with coffee that never turns lukewarm.`,
+          `Precision temperature control for high-output workdays.`,
+          `Executive elegance meets all-day temperature perfection.`,
+        ]
+      }
+      if (n.includes('travel')) {
+        return [
+          `From takeoff to touchdown, ${prod} keeps your brew hot.`,
+          `100% leakproof smart warmth across every time zone.`,
+          `Never settle for cold airport coffee again.`,
+          `Your perfect sip at 35,000 feet with ${prod}.`,
+        ]
+      }
+      return [
+        `Your drink. Your exact temperature with ${prod}.`,
+        `Never settle for lukewarm coffee again.`,
+        `Smart all-day heat retention engineered for ${pName}.`,
+        `Experience the perfect temperature from first sip to last.`,
+      ]
+    }
+
+    return [
+      `Elevate your daily standard with ${prod}.`,
+      `Engineered for ${pName} who refuse to compromise.`,
+      `Smarter, faster, better: Experience ${prod}.`,
+      `The modern solution for ${pName}: ${prod}.`,
+    ]
+  }
+
+  const initialAdPersona = location.state?.persona?.persona_name || all_personas[0]?.persona_name || 'Student'
+  const initialHooks = getSmartHooksForPersona(initialAdPersona, brand_kit.product_name)
+
+  const [adPersonaName, setAdPersonaName] = useState(initialAdPersona)
+  const [adSuggestedHooks, setAdSuggestedHooks] = useState(initialHooks)
+  const [adStyle, setAdStyle] = useState('Commercial Studio')
+  const [adAspectRatio, setAdAspectRatio] = useState('1:1')
+  const [adHeadline, setAdHeadline] = useState(initialHooks[0])
+  const [adCustomPrompt, setAdCustomPrompt] = useState('')
+  const [includeTextOverlay, setIncludeTextOverlay] = useState(true)
+  const [isGeneratingAd, setIsGeneratingAd] = useState(false)
+  const [adGenerationStep, setAdGenerationStep] = useState('')
+  const [generatedAd, setGeneratedAd] = useState(() => {
+    try {
+      const s = sessionStorage.getItem('cg_generated_ad')
+      return s ? JSON.parse(s) : null
+    } catch {
+      return null
+    }
+  })
+
+  const handleSelectAdPersona = (pName) => {
+    setAdPersonaName(pName)
+    const hooks = getSmartHooksForPersona(pName, brand_kit.product_name)
+    setAdSuggestedHooks(hooks)
+    setAdHeadline(hooks[0])
+  }
+
+  const handleGenerateAiHooks = async () => {
+    showFeedback('Generating fresh AI hooks...')
+    try {
+      const resp = await api.post('/campaigns/generate-ad-hooks', {
+        brand_kit,
+        persona: { persona_name: adPersonaName },
+      })
+      if (resp.data?.hooks && resp.data.hooks.length > 0) {
+        setAdSuggestedHooks(resp.data.hooks)
+        setAdHeadline(resp.data.hooks[0])
+        showFeedback('New AI hooks generated!')
+        return
+      }
+    } catch {}
+
+    const newHooks = getSmartHooksForPersona(adPersonaName, brand_kit.product_name)
+    const shuffled = [...newHooks].sort(() => 0.5 - Math.random())
+    setAdSuggestedHooks(shuffled)
+    setAdHeadline(shuffled[0])
+    showFeedback('AI hooks refreshed!')
+  }
+
+  const generateAdPayloadFallback = () => {
+    const dimensions = {
+      '1:1': { w: 1080, h: 1080 },
+      '16:9': { w: 1280, h: 720 },
+      '9:16': { w: 720, h: 1280 },
+    }
+    const dim = dimensions[adAspectRatio] || { w: 1080, h: 1080 }
+    const pName = brand_kit.product_name || 'TravelMate Smart Mug'
+    const pDesc = brand_kit.product_description || 'Smart travel mug that keeps drinks at your preferred temperature'
+
+    const styleDescriptions = {
+      'Commercial Studio': 'sleek minimalist commercial product photography, dramatic soft studio key lights, high-end editorial product placement, hyper-detailed, clean elegant backdrop',
+      'Lifestyle in Context': `candid authentic lifestyle advertisement showing a ${adPersonaName} naturally using ${pName}, golden hour natural ambient lighting, cinematic 35mm photography`,
+      'Vibrant Digital Banner': 'bold modern tech marketing banner, dynamic neon and vibrant gradient accents, high energy, commercial hero shot, award-winning social media ad',
+      'Cinematic 3D': 'premium 3D product render, Octane Render style, subsurface scattering, elegant luxury finish, photorealistic reflections, 8k resolution',
+    }
+    const styleDesc = styleDescriptions[adStyle] || styleDescriptions['Commercial Studio']
+
+    let contextScene = 'modern aesthetic environment'
+    const n = (adPersonaName || '').toLowerCase()
+    if (n.includes('student')) {
+      contextScene = 'college study session, modern university library with natural window light'
+    } else if (n.includes('professional') || n.includes('working') || n.includes('ciso')) {
+      contextScene = 'contemporary executive boardroom, clean glass desk, high-rise cityscape view'
+    } else if (n.includes('travel')) {
+      contextScene = 'sleek airport terminal lounge with airplane wing visible through windows'
+    }
+
+    const isMug = /mug|coffee|cup|thermos|bottle|drink|temperature|sip|travelmate/i.test(`${pName} ${pDesc}`)
+    const productDetail = isMug
+      ? `Commercial hero shot of '${pName}', a sleek modern smart travel coffee mug with brushed stainless steel and matte black finish, glowing digital LED temperature readout display on the exterior showing 140°F, insulated leakproof travel lid, centered and sharply in focus`
+      : `Commercial hero shot of '${pName}': ${pDesc}, prominently centered and in sharp focus`
+
+    const finalPrompt =
+      adCustomPrompt?.trim() ||
+      `Award-winning commercial product advertisement photography of '${pName}'. ${productDetail}. Environment: ${contextScene}. ${styleDesc}. Professional studio advertising photography, razor-sharp focus on ${pName}, 8k resolution, crisp commercial lighting, photorealistic, no blur, no distortion.`
+
+    const seed = Math.floor(Math.random() * 900000) + 100000
+    const encoded = encodeURIComponent(finalPrompt)
+    const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=${dim.w}&height=${dim.h}&model=turbo&nologo=true&seed=${seed}`
+
+    return {
+      status: 'success',
+      image_url: imageUrl,
+      prompt: finalPrompt,
+      aspect_ratio: adAspectRatio,
+      width: dim.w,
+      height: dim.h,
+      persona_name: adPersonaName,
+      product_name: pName,
+      headline: adHeadline || adSuggestedHooks[0] || `Experience the difference with ${pName}.`,
+      style: adStyle,
+      seed,
+    }
+  }
+
+  const handleGenerateAdImage = async () => {
+    setIsGeneratingAd(true)
+    setAdGenerationStep('Analyzing brand tone and target persona...')
+
+    const targetPersonaObj = all_personas.find((p) => p.persona_name === adPersonaName) || {
+      persona_name: adPersonaName,
+    }
+
+    let adData = null
+
+    try {
+      setTimeout(() => setAdGenerationStep('Synthesizing commercial scene and lighting...'), 600)
+      setTimeout(() => setAdGenerationStep('Generating high-resolution AI visual with Flux...'), 1200)
+
+      const response = await api.post('/campaigns/generate-ad-image', {
+        brand_kit,
+        persona: targetPersonaObj,
+        concept: selected_concept,
+        style: adStyle,
+        aspect_ratio: adAspectRatio,
+        custom_prompt: adCustomPrompt,
+        headline: adHeadline,
+      })
+
+      if (response.data?.image_url) {
+        adData = response.data
+      }
+    } catch {
+      adData = generateAdPayloadFallback()
+    }
+
+    if (!adData || !adData.image_url) {
+      adData = generateAdPayloadFallback()
+    }
+
+    setAdGenerationStep('Preloading ad visual to display frame...')
+
+    try {
+      await new Promise((resolve) => {
+        const testImg = new window.Image()
+        testImg.onload = resolve
+        testImg.onerror = resolve
+        testImg.src = adData.image_url
+        setTimeout(resolve, 3200)
+      })
+    } catch {}
+
+    setGeneratedAd(adData)
+    try {
+      sessionStorage.setItem('cg_generated_ad', JSON.stringify(adData))
+    } catch {}
+    setIsGeneratingAd(false)
+    setAdGenerationStep('')
+    showFeedback(`AI Image Ad for ${adPersonaName} generated successfully!`)
+  }
+
+  const handleDownloadAdImage = async (format = 'jpg') => {
+    if (!generatedAd?.image_url) {
+      showFeedback('Please generate an ad first.')
+      return
+    }
+    showFeedback(`Preparing ${format.toUpperCase()} download...`)
+
+    const safeName = (brand_kit.product_name || 'ad').toLowerCase().replace(/[^a-z0-9]/g, '_')
+    const fileName = `${safeName}_${(adPersonaName || 'audience').toLowerCase()}_ad.${format}`
+
+    const downloadBlobDirect = async (url) => {
+      try {
+        const resp = await fetch(url)
+        if (!resp.ok) throw new Error('HTTP error ' + resp.status)
+        const blob = await resp.blob()
+        if (blob.size < 1000) {
+          showFeedback('Image file was incomplete. Please regenerate with "New Variation".')
+          return
+        }
+        const mime = format === 'png' ? 'image/png' : 'image/jpeg'
+        const customBlob = new Blob([blob], { type: mime })
+        const blobUrl = URL.createObjectURL(customBlob)
+        const link = document.createElement('a')
+        link.href = blobUrl
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(blobUrl)
+        showFeedback(`Downloaded ${fileName}!`)
+      } catch {
+        window.open(url, '_blank')
+      }
+    }
+
+    try {
+      const img = new window.Image()
+      img.crossOrigin = 'anonymous'
+      img.src = generatedAd.image_url
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          const w = img.naturalWidth || generatedAd.width || 1080
+          const h = img.naturalHeight || generatedAd.height || 1080
+          canvas.width = w
+          canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, w, h)
+
+          if (includeTextOverlay) {
+            const isLandscape = w > h
+            const baseDim = isLandscape ? h : w
+
+            const scrimH = isLandscape ? h * 0.48 : h * 0.4
+            const gradient = ctx.createLinearGradient(0, h - scrimH, 0, h)
+            gradient.addColorStop(0, 'rgba(15, 23, 42, 0)')
+            gradient.addColorStop(0.35, 'rgba(15, 23, 42, 0.82)')
+            gradient.addColorStop(1, 'rgba(15, 23, 42, 0.98)')
+            ctx.fillStyle = gradient
+            ctx.fillRect(0, h - scrimH, w, scrimH)
+
+            const padX = w * 0.055
+
+            const brandSize = Math.max(14, Math.round(baseDim * 0.032))
+            ctx.fillStyle = '#C084FC'
+            ctx.font = `bold ${brandSize}px sans-serif`
+            const brandY = h - scrimH * 0.72
+            ctx.fillText((brand_kit.product_name || 'BRAND').toUpperCase(), padX, brandY)
+
+            const headSize = Math.max(22, Math.round(baseDim * 0.052))
+            ctx.fillStyle = '#FFFFFF'
+            ctx.font = `bold ${headSize}px sans-serif`
+            const lineHeight = headSize * 1.25
+            const maxW = w * 0.88
+            const words = (adHeadline || generatedAd.headline || 'Your drink. Your temperature.').split(' ')
+            const lines = []
+            let cur = ''
+            for (let i = 0; i < words.length; i++) {
+              const test = cur + words[i] + ' '
+              if (ctx.measureText(test).width > maxW && i > 0) {
+                lines.push(cur.trim())
+                cur = words[i] + ' '
+                if (lines.length >= 2) break
+              } else {
+                cur = test
+              }
+            }
+            if (lines.length < 2 && cur.trim()) lines.push(cur.trim())
+
+            const headlineStartY = brandY + brandSize + 10
+            lines.forEach((line, idx) => {
+              ctx.fillText(line, padX, headlineStartY + idx * lineHeight)
+            })
+
+            const lastLineY = headlineStartY + (lines.length - 1) * lineHeight
+            const ctaY = lastLineY + 14
+            const ctaH = Math.max(30, Math.round(baseDim * 0.052))
+            const ctaFontSize = Math.round(ctaH * 0.44)
+            ctx.font = `bold ${ctaFontSize}px sans-serif`
+            const ctaText = 'Order Now →'
+            const textW = ctx.measureText(ctaText).width
+            const ctaW = textW + 36
+
+            ctx.fillStyle = '#7E22CE'
+            ctx.beginPath()
+            if (ctx.roundRect) {
+              ctx.roundRect(padX, ctaY, ctaW, ctaH, ctaH / 2)
+            } else {
+              ctx.rect(padX, ctaY, ctaW, ctaH)
+            }
+            ctx.fill()
+
+            ctx.fillStyle = '#FFFFFF'
+            ctx.textAlign = 'center'
+            ctx.fillText(ctaText, padX + ctaW / 2, ctaY + ctaH * 0.65)
+            ctx.textAlign = 'left'
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
+            ctx.font = `500 ${Math.round(ctaFontSize * 0.9)}px sans-serif`
+            ctx.fillText(`Tailored for ${adPersonaName}`, padX + ctaW + 14, ctaY + ctaH * 0.65)
+          }
+
+          const mime = format === 'png' ? 'image/png' : 'image/jpeg'
+          canvas.toBlob(
+            (blob) => {
+              if (blob && blob.size > 1000) {
+                const blobUrl = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = blobUrl
+                a.download = fileName
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                URL.revokeObjectURL(blobUrl)
+                showFeedback(`Downloaded ${fileName}!`)
+              } else {
+                downloadBlobDirect(generatedAd.image_url)
+              }
+            },
+            mime,
+            0.95
+          )
+        } catch {
+          downloadBlobDirect(generatedAd.image_url)
+        }
+      }
+
+      img.onerror = () => {
+        downloadBlobDirect(generatedAd.image_url)
+      }
+    } catch {
+      downloadBlobDirect(generatedAd.image_url)
+    }
   }
 
   // Handle Edit toggles
@@ -834,18 +1231,43 @@ export default function CampaignResultsPage({ user, onLogout }) {
     showFeedback(`Downloading ${format === 'markdown' ? 'Markdown' : 'JSON'} export…`)
   }
 
+  const handleOpenReportCard = () => {
+    const serializablePersonas = all_personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+    const activeP = serializablePersonas.find((p) => p.persona_name === activePersonaName) || serializablePersonas[0]
+    try {
+      sessionStorage.setItem('cg_brand_kit', JSON.stringify(brand_kit))
+      sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
+      sessionStorage.setItem('cg_selected_concept', JSON.stringify(selected_concept))
+      sessionStorage.setItem('cg_persona_assets', JSON.stringify(personaAssets))
+      if (campaignId && campaignId !== 'camp-travelmate-001') {
+        sessionStorage.setItem('cg_active_campaign_id', campaignId)
+      }
+    } catch {}
+    navigate(campaignId && campaignId !== 'camp-travelmate-001' ? `/report-card?id=${campaignId}` : '/report-card', {
+      state: {
+        campaign_id: campaignId,
+        brand_kit,
+        persona: activeP,
+        all_personas: serializablePersonas,
+        selected_concept,
+        assets: currentAssets,
+        assets_by_persona: personaAssets,
+      },
+    })
+  }
+
   return (
     <SidebarLayout
       user={user}
       onLogout={onLogout}
-      currentStep={activeView === 'guardian' ? 'Step 5 of 5' : 'Step 4 of 5'}
+      currentStep={activeView === 'assets' ? 'Step 4 of 5' : 'Step 5 of 5'}
       campaignName={brand_kit.product_name?.split(' ')[0] || 'TravelMate'}
       campaignStatus="Validated"
     >
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* ─── Top View Switcher Tabs ──────────────────────────────────────── */}
-        <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-          <div className="flex items-center gap-2">
+        {/* ─── Top View Switcher Tabs (progressively revealed) ─────────────── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setSearchParams({ tab: 'assets' })}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -856,35 +1278,54 @@ export default function CampaignResultsPage({ user, onLogout }) {
             >
               Campaign Assets
             </button>
-            <button
-              onClick={() => setSearchParams({ tab: 'guardian' })}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeView === 'guardian'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Brand Guardian</span>
-            </button>
-            <button
-              onClick={() => navigate('/report-card')}
-              className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-            >
-              <Award className="w-3.5 h-3.5 text-purple-600" />
-              <span>Campaign Report Card</span>
-            </button>
-            <button
-              onClick={() => setSearchParams({ tab: 'export' })}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeView === 'export'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export Campaign</span>
-            </button>
+            {effectiveMaxStep >= 5 && (
+              <>
+                <button
+                  onClick={() => setSearchParams({ tab: 'guardian' })}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeView === 'guardian'
+                      ? 'bg-purple-700 text-white shadow-xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Brand Guardian</span>
+                </button>
+                <button
+                  onClick={handleOpenReportCard}
+                  className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                >
+                  <Award className="w-3.5 h-3.5 text-purple-600" />
+                  <span>Campaign Report Card</span>
+                </button>
+              </>
+            )}
+            {effectiveMaxStep >= 6 && (
+              <>
+                <button
+                  onClick={() => setSearchParams({ tab: 'export' })}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeView === 'export'
+                      ? 'bg-purple-700 text-white shadow-xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Export Campaign</span>
+                </button>
+                <button
+                  onClick={() => setSearchParams({ tab: 'ad' })}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeView === 'ad'
+                      ? 'bg-purple-700 text-white shadow-xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>Generate Ad</span>
+                </button>
+              </>
+            )}
           </div>
 
           <div className="text-xs text-slate-500 font-semibold hidden sm:block">
@@ -1197,15 +1638,25 @@ export default function CampaignResultsPage({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Proceed to Brand Guardian CTA */}
-            <div className="flex items-center justify-end pt-1">
+            {/* ─── Step navigation for Assets view (Step 4) ───────────────────── */}
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => setSearchParams({ tab: 'guardian' })}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+                onClick={() => navigate('/strategy-concept?step=concepts', { state: { brand_kit, all_personas: all_personas.map(({ icon: _i, color: _c, ...rest }) => rest), selected_concept } })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
               >
-                <span>Proceed to Brand Guardian</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>← Step 3: Campaign Concepts</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  unlockStep(5)
+                  setSearchParams({ tab: 'guardian' })
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Step 5: Brand Guardian →</span>
               </button>
             </div>
           </div>
@@ -1341,16 +1792,36 @@ export default function CampaignResultsPage({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Proceed to Campaign Report Card CTA */}
-            <div className="flex items-center justify-end pt-1">
+            {/* ─── Step navigation for Brand Guardian view (Step 5) ──────────── */}
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => navigate('/report-card')}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md shadow-purple-900/20 transition-all hover:scale-102 cursor-pointer"
+                onClick={() => setSearchParams({ tab: 'assets' })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
               >
-                <span>Proceed to Campaign Report Card</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>← Step 4: Campaign Assets</span>
               </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleOpenReportCard}
+                  className="px-5 py-2.5 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Award className="w-4 h-4" />
+                  <span>Campaign Report Card</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    unlockStep(6)
+                    setSearchParams({ tab: 'export' })
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export Campaign →</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1459,6 +1930,491 @@ export default function CampaignResultsPage({ user, onLogout }) {
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">Professional campaign report (.pdf)</p>
                 </div>
+              </button>
+            </div>
+
+            {/* ─── Step navigation for Export view ────────────────────────────── */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSearchParams({ tab: 'guardian' })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <span>← Step 5: Brand Guardian</span>
+              </button>
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setSearchParams({ tab: 'ad' })}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  <span>Generate AI Image Ad</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetWizardSession()
+                    navigate('/dashboard')
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-200 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Finish &amp; Return Home</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── VIEW 4: AI IMAGE AD GENERATOR (PR #2) ───────────────────────── */}
+        {activeView === 'ad' && (
+          <div className="space-y-6">
+            <div className="border-b border-slate-200/80 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[11px] font-extrabold mb-1">
+                  <Sparkles className="w-3 h-3 text-purple-600" />
+                  <span>AI Creative Studio</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Generate Image Ad
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Generate high-converting, professional marketing image ads (JPG &amp; PNG) powered by AI
+                </p>
+              </div>
+
+              {/* Persona Selector Tabs */}
+              <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex-wrap">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 hidden md:inline">
+                  Persona:
+                </span>
+                {all_personas.map((p) => {
+                  const isSelected = adPersonaName === p.persona_name
+                  return (
+                    <button
+                      key={p.persona_name}
+                      type="button"
+                      onClick={() => handleSelectAdPersona(p.persona_name)}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-purple-700 text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                      }`}
+                    >
+                      {p.persona_name}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Main Creative Studio Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Configuration Controls (5 cols) */}
+              <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-5">
+                <div className="border-b border-slate-100 pb-3">
+                  <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-purple-600" />
+                    <span>Ad Creative Settings</span>
+                  </h2>
+                  <p className="text-[11px] text-slate-500">Customize format, visual style, and copy</p>
+                </div>
+
+                {/* Aspect Ratio Selector */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    Ad Format &amp; Aspect Ratio
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: '1:1', label: '1:1 Square', sub: 'Feed / Square (1080×1080)' },
+                      { id: '16:9', label: '16:9 Banner', sub: 'Web Display (1280×720)' },
+                      { id: '9:16', label: '9:16 Story', sub: 'Reels / Stories (720×1280)' },
+                    ].map((fmt) => (
+                      <button
+                        key={fmt.id}
+                        type="button"
+                        onClick={() => setAdAspectRatio(fmt.id)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                          adAspectRatio === fmt.id
+                            ? 'border-purple-600 bg-purple-50/50 text-purple-900 ring-2 ring-purple-600/20'
+                            : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
+                        }`}
+                      >
+                        <span className="block text-xs font-black">{fmt.label}</span>
+                        <span className="block text-[10px] text-slate-500 font-medium">{fmt.sub}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Visual Style Selector */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    Visual Style Aesthetic
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'Commercial Studio', label: 'Studio Minimalist', icon: '📸' },
+                      { id: 'Lifestyle in Context', label: 'Lifestyle Candid', icon: '☕' },
+                      { id: 'Vibrant Digital Banner', label: 'Vibrant Tech Banner', icon: '⚡' },
+                      { id: 'Cinematic 3D', label: 'Cinematic 3D', icon: '✨' },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() => setAdStyle(st.id)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 ${
+                          adStyle === st.id
+                            ? 'border-purple-600 bg-purple-50/50 text-purple-900 ring-2 ring-purple-600/20 font-bold'
+                            : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
+                        }`}
+                      >
+                        <span className="text-base">{st.icon}</span>
+                        <span className="text-xs font-bold truncate">{st.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Headline Text with AI Hook Generator */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 block">
+                      Headline Hook on Ad
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateAiHooks}
+                      className="px-2 py-0.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
+                      title="Generate high-converting AI marketing hooks"
+                    >
+                      <Sparkles className="w-3 h-3 text-purple-600" />
+                      <span>AI Generate Hook</span>
+                    </button>
+                  </div>
+
+                  <input
+                    type="text"
+                    value={adHeadline}
+                    onChange={(e) => setAdHeadline(e.target.value)}
+                    placeholder="Enter headline for ad overlay..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20"
+                  />
+
+                  <div className="pt-0.5 space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 block">
+                      Recommended Hooks for {adPersonaName} (Click to apply):
+                    </span>
+                    <div className="flex flex-col gap-1.5">
+                      {adSuggestedHooks.slice(0, 3).map((h, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setAdHeadline(h)
+                            showFeedback('Hook applied to ad creative!')
+                          }}
+                          className={`text-left text-[11px] px-3 py-1.5 rounded-xl transition-all cursor-pointer border ${
+                            adHeadline === h
+                              ? 'bg-purple-100 text-purple-900 border-purple-300 font-bold shadow-2xs'
+                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                          }`}
+                        >
+                          "{h}"
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Overlay Toggle */}
+                <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={includeTextOverlay}
+                    onChange={(e) => setIncludeTextOverlay(e.target.checked)}
+                    className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer"
+                  />
+                  <span>Render Brand Headline &amp; CTA Badge on Ad (JPG/PNG)</span>
+                </label>
+
+                {/* AI Prompt Preview & Customization */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                    <span>AI Generation Prompt</span>
+                    <span className="text-[10px] text-purple-600 font-bold">Features {brand_kit.product_name}</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={
+                      adCustomPrompt ||
+                      `Commercial hero shot of '${brand_kit.product_name}'. Designed for ${adPersonaName}. ${adStyle} aesthetic, 8k resolution, razor-sharp product focus, crisp commercial lighting.`
+                    }
+                    onChange={(e) => setAdCustomPrompt(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-600 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 resize-none bg-slate-50/50"
+                  />
+                </div>
+
+                {/* Generate Button */}
+                <button
+                  type="button"
+                  onClick={handleGenerateAdImage}
+                  disabled={isGeneratingAd}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-800 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all shadow-md shadow-purple-900/30 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <Sparkles className={`w-4 h-4 ${isGeneratingAd ? 'animate-spin' : ''}`} />
+                  <span>{isGeneratingAd ? 'Generating with AI...' : 'Generate AI Image Ad'}</span>
+                </button>
+
+                {/* Dedicated Download Option */}
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <Download className="w-3.5 h-3.5 text-purple-600" />
+                      <span>Download Ad (JPG &amp; PNG)</span>
+                    </label>
+                    {generatedAd ? (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        Ready
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-medium">Pending Gen</span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadAdImage('jpg')}
+                      disabled={!generatedAd}
+                      className="py-2.5 px-3 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                      title="Download high-resolution JPG image ad"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download JPG</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadAdImage('png')}
+                      disabled={!generatedAd}
+                      className="py-2.5 px-3 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                      title="Download crisp PNG image ad"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PNG</span>
+                    </button>
+                  </div>
+
+                  {!generatedAd && (
+                    <p className="text-[11px] text-slate-400 italic text-center pt-0.5">
+                      Generate an ad above to enable 1-click JPG &amp; PNG downloads
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Generated Ad Preview & Actions (7 cols) */}
+              <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-purple-600" />
+                    <h2 className="text-sm font-bold text-slate-900">
+                      Ad Creative Preview
+                    </h2>
+                    {generatedAd && (
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Ready (JPG &amp; PNG)
+                      </span>
+                    )}
+                  </div>
+                  {generatedAd ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
+                        {generatedAd.width} × {generatedAd.height}px
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadAdImage('jpg')}
+                        className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                        title="Quick download as JPG"
+                      >
+                        <Download className="w-3 h-3" />
+                        <span>JPG</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadAdImage('png')}
+                        className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                        title="Quick download as PNG"
+                      >
+                        <Download className="w-3 h-3" />
+                        <span>PNG</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-[11px] text-slate-400">AI Creative Studio</span>
+                  )}
+                </div>
+
+                {/* Display Screen */}
+                <div className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center min-h-[380px] border border-slate-200/80 shadow-inner group">
+                  {isGeneratingAd ? (
+                    <div className="p-8 text-center space-y-4 max-w-sm">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-purple-500/50 animate-pulse">
+                        <Sparkles className="w-8 h-8 animate-spin" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black text-white">
+                          Synthesizing Ad Creative with AI...
+                        </h3>
+                        <p className="text-xs text-purple-200/80 mt-1">
+                          {adGenerationStep || 'Rendering high-resolution marketing ad...'}
+                        </p>
+                      </div>
+                      <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div className="bg-gradient-to-r from-purple-500 to-indigo-400 h-1.5 rounded-full w-3/4 animate-pulse" />
+                      </div>
+                    </div>
+                  ) : generatedAd ? (
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <img
+                        src={generatedAd.image_url}
+                        alt="AI Generated Marketing Ad"
+                        className="max-h-[500px] w-full object-contain select-none"
+                      />
+
+                      <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10 opacity-90 hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadAdImage('jpg')}
+                          className="px-2.5 py-1.5 rounded-lg bg-slate-950/80 hover:bg-purple-700 text-white backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 transition-all cursor-pointer"
+                          title="Download JPG"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>JPG</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadAdImage('png')}
+                          className="px-2.5 py-1.5 rounded-lg bg-slate-950/80 hover:bg-indigo-700 text-white backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 transition-all cursor-pointer"
+                          title="Download PNG"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>PNG</span>
+                        </button>
+                      </div>
+
+                      {includeTextOverlay && (
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white space-y-2 pointer-events-none">
+                          <span className="text-[10px] font-black tracking-widest uppercase text-purple-300 block">
+                            {brand_kit.product_name}
+                          </span>
+                          <h4 className="text-base sm:text-lg font-black leading-tight text-white drop-shadow-md">
+                            "{adHeadline || generatedAd.headline}"
+                          </h4>
+                          <div className="pt-1 flex items-center gap-3">
+                            <span className="px-3 py-1 rounded-full bg-purple-600 text-white text-[11px] font-bold shadow-md">
+                              Shop Now →
+                            </span>
+                            <span className="text-[10px] text-slate-300 font-medium">
+                              Tailored for {adPersonaName}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="p-10 text-center space-y-4 max-w-sm">
+                      <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-purple-400 mx-auto">
+                        <ImageIcon className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white">No Ad Generated Yet</h3>
+                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                          Click <strong>Generate AI Image Ad</strong> to synthesize a commercial photo ad tailored for <strong>{adPersonaName}</strong>.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Bar for Generated Ad */}
+                {generatedAd && (
+                  <div className="space-y-3 pt-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadAdImage('jpg')}
+                        className="px-3.5 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download JPG</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadAdImage('png')}
+                        className="px-3.5 py-2.5 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download PNG</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleGenerateAdImage}
+                        disabled={isGeneratingAd}
+                        className="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <RotateCw className={`w-3.5 h-3.5 ${isGeneratingAd ? 'animate-spin' : ''}`} />
+                        <span>New Variation</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(generatedAd.image_url)
+                          showFeedback('Ad Image URL copied to clipboard!')
+                        }}
+                        className="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Copy Link</span>
+                      </button>
+                    </div>
+
+                    <div className="p-3 bg-purple-50/60 rounded-xl border border-purple-100 flex items-center justify-between text-xs text-purple-900 font-medium">
+                      <span>✓ Commercial ad formatted for <strong>{adPersonaName}</strong></span>
+                      <span className="font-mono text-[10px] text-purple-700">Flux AI Engine</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Bottom Navigation for Ad Studio */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setSearchParams({ tab: 'export' })}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Export</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  resetWizardSession()
+                  navigate('/dashboard')
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-200 cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Finish &amp; Return Home</span>
               </button>
             </div>
           </div>

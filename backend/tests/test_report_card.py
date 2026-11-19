@@ -106,3 +106,61 @@ def test_report_card_api_endpoint(client, app):
     assert data["success"] is True
     assert data["data"]["grade"] in ["A", "A+"]
     assert data["data"]["overall_score"] >= 90
+    assert data["data"]["brand_kit_alignment"]["product_name"] == "CloudGuard"
+
+
+def test_report_card_aligns_with_brand_kit_and_all_personas(client):
+    payload = {
+        "id": "live-cyber-1",
+        "brand_kit": {
+            "product_name": "CyberShield Cloud",
+            "tagline": "Zero Trust. Zero Breach.",
+            "brand_tone": "Authoritative, Precise, Trustworthy",
+            "banned_words": ["cheap", "guaranteed", "hack-proof"],
+        },
+        "persona": {"persona_name": "Enterprise CISO", "emotional_triggers": "Board-level risk mitigation"},
+        "all_personas": [
+            {"persona_name": "Enterprise CISO", "emotional_triggers": "Board-level risk mitigation"},
+            {"persona_name": "VP of Cloud Engineering", "core_motivations": "Zero-latency DevSecOps pipelines"},
+            {"persona_name": "Compliance Officer", "primary_goals": "Audit readiness across SOC2 and ISO"},
+        ],
+        "concept": {"title": "Zero-Trust Precision", "hook": "Stop breaches before they begin."},
+        "assets": {
+            "social_post": {
+                "content": {
+                    "text": "CyberShield Cloud delivers Zero Trust security for Enterprise CISO teams with precise audit readiness."
+                }
+            },
+            "email": {
+                "content": {
+                    "subject": "CyberShield Cloud: Zero Trust for your team",
+                    "body": " ".join(["CyberShield Cloud empowers cloud engineering and compliance teams with authoritative precision."] * 10),
+                }
+            },
+        },
+    }
+
+    res = client.post("/api/campaigns/report-card/evaluate", json=payload)
+    assert res.status_code == 200
+    rc = res.get_json()["data"]
+    alignment = rc["brand_kit_alignment"]
+    assert alignment["product_name"] == "CyberShield Cloud"
+    assert alignment["tagline"] == "Zero Trust. Zero Breach."
+    assert alignment["brand_tones"] == ["Authoritative", "Precise", "Trustworthy"]
+    assert alignment["flagged_banned_words"] == []
+    assert alignment["product_mentioned"] is True
+    assert len(rc["persona_impacts"]) == 3
+    names = [p["persona_name"] for p in rc["persona_impacts"]]
+    assert "Enterprise CISO" in names
+    assert "VP of Cloud Engineering" in names
+    assert "Compliance Officer" in names
+
+    # Now introduce a Brand Kit banned word and verify it drops score & flags the exact word
+    payload["assets"]["social_post"]["content"]["text"] = "Get cheap guaranteed protection with CyberShield Cloud!"
+    res_bad = client.post("/api/campaigns/report-card/evaluate", json=payload)
+    assert res_bad.status_code == 200
+    rc_bad = res_bad.get_json()["data"]
+    assert rc_bad["launch_readiness"] == "Needs Revision"
+    assert rc_bad["overall_score"] <= 68
+    assert "cheap" in rc_bad["brand_kit_alignment"]["flagged_banned_words"]
+    assert "guaranteed" in rc_bad["brand_kit_alignment"]["flagged_banned_words"]

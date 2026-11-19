@@ -105,3 +105,37 @@ class TestAutoFixEndpoint:
     def test_auto_fix_missing_required_fields_returns_400(self, client):
         resp = client.post("/api/campaigns/auto-fix", json={"channel_type": "social_post"})
         assert resp.status_code == 400
+
+    def test_generate_assets_automatically_auto_fixes_failing_piece(
+        self, client, sample_brand_kit, sample_persona, monkeypatch
+    ):
+        from app.services.mock_provider import MockProvider
+
+        class DirtyMockProvider(MockProvider):
+            def generate_social_post(self, brand_kit, persona, concept):
+                return {
+                    "text": "Get this cheap guaranteed CyberShield deal right now!",
+                    "hashtags": ["#CyberShield"],
+                    "character_count": 54,
+                }
+
+        monkeypatch.setattr("app.routes.campaign_routes._get_provider", lambda: DirtyMockProvider())
+
+        concept = {"id": "c1", "title": "Zero Trust", "hook": "Stop breaches before they start."}
+        bk = dict(sample_brand_kit)
+        bk["banned_words"] = ["cheap", "guaranteed"]
+
+        resp = client.post(
+            "/api/campaigns/generate-assets",
+            json={
+                "brand_kit": bk,
+                "persona": sample_persona,
+                "selected_concept": concept,
+            },
+        )
+        assert resp.status_code == 200
+        data = resp.get_json()
+        sp = data["assets"]["social_post"]
+        assert "cheap" not in sp["content"]["text"].lower()
+        assert sp["validation_report"]["passed"] is True
+        assert sp["validation_report"].get("auto_fixed") is True

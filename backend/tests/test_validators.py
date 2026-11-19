@@ -3,6 +3,7 @@ import pytest
 from app.validators.brand_rules import (
     check_banned_words,
     check_social_post_length,
+    check_social_hashtags,
     check_email_subject_length,
     check_email_body_word_count,
     validate_social_post,
@@ -208,3 +209,32 @@ class TestValidateEmail:
     def test_word_count_in_result(self):
         result = validate_email("Subject", self._make_body(100), [])
         assert result["word_count"] == 100
+
+
+class TestSocialHashtags:
+    def test_valid_hashtags_pass(self):
+        passed, count, tags = check_social_hashtags("Stay energized! #TravelMate #CampusGear", require_at_least_one=True)
+        assert passed is True
+        assert count == 2
+        assert "#TravelMate" in tags
+
+    def test_missing_hashtags_fail_when_required(self):
+        result = validate_social_post("Stay energized every day.", [], hashtags=[])
+        assert result["passed"] is False
+        assert result["hashtags_passed"] is False
+        assert any("hashtag" in v.lower() for v in result["violations"])
+
+    def test_too_many_hashtags_fail(self):
+        result = validate_social_post(
+            "Great mug!",
+            [],
+            hashtags=["#One", "#Two", "#Three", "#Four", "#Five", "#Six"],
+        )
+        assert result["passed"] is False
+        assert result["hashtag_count"] == 6
+        assert any("too many hashtags" in v.lower() for v in result["violations"])
+
+    def test_banned_word_inside_hashtag_detected(self):
+        result = validate_social_post("Great mug!", ["cheap"], hashtags=["#TravelMate", "#cheap"])
+        assert result["passed"] is False
+        assert "cheap" in result["banned_words_detected"]

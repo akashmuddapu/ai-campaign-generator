@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import api from './services/api'
 
 import Navbar from './components/Navbar'
@@ -68,6 +68,7 @@ function AppShell() {
   })
   const [isLoading, setIsLoading] = useState(true)
   const location = useLocation()
+  const navigate = useNavigate()
 
   // Session check on mount
   useEffect(() => {
@@ -105,6 +106,7 @@ function AppShell() {
     const userData = res.data?.user || res.data
     setUser(userData)
     try {
+      sessionStorage.clear()
       if (userData?.id) {
         localStorage.setItem('cg_user_id', userData.id)
         localStorage.setItem('cg_user', JSON.stringify(userData))
@@ -118,6 +120,7 @@ function AppShell() {
     const userData = res.data?.user || res.data
     setUser(userData)
     try {
+      sessionStorage.clear()
       if (userData?.id) {
         localStorage.setItem('cg_user_id', userData.id)
         localStorage.setItem('cg_user', JSON.stringify(userData))
@@ -129,13 +132,16 @@ function AppShell() {
   const handleLogout = async () => {
     try {
       await api.post('/auth/logout')
+    } catch {
+      // Ignore network errors on logout
     } finally {
-      setUser(null)
       try {
         localStorage.removeItem('cg_user_id')
         localStorage.removeItem('cg_user')
         sessionStorage.clear()
       } catch {}
+      navigate('/', { replace: true })
+      setUser(null)
     }
   }
 

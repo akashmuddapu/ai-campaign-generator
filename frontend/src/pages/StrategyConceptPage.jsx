@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Sparkles,
   ArrowRight,
@@ -29,6 +29,7 @@ import {
 import api from '../services/api'
 import SidebarLayout from '../components/SidebarLayout'
 import LoadingIndicator from '../components/LoadingIndicator'
+import { unlockStep, setUnlockedStep, resetWizardSession } from '../utils/wizardProgress'
 
 // Dynamically resolve persona icon from role/name
 function getPersonaIcon(name, idx) {
@@ -117,9 +118,20 @@ function getConceptIcon(concept, brandKit, idx) {
 export default function StrategyConceptPage({ user, onLogout }) {
   const location = useLocation()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const urlDraftId = searchParams.get('draft_id')
+  const urlStepParam = searchParams.get('step')
+
+  // Draft ID passed from URL, route state, or sessionStorage
+  const [draftId, setDraftId] = useState(() => {
+    if (urlDraftId) return urlDraftId
+    if (location.state?.draft_id) return location.state.draft_id
+    try { return sessionStorage.getItem('cg_draft_id') || null } catch { return null }
+  })
 
   // Retrieve state or use rich fallbacks (with sessionStorage refresh resilience)
-  const brand_kit =
+  const [brand_kit, setBrandKit] = useState(() =>
     location.state?.brand_kit ||
     (() => {
       try {
@@ -135,10 +147,9 @@ export default function StrategyConceptPage({ user, onLogout }) {
       tagline: 'Your drink. Your temperature.',
       banned_words: ['cheap', 'guaranteed', 'best'],
     }
+  )
 
-  // Personas from route state have NO icon/color (stripped before navigate).
-  // Re-derive them here by name/index so History API serialization never fails.
-  const all_personas = (
+  const [rawPersonas, setRawPersonas] = useState(() =>
     location.state?.all_personas ||
     (() => {
       try {
@@ -152,16 +163,42 @@ export default function StrategyConceptPage({ user, onLogout }) {
       { persona_name: 'Working Professional' },
       { persona_name: 'Traveller' },
     ]
-  ).map((p, idx) => ({ ...p, icon: getPersonaIcon(p.persona_name, idx), color: getPersonaColor(idx) }))
+  )
+
+  // Personas from route state have NO icon/color (stripped before navigate).
+  // Re-derive them here by name/index so History API serialization never fails.
+  const all_personas = rawPersonas.map((p, idx) => ({
+    ...p,
+    icon: getPersonaIcon(p.persona_name, idx),
+    color: getPersonaColor(idx),
+  }))
 
   const [activePersonaTab, setActivePersonaTab] = useState(
     location.state?.persona?.persona_name || all_personas[0]?.persona_name || 'Student'
   )
 
   // Sub-step: 'dna' (Step 2 of 5) or 'concepts' (Step 3 of 5)
-  const [subStep, setSubStep] = useState('dna')
+  const [subStep, setSubStep] = useState(urlStepParam === 'concepts' ? 'concepts' : 'dna')
 
-  const persona_dna = location.state?.persona_dna || {
+  // Sync subStep whenever URL ?step=... changes (e.g. clicking sidebar step link)
+  useEffect(() => {
+    if (urlStepParam === 'concepts') {
+      setSubStep('concepts')
+    } else if (urlStepParam === 'dna') {
+      setSubStep('dna')
+    }
+  }, [urlStepParam])
+
+  const [personaDnaState, setPersonaDnaState] = useState(() => {
+    if (location.state?.persona_dna) return location.state.persona_dna
+    try {
+      const s = sessionStorage.getItem('cg_persona_dna')
+      if (s) return JSON.parse(s)
+    } catch {}
+    return null
+  })
+
+  const persona_dna = personaDnaState || {
     persona_name: activePersonaTab,
     audience_summary: `Audience strategy and key insights for ${activePersonaTab} messaging.`,
     core_value_angle: 'Keep your favorite drink ready between classes.',
@@ -172,45 +209,144 @@ export default function StrategyConceptPage({ user, onLogout }) {
   }
 
   // 3 Concepts matching Image 1 Screen 4
-  const concepts = location.state?.concepts || [
-    {
-      id: 'c-1',
-      icon: Thermometer,
-      title: 'Temperature That Travels',
-      angle: 'Personalized Comfort On The Move',
-      key_message: 'Your perfect drink wherever you go.',
-      hook: '"Your schedule changes. Your drink doesn\'t have to."',
-      tone: 'Reliable, forward-looking',
-      rationale: 'Addresses the daily chaos of commuter and class schedules.',
-    },
-    {
-      id: 'c-2',
-      icon: Coffee,
-      title: 'Your Perfect Sip',
-      angle: 'Mindful Morning Ritual',
-      key_message: 'Personalized comfort in every sip.',
-      hook: '"Because every journey deserves the perfect sip."',
-      tone: 'Warm, refined, mindful',
-      rationale: 'Focuses on the sensorial experience of hot beverages.',
-    },
-    {
-      id: 'c-3',
-      icon: Rocket,
-      title: 'Never Settle for Lukewarm',
-      angle: 'Peak Productivity Gear',
-      key_message: 'Keep your drink at the ideal temperature, always.',
-      hook: '"Hot or cold, just the way you like it."',
-      tone: 'Energetic, bold, decisive',
-      rationale: 'Appeals to high-intensity performers who refuse compromises.',
-    },
-  ]
+  const [concepts, setConcepts] = useState(() => {
+    if (location.state?.concepts) return location.state.concepts
+    try {
+      const s = sessionStorage.getItem('cg_concepts')
+      if (s) {
+        const parsed = JSON.parse(s)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch {}
+    return [
+      {
+        id: 'c-1',
+        title: 'Temperature That Travels',
+        angle: 'Personalized Comfort On The Move',
+        key_message: 'Your perfect drink wherever you go.',
+        hook: '"Your schedule changes. Your drink doesn\'t have to."',
+        tone: 'Reliable, forward-looking',
+        rationale: 'Addresses the daily chaos of commuter and class schedules.',
+      },
+      {
+        id: 'c-2',
+        title: 'Your Perfect Sip',
+        angle: 'Mindful Morning Ritual',
+        key_message: 'Personalized comfort in every sip.',
+        hook: '"Because every journey deserves the perfect sip."',
+        tone: 'Warm, refined, mindful',
+        rationale: 'Focuses on the sensorial experience of hot beverages.',
+      },
+      {
+        id: 'c-3',
+        title: 'Never Settle for Lukewarm',
+        angle: 'Peak Productivity Gear',
+        key_message: 'Keep your drink at the ideal temperature, always.',
+        hook: '"Hot or cold, just the way you like it."',
+        tone: 'Energetic, bold, decisive',
+        rationale: 'Appeals to high-intensity performers who refuse compromises.',
+      },
+    ]
+  })
 
   const [selectedConceptIndex, setSelectedConceptIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [draftSaved, setDraftSaved] = useState(false)
+
+  // Hydrate full draft from backend when resuming via ?draft_id=...
+  useEffect(() => {
+    if (!urlDraftId) return
+    setDraftId(urlDraftId)
+    api
+      .get(`/campaigns/${urlDraftId}`)
+      .then((res) => {
+        const bundle = res.data?.campaign || res.data
+        if (!bundle) return
+        if (bundle.brand_kit && Object.keys(bundle.brand_kit).length > 0) {
+          setBrandKit(bundle.brand_kit)
+          try { sessionStorage.setItem('cg_brand_kit', JSON.stringify(bundle.brand_kit)) } catch {}
+        }
+        const pList =
+          Array.isArray(bundle.all_personas) && bundle.all_personas.length > 0
+            ? bundle.all_personas
+            : bundle.persona?.persona_name
+            ? [bundle.persona]
+            : null
+        if (pList) {
+          setRawPersonas(pList)
+          setActivePersonaTab(bundle.persona?.persona_name || pList[0].persona_name)
+          try { sessionStorage.setItem('cg_personas', JSON.stringify(pList)) } catch {}
+        }
+        if (bundle.persona_dna) {
+          setPersonaDnaState(bundle.persona_dna)
+          try { sessionStorage.setItem('cg_persona_dna', JSON.stringify(bundle.persona_dna)) } catch {}
+        }
+        if (Array.isArray(bundle.concepts) && bundle.concepts.length > 0) {
+          setConcepts(bundle.concepts)
+          try { sessionStorage.setItem('cg_concepts', JSON.stringify(bundle.concepts)) } catch {}
+          if (bundle.concept?.title) {
+            const cIdx = bundle.concepts.findIndex((c) => c.title === bundle.concept.title)
+            if (cIdx >= 0) setSelectedConceptIndex(cIdx)
+          }
+        }
+        try { sessionStorage.setItem('cg_draft_id', urlDraftId) } catch {}
+        const targetStep = bundle.current_step || (urlStepParam === 'concepts' ? 3 : 2)
+        setUnlockedStep(Math.max(targetStep, urlStepParam === 'concepts' ? 3 : 2))
+      })
+      .catch(() => {})
+  }, [urlDraftId])
 
   const selectedConcept = concepts[selectedConceptIndex] || concepts[0]
   const currentPersona = all_personas.find((p) => p.persona_name === activePersonaTab) || all_personas[0]
+
+  // ─── Draft save helper ───────────────────────────────────────────────────
+  const saveDraft = async ({ step, extraFields = {} } = {}) => {
+    const userId = user?.id || localStorage.getItem('cg_user_id')
+    if (!userId) return null
+    try {
+      const serializablePersonas = all_personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+      const { icon: _ci, color: _cc, ...serializablePersona } = currentPersona
+      const cleanConcepts = concepts.map(({ icon: _i, ...rest }) => rest)
+      const res = await api.post('/campaigns/draft', {
+        draft_id: draftId || undefined,
+        user_id: userId,
+        current_step: step,
+        brand_kit,
+        all_personas: serializablePersonas,
+        persona: serializablePersona,
+        persona_dna: persona_dna,
+        concepts: cleanConcepts,
+        ...extraFields,
+      })
+      const savedId = res.data?.draft_id
+      if (savedId) {
+        setDraftId(savedId)
+        try { sessionStorage.setItem('cg_draft_id', savedId) } catch {}
+        const draftData = res.data?.campaign
+        if (draftData) window.dispatchEvent(new CustomEvent('cg_draft_saved', { detail: draftData }))
+      }
+      setDraftSaved(true)
+      setTimeout(() => setDraftSaved(false), 2000)
+      return savedId
+    } catch {
+      return null
+    }
+  }
+
+  // Save draft & reset wizard/sidebar back to Home
+  const handleSaveDraftAndReset = async (stepNum) => {
+    await saveDraft({
+      step: stepNum,
+      extraFields: stepNum === 3 ? { concept: selectedConcept } : {},
+    })
+    resetWizardSession()
+    navigate('/dashboard', {
+      state: {
+        draftSavedNotice: `Draft "${brand_kit.product_name || 'Campaign'}" saved at Step ${stepNum} of 5. Resume anytime from Previous Campaigns or Campaign History.`,
+      },
+    })
+  }
 
   const handleGenerateAssets = async () => {
     setIsLoading(true)
@@ -221,14 +357,16 @@ export default function StrategyConceptPage({ user, onLogout }) {
       // eslint-disable-next-line no-unused-vars
       const { icon: _ci, color: _cc, ...serializablePersona } = currentPersona
       const serializablePersonas = all_personas.map(({ icon: _i, color: _c, ...rest }) => rest)
+      const { icon: _selIcon, ...serializableConcept } = selectedConcept || {}
       const userId = user?.id || localStorage.getItem('cg_user_id')
 
       const response = await api.post('/campaigns/generate-assets', {
         brand_kit,
         persona: serializablePersona,
         all_personas: serializablePersonas,
-        selected_concept: selectedConcept,
+        selected_concept: serializableConcept,
         user_id: userId,
+        draft_id: draftId || undefined,
       })
 
       const createdCampaign = response.data
@@ -245,28 +383,38 @@ export default function StrategyConceptPage({ user, onLogout }) {
       // Persist across browser refresh/tab changes
       try {
         sessionStorage.setItem('cg_brand_kit', JSON.stringify(brand_kit))
-        sessionStorage.setItem('cg_selected_concept', JSON.stringify(selectedConcept))
+        sessionStorage.setItem('cg_selected_concept', JSON.stringify(serializableConcept))
         sessionStorage.setItem('cg_personas', JSON.stringify(serializablePersonas))
         if (createdCampaign?.id) {
           sessionStorage.setItem('cg_active_campaign_id', createdCampaign.id)
+          // Remove draft key once campaign is fully generated
+          sessionStorage.removeItem('cg_draft_id')
         }
       } catch {
         // Ignore storage errors in restricted contexts
       }
 
-      // Broadcast event so SidebarLayout immediately updates its list without page reload
+      // Unlock Step 4 (Campaign Assets) in sidebar!
+      unlockStep(4)
+
+      // Broadcast event so SidebarLayout immediately replaces the draft with the finalized campaign
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('cg_campaign_created', { detail: createdCampaign }))
+        window.dispatchEvent(
+          new CustomEvent('cg_campaign_created', {
+            detail: { ...createdCampaign, replaced_draft_id: draftId },
+          })
+        )
       }
 
-      navigate('/results', {
+      navigate('/results?tab=assets', {
         state: {
           brand_kit,
           persona: serializablePersona,
           all_personas: serializablePersonas,
-          selected_concept: selectedConcept,
+          selected_concept: serializableConcept,
           assets,
           campaign_id: createdCampaign?.id,
+          draft_id: draftId,
         },
       })
     } catch (err) {
@@ -407,21 +555,49 @@ export default function StrategyConceptPage({ user, onLogout }) {
               <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                 <button
                   type="button"
-                  onClick={() => navigate('/generator')}
+                  onClick={() =>
+                    navigate(draftId ? `/generator?draft_id=${draftId}` : '/generator', {
+                      state: {
+                        brand_kit,
+                        all_personas: all_personas.map(({ icon: _i, color: _c, ...rest }) => rest),
+                      },
+                    })
+                  }
                   className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>Back</span>
+                  <span>Step 1: Brand Kit</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setSubStep('concepts')}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
-                >
-                  <span>Continue</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-3">
+                  {draftSaved && (
+                    <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />Draft saved
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleSaveDraftAndReset(2)}
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Save Draft
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const savedId = await saveDraft({ step: 3 })
+                      unlockStep(3)
+                      const nextParams = { step: 'concepts' }
+                      if (savedId || draftId) nextParams.draft_id = savedId || draftId
+                      setSearchParams(nextParams)
+                      setSubStep('concepts')
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer"
+                  >
+                    <span>Next: Campaign Concepts</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -506,22 +682,41 @@ export default function StrategyConceptPage({ user, onLogout }) {
             <div className="flex items-center justify-between pt-4">
               <button
                 type="button"
-                onClick={() => setSubStep('dna')}
+                onClick={() => {
+                  const nextParams = { step: 'dna' }
+                  if (draftId) nextParams.draft_id = draftId
+                  setSearchParams(nextParams)
+                  setSubStep('dna')
+                }}
                 className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
+                <span>Step 2: Persona Strategy</span>
               </button>
 
-              <button
-                type="button"
-                onClick={handleGenerateAssets}
-                disabled={isLoading}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer disabled:opacity-50"
-              >
-                <span>{isLoading ? 'Generating Assets...' : 'Generate Campaign Assets'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-3">
+                {draftSaved && (
+                  <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 animate-pulse">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />Draft saved
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleSaveDraftAndReset(3)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Save Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGenerateAssets}
+                  disabled={isLoading}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-purple-200 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isLoading ? 'Generating Assets...' : 'Generate Campaign Assets'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}

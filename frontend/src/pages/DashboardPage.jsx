@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   Plus,
   Sparkles,
@@ -10,15 +10,43 @@ import {
   FolderKanban,
   CheckCircle2,
   Clock,
+  X,
 } from 'lucide-react'
 import SidebarLayout from '../components/SidebarLayout'
+import { resetWizardSession } from '../utils/wizardProgress'
 
 export default function DashboardPage({ user, onLogout }) {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [draftNotice, setDraftNotice] = useState(location.state?.draftSavedNotice || null)
 
   return (
     <SidebarLayout user={user} onLogout={onLogout} campaignName="TravelMate" campaignStatus="Ready">
       <div className="max-w-6xl mx-auto space-y-8">
+        {draftNotice && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>{draftNotice}</span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0 ml-3">
+              <Link
+                to="/history"
+                className="text-amber-800 hover:text-amber-950 font-bold underline underline-offset-2"
+              >
+                View in History →
+              </Link>
+              <button
+                type="button"
+                onClick={() => setDraftNotice(null)}
+                className="text-amber-600 hover:text-amber-900 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ─── Hero Banner matching Image 1 Screen 1 ───────────────────────── */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white p-8 md:p-10 shadow-lg shadow-purple-950/20">
           <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -40,14 +68,7 @@ export default function DashboardPage({ user, onLogout }) {
             <div className="pt-2">
               <Link
                 to="/generator"
-                onClick={() => {
-                  try {
-                    sessionStorage.removeItem('cg_brand_kit')
-                    sessionStorage.removeItem('cg_personas')
-                    sessionStorage.removeItem('cg_selected_concept')
-                    sessionStorage.removeItem('cg_active_campaign_id')
-                  } catch {}
-                }}
+                onClick={() => resetWizardSession()}
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-purple-900/50 transition-all hover:scale-102 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
@@ -108,6 +129,7 @@ export default function DashboardPage({ user, onLogout }) {
               <span className="text-slate-300">|</span>
               <Link
                 to="/generator"
+                onClick={() => resetWizardSession()}
                 className="text-xs font-bold text-slate-700 hover:text-purple-700 flex items-center gap-1"
               >
                 <span>New Setup</span>

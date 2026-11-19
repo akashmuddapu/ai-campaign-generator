@@ -26,6 +26,7 @@ import {
 import SidebarLayout from '../components/SidebarLayout'
 import api from '../services/api'
 import { generateCampaignPdf } from '../utils/generateCampaignPdf'
+import { getDraftResumePath, getStepLabel, setUnlockedStep, resetWizardSession } from '../utils/wizardProgress'
 
 // Default seed campaigns for initial workspace state or offline demo
 const SEED_CAMPAIGNS = [
@@ -432,9 +433,64 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
     setTimeout(() => setFeedbackMessage(null), 3500)
   }
 
+  // ─── Action: Resume Draft at exact step ──────────────────────────────────
+  const handleResumeDraft = (camp) => {
+    const target = camp || activeCampaign
+    const b = target.bundle || {}
+    const step = Number(target.current_step || b.current_step || 1)
+    const bk = b.brand_kit || {
+      product_name: target.product_name,
+      tagline: target.tagline,
+      brand_tone: target.brand_tone || 'Friendly, Premium, Modern',
+    }
+    const personas =
+      Array.isArray(b.all_personas) && b.all_personas.length > 0
+        ? b.all_personas
+        : b.persona
+        ? [b.persona]
+        : [{ persona_name: 'Target Audience' }]
+    const persona = b.persona || personas[0]
+    const concept = b.concept || null
+    const concepts = Array.isArray(b.concepts) ? b.concepts : []
+
+    try {
+      sessionStorage.setItem('cg_draft_id', target.id)
+      sessionStorage.setItem('cg_brand_kit', JSON.stringify(bk))
+      sessionStorage.setItem('cg_personas', JSON.stringify(personas))
+      if (b.persona_dna) sessionStorage.setItem('cg_persona_dna', JSON.stringify(b.persona_dna))
+      if (concepts.length > 0) sessionStorage.setItem('cg_concepts', JSON.stringify(concepts))
+      if (concept) sessionStorage.setItem('cg_selected_concept', JSON.stringify(concept))
+      if (b.assets && Object.keys(b.assets).length > 0) {
+        sessionStorage.setItem('cg_persona_assets', JSON.stringify(b.assets))
+      }
+    } catch {}
+
+    // Unlock steps up to where the user left off!
+    setUnlockedStep(step)
+
+    const resumePath = getDraftResumePath({ ...target, current_step: step })
+    navigate(resumePath, {
+      state: {
+        draft_id: target.id,
+        brand_kit: bk,
+        persona,
+        all_personas: personas,
+        persona_dna: b.persona_dna,
+        concepts: concepts.length > 0 ? concepts : undefined,
+        selected_concept: concept || undefined,
+        assets: b.assets,
+        campaign_id: target.id,
+      },
+    })
+  }
+
   // ─── Action: Edit in Campaign Studio ─────────────────────────────────────
   const handleEditInStudio = (camp) => {
     const target = camp || activeCampaign
+    if (target.status === 'Draft') {
+      handleResumeDraft(target)
+      return
+    }
     const b = target.bundle || {}
     const bk = b.brand_kit || {
       product_name: target.product_name,
@@ -451,13 +507,18 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
       sessionStorage.setItem('cg_brand_kit', JSON.stringify(bk))
       sessionStorage.setItem('cg_personas', JSON.stringify(personas))
       sessionStorage.setItem('cg_selected_concept', JSON.stringify(concept))
+      sessionStorage.setItem('cg_step2_done', 'true')
+      sessionStorage.setItem('cg_step3_done', 'true')
+      sessionStorage.setItem('cg_step4_done', 'true')
       if (b.assets) {
         sessionStorage.setItem('cg_persona_assets', JSON.stringify(b.assets))
       }
     } catch {}
 
+    setUnlockedStep(6)
+
     // Navigate straight to Results Studio with preloaded state
-    navigate('/results', {
+    navigate('/results?tab=assets', {
       state: {
         brand_kit: bk,
         persona: personas[0],
@@ -795,10 +856,18 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
             <button
               type="button"
               onClick={() => handleEditInStudio(activeCampaign)}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              className={`px-4 py-2 rounded-xl text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeCampaign.status === 'Draft'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600'
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Edit in Studio</span>
+              <span>
+                {activeCampaign.status === 'Draft'
+                  ? `Resume Draft (Step ${activeCampaign.current_step || 1}/5)`
+                  : 'Edit in Studio'}
+              </span>
             </button>
 
             <button
@@ -830,6 +899,7 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
 
             <Link
               to="/generator"
+              onClick={() => resetWizardSession()}
               className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -837,6 +907,39 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
             </Link>
           </div>
         </div>
+
+        {/* ─── Draft Campaign Resume Banner ─────────────────────────────────── */}
+        {activeCampaign.status === 'Draft' && (
+          <div className="bg-gradient-to-r from-amber-50 via-orange-50/70 to-amber-50 border border-amber-200 rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-amber-100 border border-amber-200 text-amber-700 flex items-center justify-center shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-black text-amber-950">
+                    Draft Campaign in Progress
+                  </span>
+                  <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900">
+                    Left off at Step {activeCampaign.current_step || 1} of 5 — {getStepLabel(activeCampaign.current_step || 1)}
+                  </span>
+                </div>
+                <p className="text-xs text-amber-800 mt-1">
+                  Your progress is saved. Click Resume to pick up right where you stopped and unlock your remaining campaign steps.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleResumeDraft(activeCampaign)}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition-all cursor-pointer flex items-center gap-2 shrink-0 self-start sm:self-auto"
+            >
+              <span>Resume Campaign Draft</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* ─── Campaign Switcher & Search Bar ──────────────────────────────── */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs space-y-3">
@@ -862,6 +965,7 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
           <div className="flex flex-wrap items-center gap-2">
             {filteredCampaigns.map((c) => {
               const isCurrent = c.id === activeCampaign.id
+              const isDraftItem = c.status === 'Draft'
               return (
                 <button
                   key={c.id}
@@ -869,20 +973,30 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
                   onClick={() => setSearchParams({ id: c.id })}
                   className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border ${
                     isCurrent
-                      ? 'bg-purple-50 border-purple-300 text-purple-900 shadow-xs'
+                      ? isDraftItem
+                        ? 'bg-amber-50 border-amber-300 text-amber-950 shadow-xs'
+                        : 'bg-purple-50 border-purple-300 text-purple-900 shadow-xs'
+                      : isDraftItem
+                      ? 'bg-amber-50/40 border-amber-200 text-amber-900 hover:bg-amber-50'
                       : 'bg-white border-slate-200 text-slate-700 hover:border-purple-200 hover:bg-slate-50'
                   }`}
                 >
                   <span className="truncate max-w-[140px]">{c.product_name}</span>
-                  <span
-                    className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ${
-                      isCurrent
-                        ? 'bg-purple-200/80 text-purple-800'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {c.score || 96}%
-                  </span>
+                  {isDraftItem ? (
+                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900">
+                      Draft • Step {c.current_step || 1}/5
+                    </span>
+                  ) : (
+                    <span
+                      className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ${
+                        isCurrent
+                          ? 'bg-purple-200/80 text-purple-800'
+                          : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {c.score || 96}%
+                    </span>
+                  )}
                 </button>
               )
             })}
@@ -1037,20 +1151,42 @@ export default function CampaignHistoryReportPage({ user, onLogout }) {
             {/* 1. Score & Health Banner */}
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center font-bold shrink-0">
-                  <ShieldCheck className="w-8 h-8" />
+                <div
+                  className={`w-14 h-14 rounded-2xl border flex items-center justify-center font-bold shrink-0 ${
+                    activeCampaign.status === 'Draft'
+                      ? 'bg-amber-50 border-amber-200 text-amber-600'
+                      : 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                  }`}
+                >
+                  {activeCampaign.status === 'Draft' ? (
+                    <Clock className="w-8 h-8" />
+                  ) : (
+                    <ShieldCheck className="w-8 h-8" />
+                  )}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h2 className="text-lg font-black text-slate-900">
-                      Brand Guardian Score: {activeCampaign.score || 96} / 100
+                      {activeCampaign.status === 'Draft'
+                        ? `Draft Progress: Step ${activeCampaign.current_step || 1} of 5`
+                        : `Brand Guardian Score: ${activeCampaign.score || 96} / 100`}
                     </h2>
-                    <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
-                      {activeCampaign.status || 'Validated'}
+                    <span
+                      className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full border ${
+                        activeCampaign.status === 'Draft'
+                          ? 'bg-amber-50 border-amber-200 text-amber-800'
+                          : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                      }`}
+                    >
+                      {activeCampaign.status === 'Draft'
+                        ? `Draft • ${getStepLabel(activeCampaign.current_step || 1)}`
+                        : activeCampaign.status || 'Validated'}
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Deterministic compliance verified across 6 dimensions with zero brand drift.
+                    {activeCampaign.status === 'Draft'
+                      ? 'Complete the remaining steps in Campaign Studio to generate and validate all marketing assets.'
+                      : 'Deterministic compliance verified across 6 dimensions with zero brand drift.'}
                   </p>
                 </div>
               </div>
