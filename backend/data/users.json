@@ -22,5 +22,17 @@
     "email": "anil@gmail.com",
     "name": "Aniul",
     "password_hash": "scrypt:32768:8:1$Bx41YHPyfdZiW180$00e050981b3aaae81b89e8513dac640800684dc33ce80a8465042cdf1937064c60279d32f72d97e0f1596cd8c5df466277041ace82783a3efe5af605ddd1ca83"
+  },
+  {
+    "id": "2e7270e0-704c-4101-9789-e5d1375675b4",
+    "email": "anji@gmail.com",
+    "name": "anji",
+    "password_hash": "scrypt:32768:8:1$13IOmdY9ARgcyhmV$3e4c3d0632e8d564324631c3bf7bd24694729a404fc342edd356a8ece1adced431006916f75b188d63d15841e43fdcd43a7e057bc093f61a484a570069742733"
+  },
+  {
+    "id": "8a5469a4-aa1f-49e9-838d-4a70c3380f25",
+    "email": "anil123@gmail.com",
+    "name": "Anil",
+    "password_hash": "scrypt:32768:8:1$Q1gvr7PpAit2ZIyy$3d5173e51ed501099fc8e317dad3db898050d0b20befb96d4aca55133efe5089eef536ea6cf13eb7481f3391e1469415db90042cb86f3e32685692f7a0e8478b"
   }
 ]
