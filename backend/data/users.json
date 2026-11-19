@@ -22,5 +22,11 @@
     "email": "srujan@gmail.com",
     "name": "Srujan",
     "password_hash": "scrypt:32768:8:1$XOqs5Stfd3kyECM1$1f3f08ae8da82fd0fc9cb7fdcb0863c6187f44d5536b002b2342852513c3327399d482c2cb57646abab9b19d314b94285b421db95a495462c28083446301c2d8"
+  },
+  {
+    "id": "3b0a367e-a31f-493b-aaa9-63ed36218936",
+    "email": "rajesh@gmail.com",
+    "name": "rajesh",
+    "password_hash": "scrypt:32768:8:1$KB3CvOtXDNutGoyo$9b3c739c3dbf11e381c6e955905029d35b6ce36e538f2fe68a3b2633832221009cff6bc08d2ed30008449cc88e4fd3ec34ff3ddbe2e4ade6fe0f903d73a0c871"
   }
 ]

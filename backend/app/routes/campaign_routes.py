@@ -17,6 +17,25 @@ def _get_provider():
     return get_ai_provider()
 
 
+@campaign_bp.post("/suggest-personas")
+def suggest_personas():
+    data = request.get_json(silent=True) or {}
+    product_name = data.get("product_name", "").strip()
+    product_description = data.get("product_description", "").strip()
+    brand_tone = data.get("brand_tone", "").strip()
+
+    if not product_name:
+        return jsonify({"error": "product_name is required"}), 400
+
+    provider = _get_provider()
+    try:
+        personas = provider.suggest_personas(product_name, product_description, brand_tone)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"status": "success", "personas": personas}), 200
+
+
 @campaign_bp.post("/persona-dna")
 def persona_dna():
     data = request.get_json(silent=True) or {}

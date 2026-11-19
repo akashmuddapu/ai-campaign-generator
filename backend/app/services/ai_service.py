@@ -45,6 +45,10 @@ class BaseAIProvider(ABC):
         """AI-guided Auto-Fix enforcing negative constraints."""
         pass
 
+    def suggest_personas(self, product_name: str, product_description: str = "", brand_tone: str = "") -> List[dict]:
+        """Suggest tailored personas based on product name and description."""
+        return []
+
 
 class ResilientAIProvider(BaseAIProvider):
     """
@@ -94,6 +98,9 @@ class ResilientAIProvider(BaseAIProvider):
 
     def auto_fix_content(self, channel_type: str, current_content: dict, violations: List[str], brand_kit: dict, persona: dict, concept: dict) -> dict:
         return self._call_resilient("auto_fix_content", channel_type, current_content, violations, brand_kit, persona, concept)
+
+    def suggest_personas(self, product_name: str, product_description: str = "", brand_tone: str = "") -> List[dict]:
+        return self._call_resilient("suggest_personas", product_name, product_description, brand_tone)
 
 
 def get_ai_provider(config: Optional[dict] = None) -> BaseAIProvider:
