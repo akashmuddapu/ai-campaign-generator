@@ -113,6 +113,40 @@ Visit **`http://localhost:5173`** in your browser.
 
 ---
 
+## 📸 Screenshots
+
+### Landing Page
+![Landing Page](IMAGES/Screenshot%202026-11-19%20165410.png)
+
+### Secure Sign Up — Real-time Password Strength & .com Email Validation
+![Sign Up Page](IMAGES/Screenshot%202026-11-19%20165501.png)
+
+### Campaign Studio Dashboard
+![Dashboard](IMAGES/Screenshot%202026-11-19%20165537.png)
+
+### Step 2 — Persona DNA: Audience Strategy
+![Persona DNA](IMAGES/Screenshot%202026-11-19%20170050.png)
+
+### Step 4 — Campaign Assets: Social Posts & Emails per Persona
+![Campaign Assets](IMAGES/Screenshot%202026-11-19%20170128.png)
+
+### Step 5 — Brand Guardian: 95/100 Score with 4-Dimension Compliance
+![Brand Guardian](IMAGES/Screenshot%202026-11-19%20170146.png)
+
+### Campaign History & Report Card
+![Campaign History Report](IMAGES/Screenshot%202026-11-19%20170220.png)
+
+### Campaign Report Card — Brand Score 96/100
+![Campaign Report Card](IMAGES/Screenshot%202026-11-19%20170413.png)
+
+### Step 6 — AI Ad Creative Studio: Generate Image Ads
+![Generate Ad](IMAGES/Screenshot%202026-11-19%20170436.png)
+
+### Step 6 — AI Ad with Hook, Download JPG/PNG
+![Ad Creative with Download](IMAGES/Screenshot%202026-11-19%20170501.png)
+
+---
+
 ## Testing
 
 ```bash
