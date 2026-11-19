@@ -1,9 +1,9 @@
 [
   {
     "id": "demo-user-001",
-    "email": "demo@campaignguard.ai",
+    "email": "demo@campaignguard.com",
     "name": "Demo Marketer",
-    "password_hash": "scrypt:32768:8:1$TceQowJd0b6KvYuD$42cb538fff459826083a9ba87183e18d5d5ab8e10b6f0d38babf7af40fa8afc2fb713cbe0a2960cfb8bedc72684ade31dbdb2615160e488649add05a94fd6a9b"
+    "password_hash": "scrypt:32768:8:1$hKlFt34EL5nTW164$799267b7c0a74da6ef0470ea0e6919b06630f5c52a549c998ba8509fd33878a96d573aeda8ae0e90cbdeab9aacc816d22ea9c76ab2a0330b353cd550b8a7576c"
   },
   {
     "id": "c8ee3606-8e44-4605-983c-9b4b706f3c48",
@@ -28,5 +28,23 @@
     "email": "rajesh@gmail.com",
     "name": "rajesh",
     "password_hash": "scrypt:32768:8:1$KB3CvOtXDNutGoyo$9b3c739c3dbf11e381c6e955905029d35b6ce36e538f2fe68a3b2633832221009cff6bc08d2ed30008449cc88e4fd3ec34ff3ddbe2e4ade6fe0f903d73a0c871"
+  },
+  {
+    "id": "99db6c4f-8d12-45e1-affc-b3aba158b4b0",
+    "email": "anil@gmail.com",
+    "name": "Aniul",
+    "password_hash": "scrypt:32768:8:1$Bx41YHPyfdZiW180$00e050981b3aaae81b89e8513dac640800684dc33ce80a8465042cdf1937064c60279d32f72d97e0f1596cd8c5df466277041ace82783a3efe5af605ddd1ca83"
+  },
+  {
+    "id": "2e7270e0-704c-4101-9789-e5d1375675b4",
+    "email": "anji@gmail.com",
+    "name": "anji",
+    "password_hash": "scrypt:32768:8:1$13IOmdY9ARgcyhmV$3e4c3d0632e8d564324631c3bf7bd24694729a404fc342edd356a8ece1adced431006916f75b188d63d15841e43fdcd43a7e057bc093f61a484a570069742733"
+  },
+  {
+    "id": "8a5469a4-aa1f-49e9-838d-4a70c3380f25",
+    "email": "anil123@gmail.com",
+    "name": "Anil",
+    "password_hash": "scrypt:32768:8:1$Q1gvr7PpAit2ZIyy$3d5173e51ed501099fc8e317dad3db898050d0b20befb96d4aca55133efe5089eef536ea6cf13eb7481f3391e1469415db90042cb86f3e32685692f7a0e8478b"
   }
 ]

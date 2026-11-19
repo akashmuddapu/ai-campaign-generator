@@ -1,10 +1,10 @@
-# CampaignGuard AI 🛡️
+# 🛡️ CampaignGuard AI
 
 <p align="left">
   <img alt="React 19" src="https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite%208-61DAFB?style=flat-square&logo=react&logoColor=black" />
   <img alt="Flask 3.1" src="https://img.shields.io/badge/Backend-Flask%203.1%20(Python)-000000?style=flat-square&logo=flask&logoColor=white" />
   <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Styling-Tailwind%20CSS%204-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white" />
-  <img alt="Tests Passing" src="https://img.shields.io/badge/Tests-128%20Passing-10B981?style=flat-square" />
+  <img alt="Tests Passing" src="https://img.shields.io/badge/Tests-142%20Passing-10B981?style=flat-square" />
 </p>
 
 > **AI Marketing Campaign Studio with Built-In Brand Governance.**  
@@ -24,12 +24,13 @@ Generate ──► Validate (Rules + AI) ──► Auto-Fix ──► Report Car
 
 ## Key Features
 
-- **🧭 6-Step Guided Studio:** Progress step-by-step from Brand Kit setup to final ad image generation, with draft auto-save (`Draft • Step X/6`) and exact-step resume.
+- **🧭 6-Step Guided Studio:** Progress step-by-step from Brand Kit setup to final ad image generation, with draft auto-save (`Draft • Step X/5`) and exact-step resume.
 - **👤 Persona-Driven Strategy:** Generate distinct psychological profiles (goals, pain points, motivations) or use 1-click **AI Suggest Personas** so every audience segment gets tailored messaging.
 - **🛡️ Brand Guardian & Auto-Fix:** Enforces hard rules in Python (banned words, character limits, hashtag counts) alongside AI semantic scoring, automatically repairing violations in a closed loop.
 - **💡 Explainable AI:** Every post and email includes a *"Why This Content?"* breakdown explaining brand, persona, and channel alignment.
 - **📊 Dynamic Report Card:** Evaluates brand tone, banned-word compliance, and predicted channel engagement with an executive letter grade (`A+`–`D`) and 5-axis radar chart.
 - **🖼️ Step 6 — Ad Campaign Image Studio:** Generates persona-tailored commercial ad visuals across multiple aspect ratios (`1:1`, `16:9`, `9:16`) with customizable overlays and 1-click **JPG / PNG** export.
+- **🔐 Secure Authentication:** Strict `.com` email validation, real-time password strength enforcement, and client-side salted SHA-256 hashing so plain-text passwords never travel over the network.
 - **📥 Multi-Format Campaign Export:** Download full campaign packages as **PDF**, **Markdown (`.md`)**, or **JSON (`.json`)**.
 - **🧠 Resilient AI Failover:** Pluggable provider chain (`Gemini → Grok → Mock`) ensures reliable uptime and instant offline demos/testing.
 
@@ -40,11 +41,11 @@ Generate ──► Validate (Rules + AI) ──► Auto-Fix ──► Report Car
 1. **Step 1 — Brand Kit & Personas (`/generator`)**  
    Define your product, brand tone, tagline, banned words, and target personas (or load sample presets / click **Suggest Personas**).
 2. **Step 2 — Persona Strategy (`/strategy-concept?step=dna`)**  
-   Review generated goals, pain points, and messaging angles tailored to each customer segment.
+   Review generated goals, pain points, and messaging angles tailored to each customer segment on a single scrollable page.
 3. **Step 3 — Campaign Concepts (`/strategy-concept?step=concepts`)**  
    Compare 3 strategic campaign directions complete with key messages and hooks.
 4. **Step 4 — Campaign Assets (`/results?tab=assets`)**  
-   Review side-by-side Social Posts and Marketing Emails per persona, edit inline, or inspect *"Why This Content?"*.
+   Review side-by-side Social Posts (`Post Content` + `Hashtags`) and Marketing Emails (`Subject Line` + `Email Body`) for every persona on a single scrollable page, edit inline, or inspect *"Why This Content?"*.
 5. **Step 5 — Brand Guardian, Report Card & Export (`/results?tab=guardian`, `/report-card`)**  
    Audit compliance scores, run 1-click Auto-Fix, inspect your Brand Kit Report Card, and export campaign packages as **PDF**, **Markdown**, or **JSON**.
 6. **Step 6 — Ad Campaign Image Generation (`/results?tab=ad`)**  
@@ -65,33 +66,7 @@ Generate ──► Validate (Rules + AI) ──► Auto-Fix ──► Report Car
 
 - **Frontend:** React 19, Vite 8, Tailwind CSS 4, React Router 7, Axios, Lucide React, jsPDF
 - **Backend:** Python 3.11+, Flask 3.1, Flask-Session, Pydantic
-- **AI & Testing:** Google Gemini API, xAI Grok API, Mock Provider, Pytest (97 tests), Vitest (31 tests)
-
----
-
-## Project Structure
-
-```text
-ai-campaign-generator/
-├── frontend/                         # React 19 + Vite 8 + Tailwind CSS 4
-│   ├── src/
-│   │   ├── pages/                    # Auth, Dashboard, 6-Step Studio, Report Card & History
-│   │   ├── components/               # Sidebar, Asset Cards, Guardian Badges, Charts & Modals
-│   │   ├── services/api.js           # Axios API client
-│   │   └── utils/                    # Step progress manager & PDF generator
-│   └── tests/                        # Vitest frontend test suite
-│
-└── backend/                          # Python Flask 3.1 REST API
-    ├── app/
-    │   ├── routes/                   # Auth, Campaigns, Ad Studio, Report Card & Presets
-    │   ├── services/                 # AI Providers, Brand Guardian, Report Card & Exports
-    │   ├── models/                   # Report card data models
-    │   └── validators/               # Deterministic banned-word, length & hashtag rules
-    ├── tests/                        # Pytest backend test suite
-    ├── .env.example
-    ├── requirements.txt
-    └── wsgi.py
-```
+- **AI & Testing:** Google Gemini API, xAI Grok API, Mock Provider, Pytest, Vitest
 
 ---
 
@@ -129,7 +104,7 @@ Visit **`http://localhost:5173`** in your browser.
 
 | Category | Method & Endpoint | Description |
 | --- | --- | --- |
-| **Auth** | `POST /auth/signup`, `/auth/login`, `/auth/logout` | User registration and session management |
+| **Auth** | `POST /auth/signup`, `/auth/login`, `/auth/logout` | User registration, client-salted SHA-256 verification & session management |
 | **Studio Flow** | `POST /campaigns/suggest-personas`, `/persona-dna`, `/concepts`, `/generate-assets` | Steps 1–4 generation & automatic Brand Guardian Auto-Fix |
 | **Drafts & History** | `POST /campaigns/draft` • `GET /campaigns` | Save/resume drafts at any step and manage user history |
 | **Report Card** | `GET /campaigns/<id>/report-card` • `POST /campaigns/report-card/evaluate` | Brand Kit alignment scoring and improvement suggestions |
@@ -141,10 +116,10 @@ Visit **`http://localhost:5173`** in your browser.
 ## Testing
 
 ```bash
-# Backend tests (97 passing)
+# Backend tests
 pytest backend/tests -q
 
-# Frontend tests (31 passing)
+# Frontend tests
 npm --prefix frontend test -- --run
 ```
 

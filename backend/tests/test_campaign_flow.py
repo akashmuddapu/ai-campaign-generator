@@ -194,28 +194,39 @@ class TestCampaignFlowEndpoints:
         assert user_draft["status"] == "Draft"
         assert user_draft["current_step"] == 2
 
-    def test_generate_ad_image_and_hooks(self, client, sample_brand_kit, sample_persona):
-        hooks_resp = client.post(
-            "/api/campaigns/generate-ad-hooks",
-            json={"brand_kit": sample_brand_kit, "persona": sample_persona},
-        )
-        assert hooks_resp.status_code == 200
-        hooks_data = hooks_resp.get_json()
-        assert hooks_data["status"] == "success"
-        assert len(hooks_data["hooks"]) >= 1
+    def test_generate_ad_image(self, client, sample_brand_kit, sample_persona):
+        payload = {
+            "brand_kit": sample_brand_kit,
+            "persona": sample_persona,
+            "concept": {"title": "Temperature That Travels", "hook": "Your drink. Your temperature."},
+            "style": "Commercial Studio",
+            "aspect_ratio": "1:1",
+            "headline": "Stay Hot On The Go"
+        }
+        resp = client.post("/api/campaigns/generate-ad-image", json=payload)
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data.get("status") == "success"
+        assert "image_url" in data
+        assert data.get("aspect_ratio") == "1:1"
+        assert data.get("width") == 1080
+        assert data.get("height") == 1080
+        assert "prompt" in data
 
-        img_resp = client.post(
-            "/api/campaigns/generate-ad-image",
-            json={
-                "brand_kit": sample_brand_kit,
-                "persona": sample_persona,
-                "style": "Commercial Studio",
-                "aspect_ratio": "16:9",
-            },
-        )
-        assert img_resp.status_code == 200
-        img_data = img_resp.get_json()
-        assert img_data["status"] == "success"
-        assert img_data["width"] == 1280
-        assert img_data["height"] == 720
-        assert img_data["image_url"].startswith("https://")
+        # Test 16:9 Banner resolution (1280x720)
+        payload_banner = dict(payload, aspect_ratio="16:9")
+        resp_banner = client.post("/api/campaigns/generate-ad-image", json=payload_banner)
+        assert resp_banner.status_code == 200
+        data_banner = resp_banner.get_json()
+        assert data_banner.get("width") == 1280
+        assert data_banner.get("height") == 720
+
+        # Test generate ad hooks
+        resp_hooks = client.post("/api/campaigns/generate-ad-hooks", json={
+            "brand_kit": sample_brand_kit,
+            "persona": sample_persona,
+        })
+        assert resp_hooks.status_code == 200
+        data_hooks = resp_hooks.get_json()
+        assert data_hooks.get("status") == "success"
+        assert len(data_hooks.get("hooks", [])) >= 3

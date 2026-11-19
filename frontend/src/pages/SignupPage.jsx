@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Shield, Lock, Mail, User, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react'
+import { Shield, Lock, Mail, User, ArrowRight, AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
 import api from '../services/api'
+import {
+  validateEmail,
+  validatePassword,
+  getPasswordChecks,
+  hashPasswordClient,
+} from '../utils/authValidation'
 
 export default function SignupPage({ onSignup }) {
   const navigate = useNavigate()
@@ -11,16 +17,39 @@ export default function SignupPage({ onSignup }) {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
+  // Real-time password requirement checks
+  const pwChecks = getPasswordChecks(password)
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
+    // Rule 1: Strict .com email regex validation (rejects @kjgegdv, @dg, non-.com)
+    const emailValidation = validateEmail(email)
+    if (!emailValidation.valid) {
+      setError(emailValidation.error)
+      setIsLoading(false)
+      return
+    }
+
+    // Rule 2: Password strength validation (min 6 chars, >=1 cap, >=1 small, >=1 number, >=1 special)
+    const pwValidation = validatePassword(password)
+    if (!pwValidation.valid) {
+      setError(pwValidation.error)
+      setIsLoading(false)
+      return
+    }
+
     try {
+      // Rule 3: Client-side salted hash (Plaintext password NEVER travels over the network)
+      // Salted with email so no two identical passwords share the same network hash
+      const clientPasswordHash = await hashPasswordClient(password, email)
+
       if (onSignup) {
-        await onSignup({ name, email, password })
+        await onSignup({ name: name.trim(), email: email.trim(), password: clientPasswordHash })
       } else {
-        await api.post('/auth/signup', { name, email, password })
+        await api.post('/auth/signup', { name: name.trim(), email: email.trim(), password: clientPasswordHash })
       }
       navigate('/dashboard')
     } catch (err) {
@@ -68,7 +97,10 @@ export default function SignupPage({ onSignup }) {
                 type="text"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  if (error) setError(null)
+                }}
                 placeholder="Sarah Connor"
                 className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 text-sm font-medium text-slate-900 outline-none"
               />
@@ -80,7 +112,7 @@ export default function SignupPage({ onSignup }) {
               htmlFor="email-input"
               className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1"
             >
-              Email Address
+              Email Address <span className="text-[10px] text-purple-600 normal-case">(.com required)</span>
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -89,7 +121,10 @@ export default function SignupPage({ onSignup }) {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (error) setError(null)
+                }}
                 placeholder="name@company.com"
                 className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 text-sm font-medium text-slate-900 outline-none"
               />
@@ -109,13 +144,50 @@ export default function SignupPage({ onSignup }) {
                 id="password-input"
                 type="password"
                 required
-                minLength={6}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 6 characters"
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (error) setError(null)
+                }}
+                placeholder="Min 6 characters with Aa1!"
                 className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 text-sm font-medium text-slate-900 outline-none"
               />
             </div>
+
+            {/* Real-time Password Strength Criteria */}
+            <div className="mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5 text-[11px]">
+              <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wider">
+                Password Requirements:
+              </span>
+              <div className="grid grid-cols-2 gap-1.5 text-slate-600">
+                <div className={`flex items-center gap-1.5 ${pwChecks.length ? 'text-emerald-700 font-bold' : ''}`}>
+                  {pwChecks.length ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-1" />}
+                  <span>Min 6 characters</span>
+                </div>
+                <div className={`flex items-center gap-1.5 ${pwChecks.uppercase ? 'text-emerald-700 font-bold' : ''}`}>
+                  {pwChecks.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-1" />}
+                  <span>1 Capital letter (A-Z)</span>
+                </div>
+                <div className={`flex items-center gap-1.5 ${pwChecks.lowercase ? 'text-emerald-700 font-bold' : ''}`}>
+                  {pwChecks.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-1" />}
+                  <span>1 Small letter (a-z)</span>
+                </div>
+                <div className={`flex items-center gap-1.5 ${pwChecks.number ? 'text-emerald-700 font-bold' : ''}`}>
+                  {pwChecks.number ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-1" />}
+                  <span>1 Number (0-9)</span>
+                </div>
+                <div className={`col-span-2 flex items-center gap-1.5 ${pwChecks.special ? 'text-emerald-700 font-bold' : ''}`}>
+                  {pwChecks.special ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-1" />}
+                  <span>1 Special symbol (!@#$%^&amp;*...)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Security badge: client-side salted hashing */}
+          <div className="p-2.5 bg-purple-50/70 border border-purple-100 rounded-xl flex items-center gap-2 text-[11px] text-purple-900 font-medium">
+            <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+            <span>Client-side salted hash encryption active. Passwords never travel plain on the network.</span>
           </div>
 
           <button

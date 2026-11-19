@@ -177,7 +177,12 @@ def generate_ad_hooks():
         safe_hooks = [f"Discover {product_name} — tailored for {p_name}."]
 
     random.shuffle(safe_hooks)
-    return jsonify({"status": "success", "hooks": safe_hooks}), 200
+    return jsonify({
+        "status": "success",
+        "persona_name": p_name,
+        "product_name": product_name,
+        "hooks": safe_hooks,
+    }), 200
 
 
 @campaign_bp.post("/generate-ad-image")
@@ -632,3 +637,4 @@ def export_campaign(campaign_id):
             mimetype="application/json",
             headers={"Content-Disposition": f"attachment; filename=campaign_{campaign_id}.json"}
         ), 200
+
