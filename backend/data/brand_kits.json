@@ -1,0 +1,135 @@
+[
+  {
+    "id": "preset-travelmate",
+    "name": "TravelMate Smart Mug",
+    "category": "B2C Consumer",
+    "brand_kit": {
+      "product_name": "TravelMate Smart Mug",
+      "product_description": "A smart travel mug that keeps drinks at your preferred temperature during your journey.",
+      "brand_tone": "Friendly, Premium, Modern",
+      "tagline": "Your drink. Your temperature.",
+      "banned_words": [
+        "cheap",
+        "guaranteed",
+        "best"
+      ],
+      "example_brand_lines": [
+        "Your perfect sip, wherever you go.",
+        "Built for every journey."
+      ]
+    },
+    "personas": [
+      {
+        "persona_name": "Student",
+        "primary_goals": "Stay energized during long study hours and lectures.",
+        "pain_points": "Drinks get cold during classes and library sessions.",
+        "core_motivations": "Convenience, reliability, and academic productivity.",
+        "emotional_triggers": "Fun, relatable, energetic student life.",
+        "preferred_message_style": "Short, energetic, student-friendly, casual.",
+        "buying_triggers": "Keeps drink at the right temperature, affordable, aesthetic."
+      },
+      {
+        "persona_name": "Working Professional",
+        "primary_goals": "Sustained productivity through back-to-back executive meetings.",
+        "pain_points": "No time to reheat coffee between client presentations.",
+        "core_motivations": "Professional polish, daily efficiency, and sleek design.",
+        "emotional_triggers": "Frustration with lukewarm coffee, focus on high output.",
+        "preferred_message_style": "Crisp, benefit-driven, modern, executive.",
+        "buying_triggers": "All-day precision temperature battery, leakproof design."
+      },
+      {
+        "persona_name": "Traveller",
+        "primary_goals": "Consistent hydration and hot drinks across time zones and commutes.",
+        "pain_points": "Airport spills, poor hotel coffee, unstable car cup holders.",
+        "core_motivations": "Portability, rugged durability, and peace of mind on the go.",
+        "emotional_triggers": "Wanderlust, comfort of familiar beverages anywhere.",
+        "preferred_message_style": "Adventurous, practical, uplifting, compact.",
+        "buying_triggers": "Compact fit for travel bags, long battery life."
+      }
+    ]
+  },
+  {
+    "id": "preset-b2b-cybershield",
+    "name": "CyberShield AI (B2B Tech)",
+    "category": "B2B Tech",
+    "brand_kit": {
+      "product_name": "CyberShield",
+      "product_description": "AI-powered enterprise cloud security and autonomous threat defense platform.",
+      "brand_tone": "Authoritative, vigilant, innovative, enterprise-grade",
+      "tagline": "Defend Tomorrow, Today",
+      "banned_words": [
+        "cheap",
+        "unhackable",
+        "easy",
+        "foolproof",
+        "basic"
+      ],
+      "example_brand_lines": [
+        "Autonomous threat defense engineered for high-consequence environments.",
+        "Zero trust. Zero hesitation. Continuous verification."
+      ]
+    },
+    "personas": [
+      {
+        "persona_name": "Enterprise CISO",
+        "primary_goals": "Zero-breach security posture, regulatory compliance certification, and executive risk transparency.",
+        "pain_points": "Alert fatigue across fragmented SIEM tools, board-level scrutiny, and enterprise vendor sprawl.",
+        "core_motivations": "Safeguarding corporate reputation, business continuity, and audit certainty.",
+        "emotional_triggers": "Fear of public data breach, audit embarrassment, loss of board confidence.",
+        "preferred_message_style": "Data-driven, empirical, risk-quantified, authoritative.",
+        "buying_triggers": "SOC2/ISO27001 validation, peer enterprise references, demonstrable ROI."
+      },
+      {
+        "persona_name": "Startup CTO",
+        "primary_goals": "Shipping features rapidly without creating security vulnerabilities or slowing sprint cycles.",
+        "pain_points": "Tedious manual security reviews, absence of dedicated security engineers, compliance friction during funding rounds.",
+        "core_motivations": "Engineering velocity, autonomous code security, investor technical diligence readiness.",
+        "emotional_triggers": "Developer pushback, engineering blockages, investor diligence panic.",
+        "preferred_message_style": "Developer-first, pragmatic, concise, transparent.",
+        "buying_triggers": "One-click GitHub integration, developer-friendly CLI, frictionless self-serve onboarding."
+      }
+    ]
+  },
+  {
+    "id": "preset-b2c-zenbrew",
+    "name": "ZenBrew Matcha (B2C Consumer)",
+    "category": "B2C Consumer",
+    "brand_kit": {
+      "product_name": "ZenBrew",
+      "product_description": "Ceremonial-grade adaptogenic sparkling matcha cold brew infused with lion's mane and l-theanine.",
+      "brand_tone": "Mindful, revitalizing, grounded, clean, aspirational",
+      "tagline": "Calm Energy in Every Sip",
+      "banned_words": [
+        "cheap",
+        "artificial",
+        "crash",
+        "jittery",
+        "junk"
+      ],
+      "example_brand_lines": [
+        "Sustained mental clarity without the coffee crash.",
+        "Crafted for the mindful achiever."
+      ]
+    },
+    "personas": [
+      {
+        "persona_name": "Mindful Wellness Enthusiast",
+        "primary_goals": "Nourishing physical vitality, balancing adrenal stress, and enjoying clean morning rituals.",
+        "pain_points": "Afternoon caffeine crashes, synthetic energy drinks, digestive acidity from dark roast coffee.",
+        "core_motivations": "Holistic wellbeing, clean label transparency, living with mindful vitality.",
+        "emotional_triggers": "Guilt from consuming artificial stimulants, feeling overwhelmed and burnt out.",
+        "preferred_message_style": "Warm, inspiring, sensorial, authentic, health-conscious.",
+        "buying_triggers": "100% organic certification, regenerative farming, eco-friendly packaging."
+      },
+      {
+        "persona_name": "High-Performance Professional",
+        "primary_goals": "Sustaining 10-hour cognitive focus during critical strategy blocks and high-stakes meetings.",
+        "pain_points": "Sudden 3 PM energy drop, racing heart rate from third cup of coffee, brain fog.",
+        "core_motivations": "Peak cognitive performance, mental endurance, sharp decision-making.",
+        "emotional_triggers": "Frustration with midday brain fog, fear of underperforming in key presentations.",
+        "preferred_message_style": "Crisp, benefit-driven, nootropic-focused, modern.",
+        "buying_triggers": "Clinically supported adaptogens, portable ready-to-drink format, convenient auto-delivery."
+      }
+    ]
+  }
+]

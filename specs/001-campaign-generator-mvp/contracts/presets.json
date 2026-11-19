@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Presets API Contracts",
+  "description": "Pre-configured sample Brand Kits and contrasting Personas for 1-click demo loading",
+  "endpoints": {
+    "get_presets": {
+      "method": "GET",
+      "path": "/api/presets",
+      "responses": {
+        "200": {
+          "description": "Available demo presets",
+          "body": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string", "example": "success" },
+              "presets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "category": { "type": "string", "enum": ["B2B Tech", "B2C Consumer"] },
+                    "brand_kit": { "type": "object" },
+                    "personas": { "type": "array" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

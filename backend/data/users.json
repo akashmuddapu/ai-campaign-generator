@@ -1,0 +1,20 @@
+[
+  {
+    "id": "demo-user-001",
+    "email": "demo@campaignguard.ai",
+    "name": "Demo Marketer",
+    "password_hash": "scrypt:32768:8:1$TceQowJd0b6KvYuD$42cb538fff459826083a9ba87183e18d5d5ab8e10b6f0d38babf7af40fa8afc2fb713cbe0a2960cfb8bedc72684ade31dbdb2615160e488649add05a94fd6a9b"
+  },
+  {
+    "id": "c8ee3606-8e44-4605-983c-9b4b706f3c48",
+    "email": "akash@gmail.com",
+    "name": "akash",
+    "password_hash": "scrypt:32768:8:1$kJgDnLY66Hqt20qc$716560588c96df48b3d420a5459fc88093492098dfc77755602ab36856de705176da5228362bdc7fe7e920d4496986c92a35813d5ca1a4e988a44f0f9e4dad1e"
+  },
+  {
+    "id": "6ba626a8-2abd-4d68-9dd9-7ec35d5b881c",
+    "email": "test@gmail.com",
+    "name": "test",
+    "password_hash": "scrypt:32768:8:1$UGeWfC3fphtrb57n$139a3d497b971c7500f0cf4287d0f092b44aa0cbf0e3be641d91cd5602792f70e41c473ce102e1859993c73e227e7fade279026f415d01043fba293a5cda716d"
+  }
+]

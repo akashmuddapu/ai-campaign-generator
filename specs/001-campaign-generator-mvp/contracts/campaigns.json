@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Campaigns API Contracts",
+  "description": "Endpoints for Persona DNA, concept generation, asset generation, Brand Guardian validation, auto-fix, and export",
+  "endpoints": {
+    "generate_persona_dna": {
+      "method": "POST",
+      "path": "/api/campaigns/persona-dna",
+      "request": {
+        "type": "object",
+        "required": ["brand_kit", "persona"],
+        "properties": {
+          "brand_kit": { "type": "object" },
+          "persona": { "type": "object" }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Generated Persona DNA / Audience Strategy",
+          "body": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string" },
+              "persona_dna": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "generate_concepts": {
+      "method": "POST",
+      "path": "/api/campaigns/concepts",
+      "request": {
+        "type": "object",
+        "required": ["brand_kit", "persona_dna"],
+        "properties": {
+          "brand_kit": { "type": "object" },
+          "persona_dna": { "type": "object" }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "At least 3 distinct campaign concepts",
+          "body": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string" },
+              "concepts": {
+                "type": "array",
+                "minItems": 3,
+                "items": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "generate_assets": {
+      "method": "POST",
+      "path": "/api/campaigns/generate-assets",
+      "request": {
+        "type": "object",
+        "required": ["brand_kit", "persona", "selected_concept"],
+        "properties": {
+          "brand_kit": { "type": "object" },
+          "persona": { "type": "object" },
+          "selected_concept": { "type": "object" }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Generated Social Post and Email with Brand Guardian validation and explanations",
+          "body": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string" },
+              "assets": {
+                "type": "object",
+                "properties": {
+                  "social_post": {
+                    "type": "object",
+                    "properties": {
+                      "content": { "type": "object" },
+                      "validation_report": { "type": "object" },
+                      "why_this_content": { "type": "object" }
+                    }
+                  },
+                  "email": {
+                    "type": "object",
+                    "properties": {
+                      "content": { "type": "object" },
+                      "validation_report": { "type": "object" },
+                      "why_this_content": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "auto_fix": {
+      "method": "POST",
+      "path": "/api/campaigns/auto-fix",
+      "request": {
+        "type": "object",
+        "required": ["channel_type", "current_content", "violations", "brand_kit", "persona", "concept"],
+        "properties": {
+          "channel_type": { "type": "string", "enum": ["social_post", "email"] },
+          "current_content": { "type": "object" },
+          "violations": { "type": "array" },
+          "brand_kit": { "type": "object" },
+          "persona": { "type": "object" },
+          "concept": { "type": "object" }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Remediated asset with updated Brand Guardian report",
+          "body": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string" },
+              "remediated_content": { "type": "object" },
+              "validation_report": { "type": "object" },
+              "why_this_content": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "export_campaign": {
+      "method": "GET",
+      "path": "/api/campaigns/export/<id>",
+      "parameters": [
+        { "name": "format", "in": "query", "schema": { "type": "string", "enum": ["markdown", "json"] } }
+      ],
+      "responses": {
+        "200": {
+          "description": "Downloadable Markdown or JSON file attachment"
+        }
+      }
+    }
+  }
+}
