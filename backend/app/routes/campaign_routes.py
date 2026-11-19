@@ -1,6 +1,9 @@
 """Campaign routes — persona DNA, concepts, asset generation, Brand Guardian, auto-fix, and export."""
 import uuid
 import json
+import re
+import random
+from urllib.parse import quote
 from datetime import datetime, timezone
 from pathlib import Path
 from flask import Blueprint, request, session, jsonify, current_app
@@ -102,6 +105,165 @@ def save_draft():
 
     storage_service.write_json(campaigns_path, campaigns)
     return jsonify({"status": "success", "draft_id": draft_id, "campaign": bundle_record}), 200
+
+
+@campaign_bp.post("/generate-ad-hooks")
+def generate_ad_hooks():
+    """Generate persona- and Brand Kit-tailored ad headline hooks (filtered against banned words)."""
+    data = request.get_json(silent=True) or {}
+    brand_kit = data.get("brand_kit") or {}
+    persona = data.get("persona") or {}
+
+    product_name = (brand_kit.get("product_name") or "TravelMate Smart Mug").strip()
+    product_desc = (brand_kit.get("product_description") or "").strip()
+    tagline = (brand_kit.get("tagline") or "").strip()
+    banned_words = [str(w).strip().lower() for w in (brand_kit.get("banned_words") or []) if str(w).strip()]
+    p_name = (persona.get("persona_name") or "Modern Audience").strip()
+    p_low = p_name.lower()
+
+    is_beverage = bool(re.search(r"mug|coffee|cup|thermos|bottle|drink|temperature|sip|travelmate|brew|matcha|tea", f"{product_name} {product_desc}", re.I))
+    is_security = bool(re.search(r"cyber|shield|security|cloud|guardrail|threat|zero.?trust|compliance", f"{product_name} {product_desc}", re.I))
+
+    if is_security:
+        hooks = [
+            f"Stop threats before they escalate with {product_name}.",
+            f"Built for {p_name}: autonomous cloud defense at scale.",
+            f"Zero drift, total visibility — experience {product_name}.",
+            f"{tagline or f'Precision enterprise protection powered by {product_name}.'}",
+        ]
+    elif is_beverage:
+        if "student" in p_low:
+            hooks = [
+                f"Fuel marathon study sessions with {product_name}.",
+                f"From 8 AM lectures to late-night library blocks, stay energized.",
+                f"Never settle for lukewarm coffee between classes again.",
+                f"Smart precision warmth engineered for unstoppable students.",
+            ]
+        elif "professional" in p_low or "working" in p_low or "executive" in p_low:
+            hooks = [
+                f"Back-to-back meetings? {product_name} holds your ideal temperature.",
+                f"Boardroom focus starts with coffee that stays hot all morning.",
+                f"Precision temperature control built for high-output workdays.",
+                f"Executive craft meets effortless all-day thermal balance.",
+            ]
+        elif "travel" in p_low or "commut" in p_low:
+            hooks = [
+                f"From takeoff to touchdown, {product_name} keeps every sip right.",
+                f"Leakproof smart warmth engineered across every time zone.",
+                f"Upgrade every commute and terminal wait with {product_name}.",
+                f"{tagline or f'Your perfect sip, wherever your journey leads.'}",
+            ]
+        else:
+            hooks = [
+                f"{tagline or f'Your drink, your exact temperature with {product_name}.'}",
+                f"Precision warmth crafted for {p_name} on the move.",
+                f"Never settle for lukewarm drinks again with {product_name}.",
+                f"Smart all-day thermal retention tailored for {p_name}.",
+            ]
+    else:
+        hooks = [
+            f"{tagline or f'Elevate your daily standard with {product_name}.'}",
+            f"Engineered for {p_name} who expect precision and performance.",
+            f"Smarter workflows, stronger results: discover {product_name}.",
+            f"The modern advantage built specifically for {p_name}.",
+        ]
+
+    # Deterministically strip any hook accidentally containing a Brand Kit banned word
+    safe_hooks = [
+        h for h in hooks
+        if not any(re.search(rf"\b{re.escape(bw)}\b", h, re.I) for bw in banned_words)
+    ]
+    if not safe_hooks:
+        safe_hooks = [f"Discover {product_name} — tailored for {p_name}."]
+
+    random.shuffle(safe_hooks)
+    return jsonify({"status": "success", "hooks": safe_hooks}), 200
+
+
+@campaign_bp.post("/generate-ad-image")
+def generate_ad_image():
+    """Synthesize a high-resolution commercial ad image prompt & URL aligned with Brand Kit & Persona."""
+    data = request.get_json(silent=True) or {}
+    brand_kit = data.get("brand_kit") or {}
+    persona = data.get("persona") or {}
+    concept = data.get("concept") or {}
+
+    style = (data.get("style") or "Commercial Studio").strip()
+    aspect_ratio = (data.get("aspect_ratio") or "1:1").strip()
+    custom_prompt = (data.get("custom_prompt") or "").strip()
+    headline = (data.get("headline") or "").strip()
+
+    dimensions = {
+        "1:1": (1080, 1080),
+        "16:9": (1280, 720),
+        "9:16": (720, 1280),
+    }
+    width, height = dimensions.get(aspect_ratio, (1080, 1080))
+
+    p_name = (brand_kit.get("product_name") or "TravelMate Smart Mug").strip()
+    p_desc = (brand_kit.get("product_description") or "Modern flagship product").strip()
+    persona_name = (persona.get("persona_name") or "Target Audience").strip()
+
+    style_descriptions = {
+        "Commercial Studio": "sleek minimalist commercial product photography, dramatic soft studio key lights, high-end editorial product placement, hyper-detailed, clean elegant backdrop",
+        "Lifestyle in Context": f"candid authentic lifestyle advertisement showing a {persona_name} naturally using {p_name}, golden hour natural ambient lighting, cinematic 35mm photography",
+        "Vibrant Digital Banner": "bold modern tech marketing banner, dynamic neon and vibrant gradient accents, high energy, commercial hero shot, award-winning social media ad",
+        "Cinematic 3D": "premium 3D product render, Octane Render style, subsurface scattering, elegant luxury finish, photorealistic reflections, 8k resolution",
+    }
+    style_desc = style_descriptions.get(style, style_descriptions["Commercial Studio"])
+
+    n = persona_name.lower()
+    if "student" in n:
+        context_scene = "college study session, modern university library with natural window light"
+    elif any(k in n for k in ("professional", "working", "ciso", "cto", "executive")):
+        context_scene = "contemporary executive boardroom, clean glass desk, high-rise cityscape view"
+    elif "travel" in n or "commut" in n:
+        context_scene = "sleek airport terminal lounge with sunlit panoramic windows"
+    else:
+        context_scene = "modern refined lifestyle studio environment"
+
+    is_mug = bool(re.search(r"mug|coffee|cup|thermos|bottle|drink|temperature|sip|travelmate", f"{p_name} {p_desc}", re.I))
+    if is_mug:
+        product_detail = (
+            f"Commercial hero shot of '{p_name}', a sleek modern smart travel coffee mug with brushed stainless steel "
+            f"and matte black finish, glowing digital LED temperature readout display showing 140F, insulated leakproof lid, sharply in focus"
+        )
+    else:
+        product_detail = f"Commercial hero shot of '{p_name}': {p_desc}, prominently centered and in sharp focus"
+
+    final_prompt = custom_prompt or (
+        f"Award-winning commercial product advertisement photography of '{p_name}'. {product_detail}. "
+        f"Environment: {context_scene}. {style_desc}. Professional studio advertising photography, "
+        f"razor-sharp focus on {p_name}, 8k resolution, crisp commercial lighting, photorealistic, no blur."
+    )
+
+    seed = random.randint(100000, 999999)
+    encoded_prompt = quote(final_prompt, safe="")
+    image_url = (
+        f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+        f"?width={width}&height={height}&model=turbo&nologo=true&seed={seed}"
+    )
+
+    resolved_headline = (
+        headline
+        or (concept.get("hook") or "").strip('"')
+        or (brand_kit.get("tagline") or "")
+        or f"Experience {p_name}"
+    )
+
+    return jsonify({
+        "status": "success",
+        "image_url": image_url,
+        "prompt": final_prompt,
+        "aspect_ratio": aspect_ratio,
+        "width": width,
+        "height": height,
+        "persona_name": persona_name,
+        "product_name": p_name,
+        "headline": resolved_headline,
+        "style": style,
+        "seed": seed,
+    }), 200
 
 
 @campaign_bp.post("/persona-dna")

@@ -193,3 +193,29 @@ class TestCampaignFlowEndpoints:
         assert user_draft is not None
         assert user_draft["status"] == "Draft"
         assert user_draft["current_step"] == 2
+
+    def test_generate_ad_image_and_hooks(self, client, sample_brand_kit, sample_persona):
+        hooks_resp = client.post(
+            "/api/campaigns/generate-ad-hooks",
+            json={"brand_kit": sample_brand_kit, "persona": sample_persona},
+        )
+        assert hooks_resp.status_code == 200
+        hooks_data = hooks_resp.get_json()
+        assert hooks_data["status"] == "success"
+        assert len(hooks_data["hooks"]) >= 1
+
+        img_resp = client.post(
+            "/api/campaigns/generate-ad-image",
+            json={
+                "brand_kit": sample_brand_kit,
+                "persona": sample_persona,
+                "style": "Commercial Studio",
+                "aspect_ratio": "16:9",
+            },
+        )
+        assert img_resp.status_code == 200
+        img_data = img_resp.get_json()
+        assert img_data["status"] == "success"
+        assert img_data["width"] == 1280
+        assert img_data["height"] == 720
+        assert img_data["image_url"].startswith("https://")

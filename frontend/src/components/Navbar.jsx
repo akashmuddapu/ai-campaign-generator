@@ -9,7 +9,7 @@ export default function Navbar({ user, onLogout }) {
     if (onLogout) {
       await onLogout()
     }
-    navigate('/login')
+    navigate('/', { replace: true })
   }
 
   return (
